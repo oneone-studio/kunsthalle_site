@@ -1,0 +1,46 @@
+.ce {
+    margin: 15px auto;
+
+    h2, h3, h4 {
+        font-family: $font-family-circular;
+        text-transform: none; 
+    }
+    h2 {
+        font-size: $font-size-m;
+    }
+    h3 {
+        font-size: $font-size-s;
+    }
+    h4 {
+        font-size: $font-size-xs;
+    }
+    form h4 {
+      font-size: $font-size-s;  
+    }
+    &.bg-white {
+        margin-bottom: 0;
+        padding-bottom: 15px;
+    }
+    .download-link {
+        .icon-arrow {
+            transform: rotate(90deg);
+        }
+    }
+    .link-mail {
+        .icon-arrow {
+            transform: rotate(180deg);
+        }
+    }
+    .swiper-button-disabled > span {
+        opacity: 0.25;
+    }
+}
+
+/* MEDIAQUERY */
+@media (max-width: 479px) {
+    .ce {    
+        h2 {
+            font-size: $font-size-m - 2px;
+        }
+    }
+}

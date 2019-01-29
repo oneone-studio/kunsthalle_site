@@ -1,0 +1,74 @@
+#modals {
+    &>div {
+        display: none;
+        color: #FFFFFF;
+        a {
+            color: #FFFFFF;
+        }
+        &.modal-active {
+            display: block;
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            z-index: 999;
+            background-color: rgba(235, 110, 104, 0.96);
+            top: 0;
+            left: 0;
+            overflow-y: scroll;
+        }
+        .content {
+            form {
+                label {
+                    color: #FFFFFF;
+                }
+                .form-group .form-control {
+                    background-image: linear-gradient(#FFFFFF, #FFFFFF), linear-gradient(#FFFFFF, #FFFFFF);
+                    color: #fff;
+                }
+                .checkbox .checkbox-material .check, 
+                label.checkbox-inline .checkbox-material .check {
+                    border-color: rgba(255,255,255, 0.75);
+                }
+                .form-control .checkbox input[type=checkbox]:checked + .checkbox-material .check, 
+                .form-control label.checkbox-inline input[type=checkbox]:checked + .checkbox-material .check, 
+                .form-group .checkbox input[type=checkbox]:checked + .checkbox-material .check, 
+                .form-group label.checkbox-inline input[type=checkbox]:checked + .checkbox-material .check {
+                    border-color: #fff;
+                }
+                .form-control .checkbox input[type=checkbox]:checked + .checkbox-material .check:before, 
+                .form-control label.checkbox-inline input[type=checkbox]:checked + .checkbox-material .check:before, 
+                .form-group .checkbox input[type=checkbox]:checked + .checkbox-material .check:before, 
+                .form-group label.checkbox-inline input[type=checkbox]:checked + .checkbox-material .check:before {
+                    color: #fff;
+                }
+            }
+            .form-group.has-error label.control-label, 
+            .form-group.has-error .help-block {
+                color: darken(#f44336, 20%);
+            }
+            .ce-confirmation {
+                text-align: center;
+                h4 {
+                    text-transform: uppercase;
+                    font-family: $font-family-dekka;
+                    font-size: 30px;
+                }
+                p {
+                    font-family: $font-family-circular-book;
+                }
+            }
+        }
+        .header {
+            margin-bottom: 80px;
+            .logo {
+                width: 200px;
+                margin-top: 10px;
+                margin-bottom: 20px;
+            }
+        }
+    }
+}
+
+body.noscroll {
+    overflow: hidden;
+}

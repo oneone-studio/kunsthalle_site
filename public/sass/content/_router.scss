@@ -1,0 +1,336 @@
+/**************************************************************************************************
+ * Global router element with default grid size configuration
+ * Overview cols for breakpoints: 4 cols, 4cols, 3 cols, 1col
+ *************************************************************************************************/
+.ce-router {
+    .grid:after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+    .grid-item,
+    .grid-sizer {
+        width: 20%;
+    }
+    .grid-item {
+        float: left;
+        padding: 10px;
+        header {
+            text-align: center;
+            text-transform: uppercase;
+            font-family: $font-family-dekka;
+            font-size: $font-size-m;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            line-height: 1.15em;
+            word-break: break-word;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+            span {
+                display: block;
+            }
+        }
+        img {
+            width: 100%;
+        }
+    }
+    .grid-item--width2 {
+        width: 40%;
+        header {
+            font-size: $font-size-l;
+        }
+    }
+    .filter {
+        border-bottom: 1px solid #FFFFFF;
+        margin: 15px 0;
+        .icon-filter {
+            fill: #FFFFFF;
+        }
+        a.open-filter {
+            font-size: 14px;
+        }
+        .menu {
+            background-color: #FFFFFF;
+            position: relative;
+            font-size: 18px;
+            ul .icon {
+                height: 22px;
+                width: 22px;
+            }
+            >div {
+                padding: 15px;
+            }
+            .triangle {
+                position: absolute;
+                top: 0;
+                left: 36px;
+                width: 0px;
+                height: 0px;
+                border-style: solid;
+                border-width: 10px 10px 0 10px;
+                border-color: $bg-grey transparent transparent transparent;
+            }
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .ce-router {
+        .grid-sizer,
+        .grid-item {
+            width: 50%;
+            header {
+                font-size: $font-size-m;
+            }
+        }
+        .grid-item--width2 {
+            width: 100%;
+            header {
+                font-size: $font-size-l;
+            }
+        }
+    }
+}
+
+@media (max-width: 767px) and (orientation: portrait) {
+    .ce-router {
+        .grid-sizer,
+        .grid-item {
+            width: 100%;
+            header {
+                font-size: $font-size-m;
+            }
+        }
+        .grid-item--width2 {
+            width: 100%;
+            header {
+                font-size: $font-size-l;
+            }
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    .ce-router {
+        .grid-sizer,
+        .grid-item {
+            width: 33.33%;
+        }
+        .grid-item--width2 {
+            width: 66.66%;
+        }
+    }
+}
+
+@media (min-width: 992px) {
+    .ce-router {
+        .grid-sizer,
+        .grid-item {
+            width: 25%;
+        }
+        .grid-item--width2 {
+            width: 50%;
+        }
+    }
+}
+
+/**************************************************************************************************
+ * Small router element (with wrapping container) with default configuration
+ * Overview cols for breakpoints: 2 cols, 1col
+ *************************************************************************************************/
+.ce-router.ce-router-small {
+    .grid-item,
+    .grid-sizer {
+        width: 50%;
+    }
+    .grid-item--width2 {
+        width: 100%;
+    }
+}
+
+@media(max-width: 767px) and (orientation: portrait) {
+    .ce-router.ce-router-small {
+        .grid-item,
+        .grid-sizer {
+            width: 100%;
+        }
+        .grid-item--width2 {
+            width: 100%;
+        }
+    }
+}
+
+/**************************************************************************************************
+ * Fullwidth 2 grid elements router element (with wrapping container-fluid) 
+ * with default configuration and header on image
+ * Overview cols for breakpoints: 2 cols, 2cols, 2 cols, 1col
+ *************************************************************************************************/
+.ce-router.ce-router-fullwidth-small {
+    .grid-item,
+    .grid-sizer {
+        width: 100%;
+    }
+    .grid-item--width2 {
+        width: 100%;
+    }
+    .grid-item header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        margin: 0;
+        padding: 10px;
+        color: #fff;
+        text-align: center;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        > div {
+            font-family: $font-family-dekka;
+            padding: 15px;
+            h2 {
+                text-transform: uppercase;
+                font-family: $font-family-dekka !important;
+            }
+            div,
+            p {
+                font-family: $font-family-dekka;
+            }
+        }
+    }
+}
+/**************************************************************************************************
+ * Fullwidth 3 grid elements router element (with wrapping container-fluid) 
+ * Overview cols for breakpoints: 3 cols, 3cols, 2 cols, 1col
+ *************************************************************************************************/
+.ce-router.ce-router-fullwidth-3col {
+    .grid-sizer,
+    .grid-item {
+        width: 100%;
+    }
+    .grid-item--width2 {
+        width: 100%;
+    }
+    .grid-item header {
+        > div {
+            h2 {
+                text-transform: uppercase;
+                font-family: $font-family-dekka !important;
+            }
+        }
+    }
+}
+
+@media (max-width: 479px) {
+    .ce-router.ce-router-fullwidth-small {
+        h2 {
+            font-size: $font-size-m * 0.9;
+        }
+        div,
+        div p {
+            font-size: $font-size-xs * 0.9;
+        }
+    }
+    .ce-router.ce-router-fullwidth-3col {
+        h2 {
+            font-size: $font-size-m * 1.05;
+        }
+        div,
+        div p {
+            font-size: $font-size-xs;
+        }
+    }
+}
+
+@media (min-width: 480px) {
+    .ce-router.ce-router-fullwidth-small,
+    .ce-router.ce-router-fullwidth-3col {
+        h2 {
+            font-size: $font-size-xl * 0.8;
+        }
+        div,
+        div p {
+            font-size: $font-size-m * 0.8;
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    .ce-router.ce-router-fullwidth-small {
+        .grid-item,
+        .grid-sizer {
+            width: 50%;
+        }
+        .grid-item--width2 {
+            width: 100%;
+        }
+        h2 {
+            font-size: $font-size-xl * 0.6;
+        }
+        div,
+        div p {
+            font-size: $font-size-m * 0.6;
+        }
+    }
+    .ce-router.ce-router-fullwidth-3col {
+        .grid-sizer,
+        .grid-item {
+            width: 50%;
+        }
+        .grid-item--width2 {
+            width: 100%;
+        }
+    }
+}
+
+@media (min-width: 992px) {
+    .ce-router.ce-router-fullwidth-small {
+        h2 {
+            font-size: $font-size-xl * 0.8;
+        }
+        div,
+        div p {
+            font-size: $font-size-m * 0.8;
+        }
+    }
+    .ce-router.ce-router-fullwidth-3col {
+        .grid-sizer,
+        .grid-item {
+            width: 33.33%;
+        }
+        .grid-item--width2 {
+            width: 66.66%;
+        }
+        h2 {
+            font-size: $font-size-xl * 0.7;
+        }
+        div,
+        div p {
+            font-size: $font-size-m * 0.7;
+        }
+    }
+}
+
+@media (min-width: 1199px) {
+    .ce-router.ce-router-fullwidth-small,
+    .ce-router.ce-router-fullwidth-3col .grid-item--width2 {
+        h2 {
+            font-size: $font-size-xl * 1.05;
+        }
+        div,
+        div p {
+            font-size: $font-size-m * 1.05;
+        }
+    }
+    .ce-router.ce-router-fullwidth-3col {
+        h2 {
+            font-size: $font-size-xl * 0.8;
+        }
+        div,
+        div p {
+            font-size: $font-size-m * 0.8;
+        }
+    }
+}

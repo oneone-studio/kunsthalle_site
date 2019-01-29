@@ -1,0 +1,160 @@
+// Text colors
+.text-green {
+    color: $green;
+}
+.text-red {
+    color: $red;
+}
+a.text-red,
+a.text-red:active,
+a.text-red:visited,
+a.text-red:focus,
+a.text-red:hover {
+    color: $red;
+}
+.text-grey {
+    color: $grey;
+}
+a.text-grey,
+a.text-grey:active,
+a.text-grey:visited,
+a.text-grey:focus,
+a.text-grey:hover {
+    color: $grey;
+}
+.text-white {
+    color: #FFFFFF;
+    a {
+        color: #FFFFFF;
+    }
+}
+
+// Text sizes
+.text-xs {
+    font-size: $font-size-xs;
+}
+.text-s {
+    font-size: $font-size-s;
+}
+.text-m {
+    font-size: $font-size-m;
+}
+.text-l {
+    font-size: $font-size-l;
+}
+.text-xl {
+    font-size: $font-size-xl;
+}
+
+// BG colors
+.bg-white {
+    background-color: #FFFFFF;
+}
+
+// Margins
+.mt-15 {
+    margin-top: 15px;
+}
+.mt-20 {
+    margin-top: 20px;
+}
+.mt-30 {
+    margin-top: 30px;
+}
+.mb-15 {
+    margin-bottom: 15px;
+}
+.mb-20 {
+    margin-bottom: 20px;
+}
+.mb-30 {
+    margin-bottom: 30px;
+}
+.mr-5 {
+    margin-right: 5px;
+}
+.ml-5 {
+    margin-left: 5px;
+}
+
+// Paddings
+.pa-10 {
+    padding: 10px;
+}
+.pl-10 {
+    padding-left: 10px;
+}
+.pr-10 {
+    padding-right: 10px;
+}
+.pa-15 {
+    padding: 15px;
+}
+.pt-15 {
+    padding-top: 15px;
+}
+.pt-20 {
+    padding-top: 20px;
+}
+.pt-30 {
+    padding-top: 30px;
+}
+.pb-15 {
+    padding-bottom: 15px;
+}
+.pb-20 {
+    padding-bottom: 20px;
+}
+.pb-30 {
+    padding-bottom: 30px;
+}
+
+// BG Image Positions
+.bg-cc {
+    background-position: center center;
+}
+.bg-ct {
+    background-position: center top;
+}
+.bg-cb {
+    background-position: center bottom;
+}
+.bg-lc {
+    background-position: left center;
+}
+.bg-lt {
+    background-position: left top;
+}
+.bg-lb {
+    background-position: left bottom;
+}
+.bg-rc {
+    background-position: right center;
+}
+.bg-rt {
+    background-position: right top;
+}
+.bg-rb {
+    background-position: right bottom;
+}
+.title-down {
+    vertical-align: bottom !important;
+}
+.title-up {
+    vertical-align: top !important;
+}
+.with-bottom-line {
+    border-bottom: 1px solid #eeeeee;
+}
+
+// Containers
+.container-small {
+    max-width: 600px;
+    margin: auto 0;
+}
+
+@media(max-width:767px) {
+    .container-nogap-sm {
+        padding: 0;
+    }
+}

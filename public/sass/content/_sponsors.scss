@@ -1,0 +1,17 @@
+.ce-sponsors {
+    border-bottom: 1px solid $bg-grey;
+
+    h2, h3, h4 {
+        color: $grey;
+    }
+    p {
+        font-size: $font-size-m;
+    }
+    li {
+        padding: 5px 30px 5px 5px;
+        img {
+            max-height: 40px;
+            max-width: 240px;
+        }
+    } 
+}

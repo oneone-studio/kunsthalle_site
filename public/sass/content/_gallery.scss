@@ -1,0 +1,42 @@
+.ce-gallery {
+    .next,
+    .prev {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        z-index: 100;
+        cursor: pointer;
+    }
+    .prev {
+        right: auto;
+        left: 0;
+    }
+    .swiper-container {
+        padding-bottom: 50px;
+
+        .swiper-wrapper {
+            // js function exists if css not works
+            align-items: flex-end;
+        }
+    }
+    .swiper-pagination-bullet {
+        opacity: 1;
+        background-color: transparent;
+        border: #000000 1px solid;
+    }
+    .swiper-pagination-bullet-active {
+        background-color: #000000;
+    }
+    .swiper-slide {
+        height: auto;
+        figure {
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            p,
+            figcaption {
+                margin-bottom: 0;
+            }
+        }
+    }
+}

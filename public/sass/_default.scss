@@ -1,0 +1,246 @@
+html * {
+	-webkit-font-smoothing: antialiased;
+}
+
+body {
+    font-size: 16px;
+    font-family: $font-family-circular-book;
+    background-color: $bg-grey;
+    color: $text-default;
+}
+
+a,
+a:hover,
+a:visited,
+a:active,
+a:focus {
+    color: #000000;
+    text-decoration: none;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+h1,
+h2,
+h3
+{
+    text-transform: uppercase;
+    font-family: $font-family-dekka;
+}
+
+h4,
+h5,
+h6 {
+    font-family: $font-family-circular;
+}
+
+h4 {
+    margin-top: 30px;
+}
+
+p {
+    font-family: $font-family-georgia;
+}
+dl {
+    margin-top: 30px;
+    dt {
+        font-family: $font-family-circular;
+    }
+    dd {
+        font-family: $font-family-georgia;
+    }
+}
+
+.dl-horizontal {
+    dt {
+        text-align: left;
+    }
+}
+
+/* FORM */
+form,
+form p {
+    font-family: $font-family-circular-book;
+}
+
+.form-group.inline {
+    margin: 0;
+    padding: 0;
+    input {
+        margin: 0;
+        padding: 0;
+    }
+}
+.form-control,
+.form-group {
+    .form-control {
+        background-image: linear-gradient($red, $red), linear-gradient($red, $red);
+    }
+    .checkbox label,
+    .control-label {
+        color: #000000;
+    }
+    .checkbox input[type=checkbox]:checked + .checkbox-material .check,
+    label.checkbox-inline input[type=checkbox]:checked + .checkbox-material .check {
+        border-color: $red;
+        color: $red;
+    }
+    .checkbox input[type=checkbox]:checked + .checkbox-material .check:before, 
+    label.checkbox-inline input[type=checkbox]:checked + .checkbox-material .check:before {
+        color: $red;
+    }
+}
+.form-group.is-focused .form-control {
+    background-image: linear-gradient($red, $red), linear-gradient($red, $red);
+}
+.form-group.disabled label,
+.form-group.disabled .control-label {
+    color: $text-light-grey;
+}
+.form-group .checkbox label, 
+.form-group .radio label, 
+.form-group label {
+    color: #000;
+}
+.form-group.is-focused .radio label:hover, 
+.form-group.is-focused label.radio-inline:hover, 
+.form-group.is-focused .radio label:focus, 
+.form-group.is-focused label.radio-inline:focus {
+    color: #000;
+}
+// put validation under label text
+.checkbox label {
+    display: block;
+}
+// display validated text as default if deactivated
+.form-group.has-error.disabled {
+    label {
+        color: $text-light-grey;
+    }
+    .help-block {
+        display: none !important;
+    }
+}
+// label inhas_error controls are always red
+.form-group.is-focused.has-error .control-label {
+    color: $red !important;
+}
+.form-group.has-error{
+    .help-block {
+        display: none;
+    }
+}
+
+// radio buttons
+.radio {
+    input[type=radio]:checked ~ .circle {
+        border-color: $red;
+    }
+    input[type=radio]:checked ~ .check {
+        background-color: $red;
+    }
+}
+
+form fieldset {
+    margin-top: 45px; 
+    legend h4 {
+        margin-top: 0;
+        label {
+            color: #000;
+            font-size: 18px;
+        }
+    }
+    p {
+        font-family: $font-family-georgia;
+    }
+}
+
+@media (max-width: 767px) {
+	form fieldset.registration-number-of-persons {
+		// modify styling for small resolution
+	}
+}
+
+/* OPENER */
+.opener {
+    overflow: hidden;
+    height: $icon-size;
+    text-align: center;
+    a.opener-close-link {
+        margin-top: -$icon-size;
+    }
+    a {
+        @include transition(margin-top);
+        display: block;
+    }
+}
+.opener.opener-open {
+    a.opener-close-link {
+        margin-top: 0;
+    }
+}
+
+/* BUTTON */
+#header,
+#content,
+#footer,
+#modals {
+	.btn {
+		border-radius: 0;
+	}
+	.btn-raised {
+		-webkit-box-shadow: none;
+				box-shadow: none;
+	}
+	.btn-default {
+		background-color: $red;
+		color: #fff;
+		font-family: $font-family-dekka;
+	}
+	.btn-default.active {
+		background-color: #fff;
+		color: $red;
+	}
+    .btn-link {
+        color: $red;
+    }
+}
+
+/* ALERT */
+.alert.alert-default {
+    background-color: rgba($dark-blue, 0.8);
+    color: $darker-blue;
+}
+
+/* LINKS */
+p,
+.links-underlined {
+	a {
+		text-decoration: underline;
+	}
+}
+
+/* IMAGES */
+figure {
+    margin: 15px 0 5px 0;
+    /*padding: 15px;*/
+    img {
+        margin: 0 auto;
+        max-width: 800px;
+        max-height: 500px;
+    }
+    figcaption {
+        color: #9E9B9B;
+        text-align: left;
+        margin: 5px 15px;
+    }
+}
+
+/* MEDIA QUERIES */
+@media (min-width: 1200px) {
+    .container {
+        width: 970px;
+    }
+}
