@@ -45,12 +45,19 @@
         <span class="link search">
             <a href="#">
                 <span class="icon icon-search"></span>
-        </a>
+            </a>
         </span>
+        <?php if(strtolower(Session::get('lang')) == 'de'): ?>
+            <a href="http://kunsthalle-site.dv/kh/top/main/set-lang?lang=en&uri=<?php echo $_SERVER['REQUEST_URI'];?>"><div 
+                class="en-flag">&nbsp;</div></a>
+        <?php endif; ?>
+        <?php if(strtolower(Session::get('lang')) == 'en'): ?>
+            <a href="http://kunsthalle-site.dv/kh/top/main/set-lang?lang=de&uri=<?php echo $_SERVER['REQUEST_URI'];?>"><div 
+                class="de-flag">&nbsp;</div></a>
+        <?php endif; ?>
         <span class="link tickets text-white">
             <a href="https://www.mus-ticket.de/new/app/Shopping?ref=shp157393406&n=KHBremen" title="Tickets kaufen" target="_blank">Tickets</a>
         </span>
-        <span class="link language text-white"><a href="#">DE</a></span>
     </div>
 </div>
 <!-- header ende -->

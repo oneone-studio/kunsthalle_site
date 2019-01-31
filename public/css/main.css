@@ -517,6 +517,13 @@ span.icon-calendar {
   background-position-y: -12px; 
   margin-right: 0px; }
 
+.de-flag {
+  width:22px; height:16px; display:inline-block; position:relative;top:3px;left:-10px; background:url('/images/de-flag.png') no-repeat; background-size:20px 14px;
+}
+.en-flag {
+  width:22px; height:16px; display:inline-block; position:relative;top:3px;left:-10px; background:url('/images/en-flag.png') no-repeat; background-size:20px 14px;
+}
+
 
 /* HEADER */
 #header {

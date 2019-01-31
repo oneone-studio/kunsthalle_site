@@ -108,8 +108,6 @@ class MenusController extends BaseController {
 	}
 
 	public function getExhibitions($category = 'current', $tag = null) {
-		// echo '>> CAT >> '. $category; exit;
-		// echo $tag; exit;
 		if($tag) {
 			$query = 'select id from tags where tag_de like "'. str_replace('-', ' ', $tag) . '"';
 			$tag = DB::select($query);
@@ -120,7 +118,7 @@ class MenusController extends BaseController {
 		} else {
 			$pages = Page::with(['page_image_sliders', 'sponsor_groups', 'sponsor_groups.sponsors', 'downloads', 'cluster', 'banner', 
 								 'banner.banner_text', 'page_image_sliders.page_slider_images', 'tags'])
-							->where('active', 1)
+							->where('active_de', 1)
 							->where('page_type', 'exhibition')
 							->get()->sortBy('start_date');
 		}
@@ -150,7 +148,7 @@ class MenusController extends BaseController {
 		$today = date('Y-m-d');
 		if(strtolower($cat) == 'current') {
 			$eps = Page::with('teaser')->where('page_type', 'exhibition')->orderBy('start_date', 'DESC')
-	                ->where('active', 1)
+	                ->where('active_de', 1)
 					->get();
 			foreach($eps as $ep) {
 				if($ep->start_date <= $today && $ep->end_date >= $today) {
@@ -162,7 +160,7 @@ class MenusController extends BaseController {
 			$pages = Page::where('page_type', 'exhibition')
 			               ->where('start_date', '>', $today)
 			               ->where('end_date', '>', $today)
-			               ->where('active', 1)
+			               ->where('active_de', 1)
 			               ->orderBy('start_date', 'ASC')
 			               ->get();			
 		}
@@ -170,7 +168,7 @@ class MenusController extends BaseController {
 			$pages = Page::where('page_type', 'exhibition')
 			               ->where('start_date', '<', $today)
 			               ->where('end_date', '<', $today)
-			               ->where('active', 1)
+			               ->where('active_de', 1)
 			               ->orderBy('start_date', 'DESC')
 			               ->get();			
 		}
@@ -189,7 +187,7 @@ class MenusController extends BaseController {
 		$page_id = 0;
 		$query = 'select p.* from pages p, content_sections cs, menu_items mi 
 		          where p.content_section_id = cs.id 
-		            and p.active = 1
+		            and p.active_de = 1
 		            and cs.menu_item_id = mi.id 
 		            and lower(replace(cs.title_en, " ", "-")) = "'. $section . '" 
 		            and lower(replace(mi.title_en, " ", "-")) = "'. $menu_item . '"
@@ -236,10 +234,10 @@ class MenusController extends BaseController {
 
 			$sponsors = [];
 			foreach($page->sponsor_groups as $g) {
-				if(!array_key_exists($g->headline, $sponsors)) {
-					$sponsors[$g->headline] = [];
+				if(!array_key_exists($g->headline_de, $sponsors)) {
+					$sponsors[$g->headline_de] = [];
 				}
-				$sponsors[$g->headline] = $g->sponsors;
+				$sponsors[$g->headline_de] = $g->sponsors;
 			}	
 			
 			return View::make('pages.sub-page', ['page' => $page, 'menu_item' => $menu_item, 'calendar' => $calendar, 
@@ -251,16 +249,21 @@ class MenusController extends BaseController {
 		return Redirect::action('MenusController@getPage', [$menu_item, $page_title]);
 	}
 
-	public function getExbPage($page_title) {		
+	public function getExbPage($lang = 'de', $page_title) {
 		$page_id = 0;
 		$query = 'select p.*, b.image from pages p, banners b
 		          where lower(replace(p.title_en, " ", "-")) = "'. $page_title . '"
-		            and p.active = 1
+		            and p.active_'.$lang.' = 1
 		            and p.page_type = "exhibition"
 		            and b.page_id = p.id
 		          limit 1';
 		$_page = DB::select($query);
-		// echo '<pre>'; print_r($page); exit;		
+
+		// Redirect to home page if page not found in chosen language
+		if(!$_page) { 
+			return Redirect::action('MenusController@getStartPage'); 
+		}
+
 		if($_page) {
 			$page_id = $_page[0]->id;
 		}
@@ -274,10 +277,10 @@ class MenusController extends BaseController {
 			}		
 			$sponsors = [];
 			foreach($page->sponsor_groups as $g) {
-				if(!array_key_exists($g->headline, $sponsors)) {
-					$sponsors[$g->headline] = [];
+				if(!array_key_exists($g->headline_de, $sponsors)) {
+					$sponsors[$g->headline_de] = [];
 				}
-				$sponsors[$g->headline] = $g->sponsors;
+				$sponsors[$g->headline_de] = $g->sponsors;
 			}	
 			$settings = [];		
 			$set = Settings::first();
@@ -328,7 +331,7 @@ class MenusController extends BaseController {
 			foreach($pg_links as $pl) {
 				if($pl->current_link == 1) { 
 					$pg = Page::where('content_section_id', $pl->id)
-							  ->where('active', 1)
+							  ->where('active_de', 1)
 							  ->get()->sortBy('sort_order');
 					if($pg) {
 						$page_id = $pg[0]->id;
@@ -342,7 +345,7 @@ class MenusController extends BaseController {
 			$page = Page::with(['page_contents', 'page_image_sliders', 'sponsor_groups', 'sponsor_groups.sponsors', 'downloads', 
 								'cluster', 'banner', 'banner.banner_text', 'page_image_sliders.page_slider_images', 'h2text', 'image_grids', 
 								'image_grids.grid_images', 'teaser', 'contacts', 'tags'])
-						  ->where('active', 1)->find($page_id);
+						  ->where('active_de', 1)->find($page_id);
 		}
 		$calendar = [];
 		if(isset($page->cluster_id) && is_numeric($page->cluster_id) && intval($page->cluster_id) > 0) {
@@ -352,10 +355,10 @@ class MenusController extends BaseController {
 		if($page && $page->sponsor_groups) {
 			foreach($page->sponsor_groups as $g) {
 				if(strlen($g->headline) > 0) {
-					if(!array_key_exists($g->headline, $sponsors)) {
-						$sponsors[$g->headline] = [];
+					if(!array_key_exists($g->headline_de, $sponsors)) {
+						$sponsors[$g->headline_de] = [];
 					}
-					$sponsors[$g->headline] = $g->sponsors;
+					$sponsors[$g->headline_de] = $g->sponsors;
 				}
 			}	
 		}			
@@ -414,7 +417,7 @@ class MenusController extends BaseController {
 		} else {
 			// if this is pages section
 			$pages = Page::with(['teaser', 'tags'])
-							->where('active', 1)
+							->where('active_de', 1)
 							->where('content_section_id', $cs_id)->get()->sortBy('sort_order');
 			$section = ContentSection::with('contacts')->find($cs_id);
 			if(!$section) {
@@ -431,8 +434,6 @@ class MenusController extends BaseController {
 				}
 			}
 			$showFliters = (count($tag_ids)) ? true : false;
-			// echo '<pre>'; print_r($pages); exit;
-			// echo 'Show Filters? '. $showFliters . '<br>'. '<pre>'; print_r($tag_ids); exit;
 			if($section) {
 				return View::make('pages.section', ['pages' => $pages, 'menu_item' => $menu_item, 'section' => $section, 
 					'section_title' =>$section_title, 'pg_links' => $pg_links, 'calendar' => $calendar, 'pg_sections' => $pg_sections, 
@@ -561,5 +562,48 @@ class MenusController extends BaseController {
 		}
 
 		return $auth; // Response::json(array('error' => true, 'auth' => false, 'message' => 'Error processing request'), 422);
+	}
+
+	public static function setLang() {
+		$lang = Input::has('lang') ? Input::get('lang') : 'de';
+		Session::put('lang', $lang);
+		Session::save();
+
+		$uri = Input::get('uri');
+		if(strtolower($lang) == 'en') {
+			$uri = str_replace('/de/', '/', $uri);
+			$uri = '/en'.$uri;
+		} else {
+			$uri = str_replace('/en/', '/', $uri);
+			$uri = '/de'.$uri;
+		}
+
+		$params = explode('/', $uri);
+		for($i=0; $i<count($params); $i++) {
+			if(empty($params[$i])) { array_splice($params, $i, 1); }
+		}
+		if(($params[0] == 'de' || $params[0] == 'en') && ($params[1] == 'de' || $params[1] == 'en')) {
+			array_splice($params, 0, 1);
+		}
+		// echo '<pre>'; print_r($params);exit;
+		$page_title = end($params);
+		$params = ['lang' => $lang, 'page_title' => $page_title];
+		// echo $page_title;exit;
+		$uri = SITE_DOMAIN . $uri;
+		// echo $uri .'<br><br>'.Session::get('lang');exit;
+		// header('location: '.$uri);
+		// response->header('location: '.$uri);
+		// return response;
+		// return redirect($uri);
+		// return Redirect::route($uri);
+		return Redirect::action('MenusController@getExbPage', $params);
+
+	}
+
+	public static function getLang() {
+		$lang = 'de';
+		if(Session::has('lang')) { $lang = Session::get('lang'); }
+		// echo '<pre>'; print_r(Session::all());exit;
+		return $lang;
 	}
 }
