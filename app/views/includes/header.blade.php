@@ -48,11 +48,11 @@
             </a>
         </span>
         <?php if(strtolower(Session::get('lang')) == 'de'): ?>
-            <a href="http://kunsthalle-site.dv/kh/top/main/set-lang?lang=en&uri=<?php echo $_SERVER['REQUEST_URI'];?>"><div 
+            <a href="/kh/top/main/set-lang?lang=en&uri=<?php echo $_SERVER['REQUEST_URI'];?>"><div 
                 class="en-flag">&nbsp;</div></a>
         <?php endif; ?>
         <?php if(strtolower(Session::get('lang')) == 'en'): ?>
-            <a href="http://kunsthalle-site.dv/kh/top/main/set-lang?lang=de&uri=<?php echo $_SERVER['REQUEST_URI'];?>"><div 
+            <a href="/kh/top/main/set-lang?lang=de&uri=<?php echo $_SERVER['REQUEST_URI'];?>"><div 
                 class="de-flag">&nbsp;</div></a>
         <?php endif; ?>
         <span class="link tickets text-white">

@@ -1,10 +1,14 @@
-    <?php // $pg_links_used = false; // used to avoid unwanted double nav ?>
+    <?php // $pg_links_used = false; // used to avoid unwanted double nav 
+    $lang = 'de';
+    if(Session::has('lang')) { $lang = Session::get('lang'); }
+    ?>
     
     @if(isset($pg_links))
         <?php $pg_links_used = true; ?>
         <div class="ce ce-submenu container-fluid">
             <div class="ce-submenu-title text-center">
-                {{$page->title_de}}
+                @if($lang == 'de') {{$page->title_de}} @endif
+                @if($lang == 'en') {{$page->title_en}} @endif
             </div>
             <div class="opener">
                 <a href="#" class="opener-close-link">
@@ -23,7 +27,12 @@
                     if(count($calendar) > 0) { $has_calendar = true; }
                 }
                 ?>
-                <li><a href="{{$link}}" class="btn btn-default btn-raised @if($pl->current_link) active @endif">{{$pl->title_de}}</a></li>
+                @if($lang == 'de')
+                    <li><a href="{{$link}}" class="btn btn-default btn-raised @if($pl->current_link) active @endif">{{$pl->title_de}}</a></li>
+                @endif
+                @if($lang == 'en')
+                    <li><a href="{{$link}}" class="btn btn-default btn-raised @if($pl->current_link) active @endif">{{$pl->title_en}}</a></li>
+                @endif
             @endforeach    
                 <li><a href="#" class="btn btn-default btn-raised close-link"><span class="icon icon-up icon-white"></span></a></li>
             </ul>
@@ -39,13 +48,24 @@
         
         @if($ps->type == 'h2text')
             <div class="ce ce-headline container">
-                <h2 class="anchor" @if(isset($ps->anchor_title_de) && strlen($ps->anchor_title_de)) data-anchortext="{{$ps->anchor_title_de}}" @endif onclick="copySectionLink('{{$ps->anchor_title_de}}')">{{$ps->headline_de}}</h2>
-                <p>{{$ps->intro_de}}</p>
+                @if($lang == 'de')
+                    <h2 class="anchor" @if(isset($ps->anchor_title_de) && strlen($ps->anchor_title_de)) data-anchortext="{{$ps->anchor_title_de}}" @endif onclick="copySectionLink('{{$ps->anchor_title_de}}')">{{$ps->headline_de}}</h2>
+                    <p>{{$ps->intro_de}}</p>
+                @endif
+                @if($lang == 'en')
+                    <h2 class="anchor" @if(isset($ps->anchor_title_en) && strlen($ps->anchor_title_en)) data-anchortext="{{$ps->anchor_title_en}}" @endif onclick="copySectionLink('{{$ps->anchor_title_en}}')">{{$ps->headline_en}}</h2>
+                    <p>{{$ps->intro_en}}</p>
+                @endif
             </div>                    
         @endif
 
         @if($ps->type == 'content')
-            <div class="ce ce-text container anchor"  @if(isset($ps->anchor_title_de) && strlen($ps->anchor_title_de)) data-anchortext="{{$ps->anchor_title_de}}" @endif>{{$ps->content_de}}</div>
+            @if($lang == 'de')
+                <div class="ce ce-text container anchor"  @if(isset($ps->anchor_title_de) && strlen($ps->anchor_title_de)) data-anchortext="{{$ps->anchor_title_de}}" @endif>{{$ps->content_de}}</div>
+            @endif
+            @if($lang == 'en')
+                <div class="ce ce-text container anchor"  @if(isset($ps->anchor_title_en) && strlen($ps->anchor_title_en)) data-anchortext="{{$ps->anchor_title_en}}" @endif>{{$ps->content_en}}</div>
+            @endif
         @endif
 
 
@@ -98,7 +118,8 @@
                 <figure>
                     <img src="{{$DOMAIN}}/files/image/{{$ps->filename}}" class="img-responsive" />
                     <figcaption>
-                        {{$ps->caption_de}}
+                        @if($lang == 'de') {{$ps->caption_de}} @endif
+                        @if($lang == 'en') {{$ps->caption_en}} @endif
                     </figcaption>
                 </figure>
             </div>
@@ -460,11 +481,17 @@
                         <div class="ce-download-element-overlay"></div>
                         <div>
                             <div>
-                                <img src="{{$DOMAIN}}/files/downloads/{{$dl['thumb_image']}}" alt="{{$dl['link_title']}}" title="{{$dl['link_title']}}" />
+                                @if($lang == 'de')
+                                    <img src="{{$DOMAIN}}/files/downloads/{{$dl['thumb_image']}}" alt="{{$dl['link_title_de']}}" title="{{$dl['link_title_de']}}" />
+                                @endif
+                                @if($lang == 'en')
+                                    <img src="{{$DOMAIN}}/files/downloads/{{$dl['thumb_image']}}" alt="{{$dl['link_title_en']}}" title="{{$dl['link_title_en']}}" />
+                                @endif
                             </div>
                         </div>
                         <div>
-                            {{$dl['link_title']}}
+                            @if($lang == 'de') {{$dl['link_title_de']}} @endif
+                            @if($lang == 'en') {{$dl['link_title_en']}} @endif
                         </div>
                     </div>
                     @endforeach  
@@ -690,7 +717,7 @@ function handleDownload() {
             data: { 'ids': ids, 'page_id': $('#page_id').val(), 'name': $('#termsOfUseName').val(), 'firm': $('#termsOfUseFirm').val(), 'publication_date':$('#dateOfPublication').val() },
             dataType: 'json',
             success:function(data) { 
-                        console.log('handleDownload success....');
+                        console.log('handleDownload success..');
                         console.log(data);
                         if(data.item != undefined) {
                             window.location.href = data.item;
