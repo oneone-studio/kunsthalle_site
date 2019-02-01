@@ -42,6 +42,9 @@ View::composer(['includes.header'], function($view) {
 });
 
 View::share('pg_links_used', false);
+$lang = 'de';
+if(Session::has('lang')) { $lang = Session::get('lang'); }
+View::share('lang', $lang);
 
 // define('FILES_DOMAIN', 'http://kunsthalle-cms.dev');
 View::composer(['pages.page','pages.sub-page','pages.section','pages.exhibitions','pages.exb-page', 'pages.calendar', 'pages.start'], function($view) {
@@ -112,11 +115,12 @@ Route::get('/friends-of-art', function() {
 
 // Route::get('/get-event-reg-response', 'MenusController@getEventRegResponse');
 
-Route::get('/{menu_item}', 'MenusController@getMenuItem');
-Route::get('/{menu_item}/{page}/{action?}', 'MenusController@getPage');
+Route::get('/{lang?}/{menu_item}', 'MenusController@getMenuItem');
+// Route::get('/{menu_item}/{page}/{action?}', 'MenusController@getPage');
+Route::get('/{lang?}/{menu_item}/{page}/{action?}', 'MenusController@getPage');
 Route::post('get-dl-password', 'MenusController@getDLPassword');
 
-Route::get('/sb-page/{menu_item}/{section}/{page_id}', 'MenusController@getSubPage');
+Route::get('/{lang?}/sb-page/{menu_item}/{section}/{page_id}', 'MenusController@getSubPage');
 // Route::get('/menus/{menu_item}/{section}/{page_title}', 'MenusController@pageWithTitle');
 // Route::get('/kunsthalle-bremen/team', 'MenusController@getTeamPage');
 
@@ -126,13 +130,13 @@ Route::get('/sb-page/{menu_item}/{section}/{page_id}', 'MenusController@getSubPa
 Route::get('/{lang?}/view/exhibitions/exb-page/{page_title}', 'MenusController@getExbPage');
 
 // Route::get('/exhibitions/list/{category?}', ['as' => 'exhibitions', 'uses' => 'MenusController@getExhibitions']);
-Route::get('/view/exhibitions/list/{category?}/{tag?}', 'MenusController@getExhibitions');
-Route::get('/exhibition/{id}', 'ExhibitionsController@exhibition');
+Route::get('/{lang?}/view/exhibitions/list/{category?}/{tag?}', 'MenusController@getExhibitions');
+Route::get('/{lang?}/exhibition/{id}', 'ExhibitionsController@exhibition');
 
 // Header file
-Route::get('/kh/top/main/menu', 'MenusController@getTopMenu');
-Route::get('/kh/top/main/set-lang', 'MenusController@setLang');
-Route::get('/kh/top/main/get-lang', 'MenusController@getLang');
+Route::get('/{lang?}/kh/top/main/menu', 'MenusController@getTopMenu');
+Route::get('/{lang?}/kh/top/main/set-lang', 'MenusController@setLang');
+Route::get('/{lang?}/kh/top/main/get-lang', 'MenusController@getLang');
 
 /* Content / pages
 */

@@ -68,7 +68,8 @@ class MenusController extends BaseController {
 		return $sections;		
 	}
 
-	public function getMenuItem($menu_item) {
+	public function getMenuItem($lang = 'de', $menu_item) {
+		$lang = self::getLang();
 		$rdr = DB::table('redirects')->where('slug', $menu_item)->first();
 		if($rdr) {
 			$url = $rdr->redirect_url;
@@ -88,7 +89,7 @@ class MenusController extends BaseController {
 		$page = [];		
 		$pg_sections = [];
 		if(is_array($pg_links) && count($pg_links)) {
-			return Redirect::action('MenusController@getPage', [$menu_item, $pg_links[0]->link]);
+			return Redirect::action('MenusController@getPage', [$lang, $menu_item, $pg_links[0]->link]);
 		}
 
 		return Redirect::action('MenusController@getStartPage');
@@ -107,9 +108,10 @@ class MenusController extends BaseController {
 		return View::make('pages.view', ['page' => $page, 'calendar' => $calendar, 'pg_sections' => $pg_sections]);
 	}
 
-	public function getExhibitions($category = 'current', $tag = null) {
+	public function getExhibitions($lang='de', $category = 'current', $tag = null) {
+		$lang = self::getLang();
 		if($tag) {
-			$query = 'select id from tags where tag_de like "'. str_replace('-', ' ', $tag) . '"';
+			$query = 'select id from tags where tag_'.$lang.' like "'. str_replace('-', ' ', $tag) . '"';
 			$tag = DB::select($query);
 		}
 		$pages = [];
@@ -118,12 +120,12 @@ class MenusController extends BaseController {
 		} else {
 			$pages = Page::with(['page_image_sliders', 'sponsor_groups', 'sponsor_groups.sponsors', 'downloads', 'cluster', 'banner', 
 								 'banner.banner_text', 'page_image_sliders.page_slider_images', 'tags'])
-							->where('active_de', 1)
+							->where('active_'.$lang, 1)
 							->where('page_type', 'exhibition')
 							->get()->sortBy('start_date');
 		}
 		$results = [];
-		$tags = Tag::all()->sortBy('tag_de');
+		$tags = Tag::all()->sortBy('tag_'.$lang);
 		$main_exb = [];
 		$use_main_exb = false;
 		foreach($pages as $p) {
@@ -144,11 +146,12 @@ class MenusController extends BaseController {
 	}
 
 	public function getExbPagesByCat($cat) {
+		$lang = self::getLang();
 		$pages = [];
 		$today = date('Y-m-d');
 		if(strtolower($cat) == 'current') {
 			$eps = Page::with('teaser')->where('page_type', 'exhibition')->orderBy('start_date', 'DESC')
-	                ->where('active_de', 1)
+	                ->where('active_'.$lang, 1)
 					->get();
 			foreach($eps as $ep) {
 				if($ep->start_date <= $today && $ep->end_date >= $today) {
@@ -160,7 +163,7 @@ class MenusController extends BaseController {
 			$pages = Page::where('page_type', 'exhibition')
 			               ->where('start_date', '>', $today)
 			               ->where('end_date', '>', $today)
-			               ->where('active_de', 1)
+			               ->where('active_'.$lang, 1)
 			               ->orderBy('start_date', 'ASC')
 			               ->get();			
 		}
@@ -168,7 +171,7 @@ class MenusController extends BaseController {
 			$pages = Page::where('page_type', 'exhibition')
 			               ->where('start_date', '<', $today)
 			               ->where('end_date', '<', $today)
-			               ->where('active_de', 1)
+			               ->where('active_'.$lang, 1)
 			               ->orderBy('start_date', 'DESC')
 			               ->get();			
 		}
@@ -183,11 +186,12 @@ class MenusController extends BaseController {
 		return (($d1 < $d2) ? 1 : -1);
 	}
 
-	public function getSubPage($menu_item, $section, $page_title) {		
+	public function getSubPage($lang = 'de', $menu_item, $section, $page_title) {		
+		$lang = self::getLang();
 		$page_id = 0;
 		$query = 'select p.* from pages p, content_sections cs, menu_items mi 
 		          where p.content_section_id = cs.id 
-		            and p.active_de = 1
+		            and p.active_'.$lang.' = 1
 		            and cs.menu_item_id = mi.id 
 		            and lower(replace(cs.title_en, " ", "-")) = "'. $section . '" 
 		            and lower(replace(mi.title_en, " ", "-")) = "'. $menu_item . '"
@@ -234,10 +238,10 @@ class MenusController extends BaseController {
 
 			$sponsors = [];
 			foreach($page->sponsor_groups as $g) {
-				if(!array_key_exists($g->headline_de, $sponsors)) {
-					$sponsors[$g->headline_de] = [];
+				if(!array_key_exists($g->{'headline_'.$lang}, $sponsors)) {
+					$sponsors[$g->{'headline_'.$lang}] = [];
 				}
-				$sponsors[$g->headline_de] = $g->sponsors;
+				$sponsors[$g->{'headline_'.$lang}] = $g->sponsors;
 			}	
 			
 			return View::make('pages.sub-page', ['page' => $page, 'menu_item' => $menu_item, 'calendar' => $calendar, 
@@ -250,6 +254,7 @@ class MenusController extends BaseController {
 	}
 
 	public function getExbPage($lang = 'de', $page_title) {
+		$lang = self::getLang();
 		$page_id = 0;
 		$query = 'select p.*, b.image from pages p, banners b
 		          where lower(replace(p.title_en, " ", "-")) = "'. $page_title . '"
@@ -277,10 +282,10 @@ class MenusController extends BaseController {
 			}		
 			$sponsors = [];
 			foreach($page->sponsor_groups as $g) {
-				if(!array_key_exists($g->headline_de, $sponsors)) {
-					$sponsors[$g->headline_de] = [];
+				if(!array_key_exists($g->{'headline_'.$lang}, $sponsors)) {
+					$sponsors[$g->{'headline_'.$lang}] = [];
 				}
-				$sponsors[$g->headline_de] = $g->sponsors;
+				$sponsors[$g->{'headline_'.$lang}] = $g->sponsors;
 			}	
 			$settings = [];		
 			$set = Settings::first();
@@ -308,7 +313,8 @@ class MenusController extends BaseController {
 		return Redirect::action('MenusController@getPage', [$menu_item, $page_title]);
 	}
 
-	public function getPage($menu_item, $link, $action = null) {
+	public function getPage($lang = 'de', $menu_item, $link, $action = null) {
+		$lang = self::getLang();
 		$hasMembersForm = (strtolower($menu_item) == 'jetzt-unterstützen' && strtolower($link == 'online-mitgliedsantrag')) ? true : false;
 
 		if(strtolower($menu_item) == 'exhibitions') {
@@ -331,9 +337,9 @@ class MenusController extends BaseController {
 			foreach($pg_links as $pl) {
 				if($pl->current_link == 1) { 
 					$pg = Page::where('content_section_id', $pl->id)
-							  ->where('active_de', 1)
+							  ->where('active_'.$lang, 1)
 							  ->get()->sortBy('sort_order');
-					if($pg) {
+					if($pg && isset($pg[0])) {
 						$page_id = $pg[0]->id;
 					}
 					if($pl->type == 'page') { $is_page = true; }
@@ -345,23 +351,23 @@ class MenusController extends BaseController {
 			$page = Page::with(['page_contents', 'page_image_sliders', 'sponsor_groups', 'sponsor_groups.sponsors', 'downloads', 
 								'cluster', 'banner', 'banner.banner_text', 'page_image_sliders.page_slider_images', 'h2text', 'image_grids', 
 								'image_grids.grid_images', 'teaser', 'contacts', 'tags'])
-						  ->where('active_de', 1)->find($page_id);
+						  ->where('active_'.$lang, 1)->find($page_id);
 		}
 		$calendar = [];
-		if(isset($page->cluster_id) && is_numeric($page->cluster_id) && intval($page->cluster_id) > 0) {
-			$calendar = KEventsController::getEventsCalendar(null, false, $page->cluster_id);	
+		if($lang == 'de') {
+			if(isset($page->cluster_id) && is_numeric($page->cluster_id) && intval($page->cluster_id) > 0) {
+				$calendar = KEventsController::getEventsCalendar(null, false, $page->cluster_id);	
+			}
 		}
 		$sponsors = [];
 		if($page && $page->sponsor_groups) {
 			foreach($page->sponsor_groups as $g) {
-				if(strlen($g->headline) > 0) {
-					if(!array_key_exists($g->headline_de, $sponsors)) {
-						$sponsors[$g->headline_de] = [];
-					}
-					$sponsors[$g->headline_de] = $g->sponsors;
+				if(strlen($g->{'headline_'.$lang}) > 0) {
+					if(!array_key_exists($g->{'headline_'.$lang}, $sponsors)) { $sponsors[$g->{'headline_'.$lang}] = []; }
+					$sponsors[$g->{'headline_'.$lang}] = $g->sponsors;
 				}
 			}	
-		}			
+		}
 		if($is_page) {
 			$contacts = [];
 			$detps = Department::all()->sortBy('sort_order');
@@ -371,10 +377,10 @@ class MenusController extends BaseController {
 							->where('department_id', $d->id)
 							->get()->sortBy('sort_order');
 				foreach($list as $l) {
-					if(!array_key_exists($l->department->title_de, $contacts)) {
-						$contacts[$l->department->title_de] = [];
+					if(!array_key_exists($l->department->{'title_'.$lang}, $contacts)) {
+						$contacts[$l->department->{'title_'.$lang}] = [];
 					}
-					$contacts[$l->department->title_de][] = $l;
+					$contacts[$l->department->{'title_'.$lang}][] = $l;
 				}
 			}
 			$settings = [];		
@@ -384,7 +390,7 @@ class MenusController extends BaseController {
 			if($link == 'online-member-form' || $link == 'online-mitgliedsantrag') {
 				$show_membership_form = true;
 			}
-			$dl_found = count($page->downloads) > 0 ? true : false;
+			$dl_found = isset($page->downloads) && count($page->downloads) > 0 ? true : false;
 
 			// if single page
 			foreach($contacts as $d => $cts) {
@@ -417,14 +423,14 @@ class MenusController extends BaseController {
 		} else {
 			// if this is pages section
 			$pages = Page::with(['teaser', 'tags'])
-							->where('active_de', 1)
+							->where('active_'.$lang, 1)
 							->where('content_section_id', $cs_id)->get()->sortBy('sort_order');
 			$section = ContentSection::with('contacts')->find($cs_id);
 			if(!$section) {
 				return Redirect::action('MenusController@getStartPage');
 			}
 			$section_title = strtolower(str_replace(' ', '-', $section->title_en));
-			$tags = Tag::all()->sortBy('tag_de');
+			$tags = Tag::all()->sortBy('tag_'.$lang);
 			$tag_ids = [];
 			foreach($pages as $p) {
 				if($p->tags && count($p->tags)) {
@@ -480,6 +486,7 @@ class MenusController extends BaseController {
 		          and mi.title_en like "'. strtolower(str_replace('-', ' ', $title). '"		        
 		        group by cs.id
 		        order by cs.sort_order');
+
 		$results = DB::select($sql);
 		$f = fopen('logs/test_2.log', 'a+');
 		$cur_found = false;
@@ -545,7 +552,7 @@ class MenusController extends BaseController {
 		return View::make('pages.member-reg-resp');		
 	}
 
-	public function getTopMenu() {
+	public function getTopMenu($lang = 'de') {
 		// echo 'top menu'; exit;
 		return View::make('includes.top-menu');		
 	}
@@ -564,12 +571,21 @@ class MenusController extends BaseController {
 		return $auth; // Response::json(array('error' => true, 'auth' => false, 'message' => 'Error processing request'), 422);
 	}
 
-	public static function setLang() {
+	public static function setLang($lang = 'de') {
 		$lang = Input::has('lang') ? Input::get('lang') : 'de';
+		// echo $lang;exit;		
 		Session::put('lang', $lang);
 		Session::save();
 
 		$uri = Input::get('uri');
+		// echo $uri;exit;
+		$page_type = 'normal';
+		if(strpos($uri, '/exhibitions') || strpos($uri, '/exb-page')) {
+			$page_type = 'exb';
+		}
+		if(strpos($uri, '/sb-page')) {
+			$page_type = 'sp';
+		}
 		if(strtolower($lang) == 'en') {
 			$uri = str_replace('/de/', '/', $uri);
 			$uri = '/en'.$uri;
@@ -582,28 +598,45 @@ class MenusController extends BaseController {
 		for($i=0; $i<count($params); $i++) {
 			if(empty($params[$i])) { array_splice($params, $i, 1); }
 		}
-		if(($params[0] == 'de' || $params[0] == 'en') && ($params[1] == 'de' || $params[1] == 'en')) {
-			array_splice($params, 0, 1);
-		}
-		// echo '<pre>'; print_r($params);exit;
-		$page_title = end($params);
-		$params = ['lang' => $lang, 'page_title' => $page_title];
-		// echo $page_title;exit;
-		$uri = SITE_DOMAIN . $uri;
-		// echo $uri .'<br><br>'.Session::get('lang');exit;
-		// header('location: '.$uri);
-		// response->header('location: '.$uri);
-		// return response;
-		// return redirect($uri);
-		// return Redirect::route($uri);
-		return Redirect::action('MenusController@getExbPage', $params);
 
+		if($page_type == 'exb') {
+			if(($params[0] == 'de' || $params[0] == 'en') && ($params[1] == 'de' || $params[1] == 'en')) {
+				array_splice($params, 0, 1);
+			}
+			$page_title = end($params);
+			$params = ['lang' => $lang, 'page_title' => $page_title];
+
+			return Redirect::action('MenusController@getExbPage', $params);
+		}
+		else if($page_type == 'sp') {
+			
+			if(count($params) > 0 && ($params[0] == 'de' || $params[0] == 'en') && ($params[1] == 'de' || $params[1] == 'en')) {
+				array_splice($params, 0, 1);
+			}
+			$menu_item = (isset($params[2])) ? $params[2] : '';
+			$section = (isset($params[3])) ? $params[3] : '';
+			$page_title = end($params);
+			
+			$params = ['lang' => $lang, 'menu_item' => $menu_item, 'section' => $section, 'page_title' => $page_title];
+
+			return Redirect::action('MenusController@getSubPage', $params);
+		} else {
+
+			if(($params[0] == 'de' || $params[0] == 'en') && ($params[1] == 'de' || $params[1] == 'en')) {
+				array_splice($params, 0, 1);
+			}
+			$menu_item = (isset($params[1])) ? $params[1] : '';
+			$page_title = end($params);
+			$params = ['lang' => $lang, 'menu_item' => $menu_item, 'page_title' => $page_title];
+
+			return Redirect::action('MenusController@getPage', $params);
+		}
 	}
 
 	public static function getLang() {
 		$lang = 'de';
 		if(Session::has('lang')) { $lang = Session::get('lang'); }
-		// echo '<pre>'; print_r(Session::all());exit;
+
 		return $lang;
 	}
 }

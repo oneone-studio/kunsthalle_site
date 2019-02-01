@@ -3,9 +3,9 @@
 
 	    <div class="ce ce-menu container-fluid">
 	        <ul class="list-inline">
-	            <li><a href="/view/exhibitions/list/current" class="btn btn-default btn-raised @if($category && $category == 'current') active @endif">Aktuelle Ausstellungen</a></li>
-	            <li><a href="/view/exhibitions/list/upcoming" class="btn btn-default btn-raised @if($category && $category == 'upcoming') active @endif">Kommende Ausstellungen</a></li>
-	            <li><a href="/view/exhibitions/list/past" class="btn btn-default btn-raised @if($category && $category == 'past') active @endif">Vergangene Ausstellungen</a></li>
+	            <li><a href="/{{$lang}}/view/exhibitions/list/current" class="btn btn-default btn-raised @if($category && $category == 'current') active @endif">Aktuelle Ausstellungen</a></li>
+	            <li><a href="/{{$lang}}/view/exhibitions/list/upcoming" class="btn btn-default btn-raised @if($category && $category == 'upcoming') active @endif">Kommende Ausstellungen</a></li>
+	            <li><a href="/{{$lang}}/view/exhibitions/list/past" class="btn btn-default btn-raised @if($category && $category == 'past') active @endif">Vergangene Ausstellungen</a></li>
 	        </ul>
 	    </div>
 
@@ -15,7 +15,7 @@
 				<div class="container-fluid">
 					<div class="teaser-wrapper pa-10 mb-30">
 						<div class="teaser-item">
-							<a href="/view/exhibitions/exb-page/{{ strtolower(str_replace(' ', '-', $main_exb->title_en)) }}">
+							<a href="/{{$lang}}/view/exhibitions/exb-page/{{ strtolower(str_replace(' ', '-', $main_exb->title_en)) }}">
 							<img src="{{$DOMAIN}}/files/teasers/{{$main_exb->teaser->filename}}" alt="" class="img-responsive"></a>
 						</div>
 						<div class="teaser-item text pa-15">
@@ -80,7 +80,7 @@
 						  	foreach($p->tags as $tag) { $tag_classes .= ' tag-'. $tag->id; }
 						  ?>
 						 <article class="grid-item {{$tag_classes}}">
-						   <a href="/view/exhibitions/exb-page/{{ strtolower(str_replace(' ', '-', $p->title_en)) }}">
+						   <a href="/{{$lang}}/view/exhibitions/exb-page/{{ strtolower(str_replace(' ', '-', $p->title_en)) }}">
 							<img src="{{$DOMAIN}}/files/teasers/{{$p->teaser->filename}}" alt="" class="img-responsive"></a>
 							<header>
 								<div>

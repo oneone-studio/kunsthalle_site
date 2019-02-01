@@ -101,7 +101,7 @@
 						  	foreach($p->tags as $tag) { $tag_classes .= ' tag-'. $tag->id; }
 						  ?>
 							<article class="grid-item {{$tag_classes}}">
-							   <a href="/sb-page/{{$menu_item}}/{{$section_title}}/{{ strtolower(str_replace(' ', '-', $p->title_en)) }}">
+							   <a href="/{{$lang}}/sb-page/{{$menu_item}}/{{$section_title}}/{{ strtolower(str_replace(' ', '-', $p->title_en)) }}">
 								<img src="{{$DOMAIN}}/files/teasers/{{$p->teaser->filename}}" alt="" class="img-responsive">
 								</a>
 								<header>
@@ -137,7 +137,7 @@
 						  @if($p->is_main_teaser)					  
 						
 							<article class="grid-item grid-item--width2 filter-guidances filter-members filter-youngsters filter-holiday-courses filter-seminars filter-movies filter-lectures {{$tag_classes}}">
-							  <a href="/sb-page/{{$menu_item}}/{{$section_title}}/{{ strtolower(str_replace(' ', '-', $p->title_en)) }}">
+							  <a href="/{{$lang}}/sb-page/{{$menu_item}}/{{$section_title}}/{{ strtolower(str_replace(' ', '-', $p->title_en)) }}">
 								<img src="{{$DOMAIN}}/files/teasers/{{$p->teaser->filename}}" alt="" class="img-responsive">
 								<header>{{$p->teaser->caption}}</header></a>
 							</article>						
@@ -145,7 +145,7 @@
 						  @else	
 
 							<article class="grid-item filter-guidances {{$tag_classes}}">
-							  <a href="/sb-page/{{$menu_item}}/{{$section_title}}/{{ strtolower(str_replace(' ', '-', $p->title_en)) }}">
+							  <a href="/{{$lang}}/sb-page/{{$menu_item}}/{{$section_title}}/{{ strtolower(str_replace(' ', '-', $p->title_en)) }}">
 								<img src="{{$DOMAIN}}/files/teasers/{{$p->teaser->filename}}" alt="" class="img-responsive">
 								<header>{{$p->teaser->caption}}</header></a>
 							</article>

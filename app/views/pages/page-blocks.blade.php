@@ -1,4 +1,4 @@
-    <?php // $pg_links_used = false; // used to avoid unwanted double nav 
+    <?php
     $lang = 'de';
     if(Session::has('lang')) { $lang = Session::get('lang'); }
     ?>
@@ -202,7 +202,7 @@
     @endif    
 
     <!-- Calendar -->
-    @if(isset($calendar) && count($calendar))    
+    @if($lang == 'de' && isset($calendar) && count($calendar))    
         <!-- Event calender as module start -->
         @include('pages.calendar-section', ['excl_search' => false])
         <!-- Event calender as module end -->       
@@ -505,7 +505,6 @@
         </div>
         <!-- download end -->
     @endif    
-
 
     <!-- Modal -->
     <div id="modals">
