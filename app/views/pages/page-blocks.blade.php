@@ -639,6 +639,7 @@
     </div>
 
     <input type="hidden" id="page_id" value="{{$page->id}}">
+    <a id="dl_file_link" target="_blank" download></a>
     <div id="zip"></div>
 
 <script type="text/javascript">
@@ -716,7 +717,7 @@ function handleDownload() {
             data: { 'ids': ids, 'page_id': $('#page_id').val(), 'name': $('#termsOfUseName').val(), 'firm': $('#termsOfUseFirm').val(), 'publication_date':$('#dateOfPublication').val() },
             dataType: 'json',
             success:function(data) { 
-                        console.log('handleDownload success..');
+                        console.log('handleDownload success...');
                         console.log(data);
                         if(data.item != undefined) {
                             window.location.href = data.item;
@@ -741,7 +742,35 @@ function handleDownload() {
     return false;
 }
 
+// function doDownload(dl_url, name) {
+//     $.ajax({
+//       url: dl_url,
+//       type: "GET",
+//       dataType: 'binary',
+//       success: function(result) {
+//         var url = URL.createObjectURL(result);
+//         var $a = $('<a />', {
+//           'href': url,
+//           'download': name,
+//           'text': "click"
+//         }).hide().appendTo("body")[0].click();
+//         setTimeout(function() {
+//           URL.revokeObjectURL(url);
+//         }, 10000);
+//       }
+//     });
+// }
+
+// function doDownload(url, name) {
+//     event.preventDefault();  
+//     $.get({url, success:function(result) { 
+//       window.location.href = $(this).attr('href'); }
+//     });
+// }
+
 function doDownload(url, name) {
+    // alert(url);return;
+// url = 'http://kunsthalle-site.dv/images/hugoboss.png';
     var click, save_link, event;
     save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
     if( !("download" in save_link) ) return false; // a[download] not supported on this browser
