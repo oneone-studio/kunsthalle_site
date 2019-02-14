@@ -8,7 +8,7 @@
                 @if($page->banner && $page->banner->banner_text)    
                    @foreach($page->banner->banner_text as $t)
                     <?php $size = 's'; if($t->size) { $size = strtolower($t->size); } ?>
-                       <span class="text-{{$size}}">{{$t->line}}</span>
+                       <span class="text-{{$size}}">{{$t->line_de}}</span>
                    @endforeach
                 @endif    
                 </h1>
@@ -70,6 +70,8 @@ function handleDownload() {
     list = list.split(', ').join(',');
     var items = list.split(',');
     console.log(items)
+    var isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
+    console.log('User browser IE11? '+ isIE11);
     kunsthalle.hideModal('termsofuse');
     if(items.length > 0) {
         $.ajax({
@@ -78,8 +80,16 @@ function handleDownload() {
             data: { 'ids': items, 'page_id': $('#page_id').val() },
             dataType: 'json',
             success:function(data) { 
-                        console.log('handleDownload success..');
-                        console.log(data);
+                        console.log('handleDownload success..'); console.log(data);
+                        if(data.file != undefined) {
+                            if(isIE11) { 
+                              window.document.location = data.file; 
+                            } else {
+                              var filename = data.file.substr(data.file.lastIndexOf('/')+1, data.file.length);
+                              console.log(filename + "\n"+ data.file);
+                              doDownload(data.file, filename);
+                            }
+                        }
                         if(data.item != undefined) {
                             $('#zip').html('<iframe width="1" height="1" frameborder="0" src="' + data.item + '"></iframe>');
                         }
