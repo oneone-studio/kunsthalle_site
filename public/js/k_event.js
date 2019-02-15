@@ -613,7 +613,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                 '</div>'+
                 '<div>'+
                     '<button id="submit_'+evt.index+'" type="submit" class="btn btn-raised btn-default"'+
-                    ' onclick="return checkParticipants()">Jetzt zahlungspflichtig anmelden</button>'+
+                    '>Jetzt zahlungspflichtig anmelden</button>'+
                 '</div>'+
                 '<input name="menu_item" type="hidden" value="">'+
                 '<input name="link" type="hidden" value="">'+
@@ -690,6 +690,5 @@ function checkParticipants() {
 
         return false;
     }
-
-    return true;
+    // return true;
 }

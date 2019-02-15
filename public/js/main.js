@@ -288,7 +288,7 @@ var kunsthalle = {
 				++pCount;
 				$('.prt_err').hide();
 				input.val(newValue).trigger('change');
-				console.log("increment-> newValue["+input.attr('id')+']: '+newValue+"\nparticipant_count:- "+participant_count);
+				console.log("increment-> newValue["+input.attr('id')+']: '+newValue+"\nparticipant_count: "+participant_count);
 			})
 			.on('click', 'a.registration-count-decrement', function (e) {
 				e.preventDefault();
@@ -304,8 +304,13 @@ var kunsthalle = {
 				if (newValue <= 0) {
 					newValue = '';
 				}
-				console.log("decrement-> newValue["+input.attr('id')+']: '+newValue+"\nparticipant_count:- "+participant_count);
+				console.log("decrement-> newValue["+input.attr('id')+']: '+newValue+"\nparticipant_count: "+participant_count);
 				input.val(newValue).trigger('change');
+			})
+			.keydown(function(e) {
+				if(e.keyCode == 13) {
+					$(this).validate();					
+				}
 			})
 			.on('change', '.registration-count-item .form-control', function (e) {
 				e.preventDefault();
@@ -944,17 +949,7 @@ $.validator.addMethod("participant", function(value, element) {
 	participant_count = getParticipantCount();
 	console.log("\nParticipant count: "+participant_count);
 	if(participant_count < 1) {
-        $('.prt_err').show();
-        $('.participant').first().trigger('focus');
-        if($(".participants_"+curEventIndex).length) {
-            var scrollPos = $(".participants_"+curEventIndex).offset().top + 40;
-            $('html, body').animate({
-              scrollTop: scrollPos
-            }, 700);
-        }
-
-        return false;
+		$('.prt_err').show();
 	}
-
-	return true;
+	return (participant_count > 0);
 });
