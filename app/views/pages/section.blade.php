@@ -209,8 +209,8 @@
                 </div>
                 <div class="content">
                     <div class="ce-confirmation">
-                        <h4>Vielen Dank für Ihre Nachricht</h4>
-                        <p>Wir werden Ihre E-Mail so schnell wie möglich beantworten.</p>
+						<h4>VIELEN DANK FÜR IHRE NACHRICHT</h4>
+						<p>Wir werden Ihre Mail so schnell wie möglich beantworten.</p>
                         <a href="javascript:kunsthalle.hideModal()" class="btn btn-default btn-raised active">OK</a>
                     </div>
                 </div>
