@@ -16,7 +16,7 @@
                     <p>Vielen Dank für Ihre Anmeldung, die wir schnellstmöglich bearbeiten werden.
                     Eine Bestätigung Ihrer Teilnahme erhalten Sie nach Prüfung Ihrer Anmeldung.</p>
                     <p>Ihre Kunsthalle Bremen</p>
-                    <a href="javascript:doRedirect();" class="btn btn-default btn-raised active">OK</a>
+                    <a href="/calendar/besuch-planen" class="btn btn-default btn-raised active">OK</a>
                 </div>
             </div>
         </div>
@@ -57,10 +57,10 @@ function doRedirect() {
 }
 
 $(function() {
-    if(confirm) {
+    // if(confirm) {
         console.log('showing confirmation');
         showConfirmation();
-    }
+    // }
 });
 </script>
 @stop
