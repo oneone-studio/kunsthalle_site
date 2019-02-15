@@ -1,8 +1,7 @@
     <?php
     $lang = 'de';
     if(Session::has('lang')) { $lang = Session::get('lang'); }
-    ?>
-    
+    ?>    
     @if(isset($pg_links))
         <?php $pg_links_used = true; ?>
         <div class="ce ce-submenu container-fluid">
@@ -20,7 +19,7 @@
             </div>
             <ul>
             @foreach($pg_links as $pl)
-                <?php $link = "/".$menu_item.'/'.$pl->link;
+                <?php $link = '/'.$lang.'/'.$menu_item.'/'.$pl->link;
                 $has_calendar = false;
                 $is_calendar = false;
                 if(strtolower($pl->title_en) == 'calendar' || strtolower($pl->title_de) == 'kalender') {  $link = '/'.$pl->link .'/'. $menu_item; $is_calendar = true; 
@@ -639,7 +638,6 @@
     </div>
 
     <input type="hidden" id="page_id" value="{{$page->id}}">
-    <a id="dl_file_link" target="_blank" download></a>
     <div id="zip"></div>
 
 <script type="text/javascript">
@@ -742,35 +740,7 @@ function handleDownload() {
     return false;
 }
 
-// function doDownload(dl_url, name) {
-//     $.ajax({
-//       url: dl_url,
-//       type: "GET",
-//       dataType: 'binary',
-//       success: function(result) {
-//         var url = URL.createObjectURL(result);
-//         var $a = $('<a />', {
-//           'href': url,
-//           'download': name,
-//           'text': "click"
-//         }).hide().appendTo("body")[0].click();
-//         setTimeout(function() {
-//           URL.revokeObjectURL(url);
-//         }, 10000);
-//       }
-//     });
-// }
-
-// function doDownload(url, name) {
-//     event.preventDefault();  
-//     $.get({url, success:function(result) { 
-//       window.location.href = $(this).attr('href'); }
-//     });
-// }
-
 function doDownload(url, name) {
-    // alert(url);return;
-// url = 'http://kunsthalle-site.dv/images/hugoboss.png';
     var click, save_link, event;
     save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
     if( !("download" in save_link) ) return false; // a[download] not supported on this browser
