@@ -1,7 +1,3 @@
-    <?php
-    $lang = 'de';
-    if(Session::has('lang')) { $lang = Session::get('lang'); }
-    ?>    
     @if(isset($pg_links))
         <?php $pg_links_used = true; ?>
         <div class="ce ce-submenu container-fluid">

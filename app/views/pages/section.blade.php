@@ -14,7 +14,7 @@
             </div>
             <ul>
         @foreach($pg_links as $pl)
-            <?php $link = "/".$menu_item.'/'.$pl->link;
+            <?php $link = '/'.$lang.'/'.$menu_item.'/'.$pl->link;
             $has_calendar = false;
             $is_calendar = false;
             if(strtolower($pl->title_en) == 'calendar' || strtolower($pl->title_de) == 'kalender') {  $link = '/'.$pl->link .'/'. $menu_item; $is_calendar = true; 

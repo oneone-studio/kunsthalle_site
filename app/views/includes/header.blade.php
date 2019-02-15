@@ -8,7 +8,7 @@ if(Session::has('lang')) { $lang = Session::get('lang'); }
     <div class="center">
         <div id="menu-wrapper">
             <div id="logo-wrapper">
-                <a href="http://kunsthalle-bremen.de/index"><img class="logo" src="/images/kunsthalle_bremen_logo.svg" alt="Kunsthalle Bremen" title="Kunsthalle Bremen" /></a>
+                <a href="<?php echo SITE_DOMAIN;?>/index"><img class="logo" src="/images/kunsthalle_bremen_logo.svg" alt="Kunsthalle Bremen" title="Kunsthalle Bremen" /></a>
             </div>
             <div class="opener">
                 <a href="javascript:kunsthalle.closeMenu()" class="opener-close-link">
