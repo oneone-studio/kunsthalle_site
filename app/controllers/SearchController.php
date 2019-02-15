@@ -9,6 +9,7 @@ class SearchController extends BaseController {
 	}
 	
 	public function handleSearch() {
+		$lang = MenusController::getLang();
 		$domain = Config::get('kh.domain');
 		$f = fopen('logs/search.log', 'w+');
 		fwrite($f, "sendMessage\n\n". print_r(Input::all(), true));
@@ -83,7 +84,7 @@ class SearchController extends BaseController {
 			              and mi.id = cs.menu_item_id 
 			              group by p.id';
 			    $results = DB::select($query);
-			    if($results) {
+			    if($results && count($results)) {
 			    	$pres = $results[0];
 					$page_slug = strtolower(str_replace(" ", "-", $pg->title_en));
 			    	$url = self::getSearchResUrl($pg->page_type, $results[0]->menu_item_slug, $results[0]->cs_item_slug, $page_slug);
@@ -116,7 +117,7 @@ class SearchController extends BaseController {
 						$cs_match = true;
 					}
 					if(stripos($pg->content_section->detail_de, $term) || stripos($pg->content_section->detail_en, $term)) { $cs_match = true; }
-					if($cs_match) {
+					if($results && count($results) && $cs_match) {
 						$url = $_url.$results[0]->menu_item_slug.'/'. strtolower(str_replace(' ', '-', $pg->content_section->title_en));
 						if(!in_array($url, $urls)) {
 							$res_item = self::getResItem($pg->id, 'content_section', $pg->content_section->title_de, $pg->content_section->title_en);
@@ -190,7 +191,7 @@ class SearchController extends BaseController {
 		    	$query .= ' or pc.content_de like "%'. $trm . '%"';
 		    }      
 			$query .= ') and pc.page_id = p.id
-			            and p.active = 1
+			            and p.active_'.$lang.' = 1
 			            and p.page_type = "exhibition"';
 			$results = DB::select($query);
 			if($results) {
@@ -212,11 +213,11 @@ class SearchController extends BaseController {
 			fwrite($f, "\nquery:\n".$query);
 			$start_date = '';
 			$list = [];
+			$evt_list = [];
 			$url = $domain.'calendar/besuch-planen/'; //27105082017_1';
 			if($results) {
 				fwrite($f, "\n\nResults:-\n". print_r($results, true));
 				foreach($results as $evt) {
-					// $evt = $results[0]; // old
 					// repeated dates case
 					if((isset($evt->event_day) && strlen($evt->event_day) > 0) || strtolower($evt->event_day_repeat) == 'daily') {
 						$rep_dates = KEventsController::getEventRepeatDates($evt->id, $evt->start_date, $evt->event_day, $evt->event_day_repeat, $evt->repeat_month, $evt->end_date);
@@ -237,7 +238,7 @@ class SearchController extends BaseController {
 												$res->url = $url. $index .'_'. $evt_data['slideNo'];
 												if(!in_array($res->url, $urls)) {
 													$res->date_info = $evt_data['date_info'];
-													$data[] = (array)$res;
+													$evt_list[] = (array)$res;
 												}
 											}
 										}
@@ -266,7 +267,7 @@ class SearchController extends BaseController {
 												$res->url = $url. $index .'_'. $evt_data['slideNo'];
 												if(!in_array($res->url, $urls)) {
 													$res->date_info = $evt_data['date_info'];
-													$data[] = (array)$res;
+													$evt_list[] = (array)$res;
 												}
 											}
 										}
@@ -275,6 +276,20 @@ class SearchController extends BaseController {
 							}
 						}
 					}	
+				}
+			}
+			if(count($evt_list) > 0) {
+				usort($evt_list, function($x, $y) {
+					$dt_x = substr($x['date_info'], strpos($x['date_info'], ', ')+2, strlen($x['date_info']));
+					$dt_int_x = (int)strtotime($dt_x);
+					$dt_y = substr($y['date_info'], strpos($y['date_info'], ', ')+2, strlen($y['date_info']));
+					$dt_int_y = (int)strtotime($dt_y);
+					if($dt_int_x == $dt_int_y) return 0;
+					return ($dt_int_x < $dt_int_y) ? -1 : 1;
+				});
+				// Add events to results data
+				foreach($evt_list as $evt) {
+					$data[] = $evt;
 				}
 			}
 
@@ -409,7 +424,6 @@ class SearchController extends BaseController {
 						$day_arr = explode(' ', $day);
 						$dayStr = $day_arr[count($day_arr)-1];
 						$evt_data = [ 'slideNo' => $ev['slideNo'],
-								  // 'date_info' => $day .', '. $m
 								  'date_info' => $dayStr .', '. date('d.m.Y', strtotime($start_date))
 								];
 						break;		
