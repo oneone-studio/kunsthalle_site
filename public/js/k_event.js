@@ -3,6 +3,8 @@ var showErr = false;
 function getFormHTML(evt, reg_event_date, index, slideNo) {
     console.log('getFormHTML() called for '+ index);
     var h = html = '';
+    var isIE = detectIE();
+    var disabled = (isIE == true) ? ' disabled': '';
 
     if(evt.guide_name != undefined) {
         h += '<h3 class="detail-header">'+evt.guide_name+'</h3>';
@@ -258,7 +260,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                                     '<div class="form-group inline">'+
                                         '<input type="text" class="form-control participant price-inp" name="regular_adult_price" autocomplete="off" '+
                                         ' id="'+evt.index+'_regular_adult_price" placeholder="0" onkeydown="this.blur()" '+
-                                        'data-price="'+evt.event_cost.regular_adult_price+'">'+
+                                        'data-price="'+evt.event_cost.regular_adult_price+'" '+disabled+'>'+
                                     '</div>'+
                                 '</div>'+
                                 '<div class="col-xs-4 col-sm-6 col3">'+
@@ -286,7 +288,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                                         ' id="'+evt.index+'_regular_child_price" placeholder="0" onkeydown="this.blur()" '+
                                         ' data-price="';
                         if(evt.event_cost != undefined) { h += evt.event_cost.regular_child_price; }
-                        h += '"></div>'+
+                        h += '" '+disabled+'></div>'+
                                 '</div>'+
                                 '<div class="col-xs-4 col-sm-6 col3">'+
                                     '<label for="regular_child_price">Kind(er)</label>'+
@@ -313,7 +315,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                                         ' id="'+evt.index+'_member_adult_price" placeholder="0" onkeydown="this.blur()" '+
                                         ' data-price="';
                         if(evt.event_cost != undefined) { h += evt.event_cost.member_adult_price; }
-                        h += '"></div>'+
+                        h += '" '+disabled+'></div>'+
                                 '</div>'+
                                 '<div class="col-xs-4 col-sm-6 col3">'+
                                     '<label for="member_adult_price">Mitglied(er)</label>'+
@@ -340,7 +342,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                                         ' id="'+evt.index+'_member_child_price" placeholder="0" onkeydown="this.blur()" '+
                                             ' data-price="';
                         if(evt.event_cost != undefined) { h += evt.event_cost.member_child_price; }
-                        h += '"></div>'+
+                        h += '" '+disabled+'></div>'+
                                 '</div>'+
                             '<div class="col-xs-4 col-sm-6 col3">'+
                                 '<label for="member_child_price">Kind(er)/ Mitglied</label>'+
@@ -367,7 +369,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                                         ' id="'+evt.index+'_sibling_child_price" placeholder="0" onkeydown="this.blur()" '+
                                             ' data-price="';
                         if(evt.event_cost != undefined) { h += evt.event_cost.sibling_child_price; }
-                        h += '"></div>'+
+                        h += '" '+disabled+'></div>'+
                             '</div>'+
                             '<div class="col-xs-4 col-sm-6 col3">'+
                                 '<label for="regular_adult_rp">Geschwisterkind(er)</label>'+
@@ -394,7 +396,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                                        ' id="'+evt.index+'_sibling_member_price" placeholder="0" onkeydown="this.blur()" '+
                                             ' data-price="';
                         if(evt.event_cost != undefined) { h += evt.event_cost.sibling_member_price; }
-                        h += '"></div>'+
+                        h += '" '+disabled+'></div>'+
                             '</div>'+
                             '<div class="col-xs-4 col-sm-6 col3">'+
                                 '<label for="sibling_member_price">Geschwisterkind(er) / Mitglied</label>'+
@@ -421,7 +423,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                                         ' id="'+evt.index+'_reduced_price" placeholder="0" onkeydown="this.blur()" '+
                                             ' data-price="';
                         if(evt.event_cost != undefined) { h += evt.event_cost.reduced_price; }
-                        h += '"></div>'+
+                        h += '" '+disabled+'></div>'+
                             '</div>'+
                             '<div class="col-xs-4 col-sm-6 col3">'+
                                 '<label for="reduced_price">ermäßigt</label>'+
@@ -691,4 +693,27 @@ function checkParticipants() {
         return false;
     }
     // return true;
+}
+
+// detect IE
+function detectIE() {
+  var ua = window.navigator.userAgent;
+  var msie = ua.indexOf('MSIE ');
+  if (msie > 0) {
+    // IE 10 or older => return version number
+    return true;
+  }
+  var trident = ua.indexOf('Trident/');
+  if (trident > 0) {
+    // IE 11 => return version number
+    var rv = ua.indexOf('rv:');
+    return true;
+  }
+  var edge = ua.indexOf('Edge/');
+  if (edge > 0) {
+    // Edge (IE 12+) => return version number
+    return true;
+  }
+  // other browser
+  return false;
 }
