@@ -867,4 +867,5 @@ function copySectionLink(section) {
 function noImgUrl() { 
     console.log('noImgUrl()');
 }
+
 </script>

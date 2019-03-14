@@ -50,7 +50,7 @@
         <span class="link tickets text-white">
             <a href="https://www.mus-ticket.de/new/app/Shopping?ref=shp157393406&n=KHBremen" title="Tickets kaufen" target="_blank">Tickets</a>
         </span>
-        <span class="link language text-white"><a href="#">DE</a></span>
+        <span class="link language"><a href="#"><span class="en-flag"></span></a></span>
     </div>
 </div>
 <!-- header ende -->

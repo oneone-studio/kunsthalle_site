@@ -52,6 +52,7 @@
 				</div>
                 <ul class="list-unstyled text-white">
                   @foreach($menu as $mi)
+                     <!-- <li><a href="/{{strtolower(str_replace(' ', '-', $mi->title_en))}}">{{$mi->title_de}}</a></li> -->
                      <li><a href="/{{strtolower(str_replace(' ', '-', $mi->title_en))}}">{{$mi->title_de}}</a></li>
                   @endforeach  
 				</ul>

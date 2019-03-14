@@ -310,13 +310,13 @@ class MenusController extends BaseController {
 				'page_title' => $page_title, 'downloads' => $downloads, 'show_calendar' => $calendar ]);
 		}
 
-		return Redirect::action('MenusController@getPage', [$menu_item, $page_title]);
+		return Redirect::action('MenusController@getPage', [$lang, $menu_item, $page_title]);
 	}
 
 	public function getPage($lang = 'de', $menu_item, $link, $action = null) {
 		$lang = self::getLang();
 		$hasMembersForm = (strtolower($menu_item) == 'jetzt-unterstützen' && strtolower($link == 'online-mitgliedsantrag')) ? true : false;
-
+		// echo $lang.'<br>'.$menu_item.'<br>'.$link; exit;
 		if(strtolower($menu_item) == 'exhibitions') {
 			$category = 'current';
 			if($action == 'current' || $action == 'upcoming' || $action == 'past') { $category = $action; }
@@ -325,7 +325,7 @@ class MenusController extends BaseController {
 		}
 
 		$pg_links = $this->getPageLinksByTitle($menu_item, $link);
-
+		// echo '<pre>'; print_r($pg_links); exit;		
 		$page = [];		
 		$pg_sections = [];
 		$is_page = false;
@@ -333,7 +333,6 @@ class MenusController extends BaseController {
 		$page_id = 0;
 		$pages = [];
 		if(is_array($pg_links) && count($pg_links)) {
-			// $page_id = $pg_links[0]->page_id;
 			foreach($pg_links as $pl) {
 				if($pl->current_link == 1) { 
 					$pg = Page::where('content_section_id', $pl->id)
@@ -479,15 +478,17 @@ class MenusController extends BaseController {
 	}
 
 	public function getPageLinksByTitle($title, $link = '') {
+		// echo $title.'<br>'. $link; exit;		
+		$lang = self::getLang();
 		$sql = 'select cs.*
 		        from content_sections cs, menu_items mi, pages p
 		        where mi.id = cs.menu_item_id
 		          and cs.active = 1
-		          and mi.title_en like "'. strtolower(str_replace('-', ' ', $title). '"		        
+		          and mi.title_'.$lang.' like "'. strtolower(str_replace('-', ' ', $title). '"		        
 		        group by cs.id
-		        order by cs.sort_order');
-
+		        order by cs.sort_order');		          
 		$results = DB::select($sql);
+
 		$f = fopen('logs/test_2.log', 'a+');
 		$cur_found = false;
 		foreach($results as &$res) {
@@ -512,9 +513,10 @@ class MenusController extends BaseController {
 		return $menu_items;
 	}
 
-	public function getFooterPage($link) {
+	public function getFooterPage($lang = 'de', $link) {
+		$lang = self::getLang();
 		$page = Page::with(['page_contents'])
-					  ->where('page_type', 'footer')->where('title_en', 'like', str_replace('-', ' ', $link))->first();
+					  ->where('page_type', 'footer')->where('title_'.$lang, 'like', str_replace('-', ' ', $link))->first();
 
 		return View::make('pages.footer-page', ['page' => $page]);		
 	}
@@ -523,24 +525,25 @@ class MenusController extends BaseController {
 		return View::make('pages.external.webmill');		
 	}
 
-	public function getEventRegResponse() {
-		if(Input::has('return_url')) {
-			$return_url = Input::get('return_url');
+	public function getEventRegResponse($return_url = null) {
+		// echo 'getEventRegResponse<br>'.$return_url; print_r(Input::all());exit;
+		if(!isset($return_url) && Input::has('return_url')) { $return_url = Input::get('return_url'); }
+		if(isset($return_url)) {
 			$arr = explode('_', $return_url);
 			$url = '';
+			$has_event_index = false;
+			if(($arr[0] == 'calendar' && $arr[1] == 'besuch-planen') && ((count($arr) > 2) && (strlen($arr[2]) > 8) && isset($arr[3]))) {
+				$arr[2] = $arr[2].'_'.$arr[3];
+				array_splice($arr, 3, 1);
+				$has_event_index = true;
+			}
+
 			if(count($arr) > 1) {
-				if(strpos($arr[count($arr)-1], '_')) {
-					for($i=1;$i<count($arr)-1;$i++) { $url .= '/'. $arr[$i]; }
-					$url .= '_'. $arr[count($arr)-1];
-				} else {
-					for($i=1;$i<count($arr);$i++) { $url .= '/'. $arr[$i]; }
-				}
+				for($i=0;$i<count($arr);$i++) { $url .= '/'. $arr[$i]; }
 				$return_url = $url;
 			} else {
 				$return_url = str_replace('_', '/', $return_url);
 			}
-			// echo $return_url;exit;
-
 			return View::make('pages.event-reg-resp', ['return_url' => $return_url]);		
 		}
 		
@@ -548,8 +551,11 @@ class MenusController extends BaseController {
 	}
 
 	public function getMemberRegResponse() {
-		echo 'Member reg'; exit;
 		return View::make('pages.member-reg-resp');		
+	}
+
+	public function getBlog() {
+		return View::make('pages.blog');
 	}
 
 	public function getTopMenu($lang = 'de') {
@@ -578,6 +584,7 @@ class MenusController extends BaseController {
 		Session::save();
 
 		$uri = Input::get('uri');
+		if($uri == '/') { $uri .= 'index'; }
 		// echo $uri;exit;
 		$page_type = 'normal';
 		if(strpos($uri, '/exhibitions') || strpos($uri, '/exb-page')) {

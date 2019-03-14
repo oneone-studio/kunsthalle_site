@@ -1,6 +1,6 @@
     <ul id="footermenu" class="list-unstyled">
        @foreach($ftr_links as $href => $title)      
-          <li><a href="/view/static/page/{{$href}}" title="#">{{$title}}</a></li>
+          <li><a href="/{{$lang}}/view/static/page/{{$href}}" title="#">{{$title}}</a></li>
        @endforeach   
        <!-- <li><a href="javascript:gaOptout()">Click here to opt-out of Google Analytics</a></li> -->
     </ul>
@@ -56,10 +56,9 @@
         </div>
     </div>
 <!-- footer ende -->
-
 <!-- jquery -->
     <!-- jquery -->
-    <script src="/bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
+    <!-- <script src="/bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script> -->
     <script src="/bower_components/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
     <!-- bootstrap -->
     <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script>
@@ -122,5 +121,4 @@ $(function() {
 });
 
 </script>
-
 @include('includes.sidemenu')

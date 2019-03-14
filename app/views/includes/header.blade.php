@@ -1,8 +1,3 @@
-<?php
-$lang = 'de';
-if(Session::has('lang')) { $lang = Session::get('lang'); }
-?>
-
 <!-- header start -->
 <div id="header">
     <div class="center">
@@ -23,29 +18,51 @@ if(Session::has('lang')) { $lang = Session::get('lang'); }
             </div>
             <ul class="list-unstyled text-white">
               @foreach($menu as $mi)
-                <?php $link = '/'.$lang.'/'.strtolower(str_replace(' ', '-', $mi->title_en));
-                    if(strtolower($mi->title_de) == 'besuch planen' || strtolower($mi->title_en) == 'besuch planen') { $link .= '/ihr-besuch'; }
+                <?php 
+                    // $link = '/'.$lang.'/'.strtolower(str_replace(' ', '-', $mi->title_en));
+                    $link = '/'.$lang.'/'.$mi->{'slug_'.$lang};
+                    if(strtolower($mi->{'title_'.$lang}) == 'besuch planen' || $mi->{'slug_'.$lang} == 'besuch-planen') { $link .= '/ihr-besuch'; }
+                    if(strtolower($mi->{'title_'.$lang}) == 'plan a visit' || $mi->{'slug_'.$lang} == 'plan-a-visit') { $link .= '/your-visit'; }
                     if(strtolower($mi->title_en) == 'exhibitions') { $link = '/'.$lang.'/view/exhibitions/list/current'; }
                     if(strtolower($mi->title_en) == 'blog') { $link = 'http://kunsthallebremen.tumblr.com'; }
+
+                    $link_title = $mi->{'title_'.$lang};
                 ?>
-                <li><a href="{{$link}}">{{$mi->title_de}}</a></li>
+                <li><a href="{{$link}}">{{ $link_title }}</a></li>
               @endforeach  
             </ul>
         </div>
     </div>
     <div class="left">
-        <a href="/{{$lang}}/besuch-planen/ihr-besuch" title="Ihr Besuch">
-            <span class="icon icon-visit-us icon-is"></span>
-            <span class="hidden-xs">
-                Ihr Besuch
-            </span>
-        </a>
-        <a href="/calendar/besuch-planen" title="Besuch Planen">
-            <span class="icon icon-calendar icon-is"></span>
-            <span class="hidden-xs">
-                VERANSTALTUNGEN
-            </span>
-        </a>
+        @if($lang == 'de')
+            <a href="/{{$lang}}/besuch-planen/ihr-besuch" title="Ihr Besuch">
+                <span class="icon icon-visit-us icon-is"></span>
+                <span class="hidden-xs">
+                    Ihr Besuch
+                </span>
+            </a>
+            <a href="/calendar/besuch-planen" title="Besuch Planen">
+                <span class="icon icon-calendar icon-is"></span>
+                <span class="hidden-xs">
+                    VERANSTALTUNGEN
+                </span>
+            </a>
+        @endif
+        @if($lang == 'en')
+            <a href="/{{$lang}}/plan-a-visit/your-visit" title="Ihr Besuch">
+                <span class="icon icon-visit-us icon-is"></span>
+                <span class="hidden-xs">
+                    Your Visit
+                </span>
+            </a>
+            <a href="/calendar/besuch-planen" title="Besuch Planen">
+                <span class="icon icon-calendar icon-is"></span>
+                <span class="hidden-xs">
+                    EVENTS
+                </span>
+            </a>
+        @endif
+            
     </div>
     <div class="right">
         <span class="link search">
