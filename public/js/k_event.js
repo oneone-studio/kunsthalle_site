@@ -4,7 +4,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
     console.log('getFormHTML() called for '+ index);
     var h = html = '';
     var isIE = detectIE();
-    var disabled = (isIE == true) ? ' disabled': '';
+    var disabled = (isIE == true) ? " disabled": '';
 
     if(evt.guide_name != undefined) {
         h += '<h3 class="detail-header">'+evt.guide_name+'</h3>';

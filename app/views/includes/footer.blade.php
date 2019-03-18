@@ -78,7 +78,7 @@
     <!-- german validation messages -->
     <script src="/js/messages_de.js" type="text/javascript"></script>
     <!-- custom -->
-    <script src="/js/main.js" type="text/javascript"></script>
+    <script src="/js/main.js?v=201903181121" type="text/javascript"></script>
 
 <script type="text/javascript">
 function subscribeForNewsletter(evt) {

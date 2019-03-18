@@ -9,7 +9,8 @@
 <link rel="shortcut icon" size="196x196" href="/images/android-icon.png" />
 <title>Kunsthalle Bremen</title>
 
-<script type="text/javascript" src="/js/k_event.js"></script>
+<script src="/bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/js/k_event.js?v=201903181121"></script>
 
 <link rel="stylesheet" type="text/css" href="/fonts/ll_circular_bold_web/css/stylesheet.css" media="all" />
 <link rel="stylesheet" type="text/css" href="/fonts/ll_circular_book_web/css/stylesheet.css" media="all" />
