@@ -70,13 +70,14 @@
                 <div class="swiper-container">
                     <div class="swiper-wrapper">
                     @foreach($ps->page_slider_images as $img)
+                        <?php $detail = $img->{'detail_'.$lang}; ?>
                         <div class="swiper-slide">
                             <figure>
                                 <div class="bg-white">
                                     <img src="{{$DOMAIN}}/files/sliders/{{$img->filename}}" class="img-responsive" />
                                 </div>
                                 <figcaption>
-                                {{$img->detail}}
+                                {{$detail}}
                                 </figcaption>
                             </figure>
                         </div>

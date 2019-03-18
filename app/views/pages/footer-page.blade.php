@@ -12,8 +12,7 @@ $(function() {
 });
 </script>
   <div class="ce ce-headline container">
-  		<h2 class="anchor">{{$page->title_de}}</h2>
-  		<p>{{$page->page_contents[0]->content_de}}</p>
+  		<h2 class="anchor"><?php echo $page->{'title_'.$lang}; ?></h2>
+  		<p><?php echo $page->page_contents[0]->{'content_'.$lang}; ?></p>
   </div>
-
 @stop

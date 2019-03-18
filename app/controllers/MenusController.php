@@ -456,7 +456,7 @@ class MenusController extends BaseController {
 	}
 
 	public function getStartPage() {
-		$f = fopen('logs/test2.log', 'w+');
+		$f = fopen('logs/page.log', 'w+');
 		fwrite($f, "getStartPage\n\n");
 		$page = Page::with(['page_image_sliders', 'page_image_sliders.page_slider_images', 'page_image_sliders.page_slider_images.slide_text'])
 						->where('page_type', 'start_page')->first();
@@ -516,9 +516,10 @@ class MenusController extends BaseController {
 	public function getFooterPage($lang = 'de', $link) {
 		$lang = self::getLang();
 		$page = Page::with(['page_contents'])
-					  ->where('page_type', 'footer')->where('title_'.$lang, 'like', str_replace('-', ' ', $link))->first();
+					  ->where('page_type', 'footer')
+					  ->where('title_'.$lang, 'like', str_replace('-', ' ', $link))->first();
 
-		return View::make('pages.footer-page', ['page' => $page]);		
+		return View::make('pages.footer-page', ['page' => $page]);
 	}
 
 	public function getOnlineKatalog() {
