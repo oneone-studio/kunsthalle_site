@@ -13,9 +13,8 @@
                                    @foreach($slide->slide_text as $t)
                                     <?php $size = 's';
                                         if($t->size) { $size = strtolower($t->size); }
-                                        $line = ($lang == 'en') ? $t->line_en : $t->line_de;
                                     ?>
-                                       <span class="text-{{$size}}">{{ $line }}</span>
+                                       <span class="text-{{$size}}">{{$t->{'line_'.$lang} }}</span>
                                    @endforeach
                                 @endif    
                              </a>

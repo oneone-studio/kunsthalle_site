@@ -8,7 +8,7 @@
                 @if($page->banner && $page->banner->banner_text)    
                    @foreach($page->banner->banner_text as $t)
                     <?php $size = 's'; if($t->size) { $size = strtolower($t->size); } ?>
-                       <span class="text-{{$size}}">{{$t->line}}</span>
+                       <span class="text-{{$size}}">{{$t->{'line_'.$lang} }}</span>
                    @endforeach
                 @endif    
               </h1>

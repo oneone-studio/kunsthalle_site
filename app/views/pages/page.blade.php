@@ -10,7 +10,7 @@
                     <?php $size = 's';
                         if($t->size) { $size = strtolower($t->size); }
                     ?>
-                       <span class="text-{{$size}}">{{$t->line_de}}</span>
+                       <span class="text-{{$size}}">{{$t->{'line_'.$lang} }}</span>
                    @endforeach
                 @endif    
                 </h1>

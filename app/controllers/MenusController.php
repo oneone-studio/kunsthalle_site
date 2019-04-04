@@ -483,7 +483,7 @@ class MenusController extends BaseController {
 		$sql = 'select cs.*
 		        from content_sections cs, menu_items mi, pages p
 		        where mi.id = cs.menu_item_id
-		          and cs.active = 1
+		          and cs.active_'.$lang.' = 1
 		          and mi.title_'.$lang.' like "'. strtolower(str_replace('-', ' ', $title). '"		        
 		        group by cs.id
 		        order by cs.sort_order');		          
@@ -492,8 +492,8 @@ class MenusController extends BaseController {
 		$f = fopen('logs/test_2.log', 'a+');
 		$cur_found = false;
 		foreach($results as &$res) {
-			$res->link = strtolower(str_replace(' ', '-', $res->title_en));
-			if(strtolower(str_replace('-', ' ', $link)) == strtolower($res->title_en)) {
+			$res->link = strtolower(str_replace(' ', '-', trim($res->{'title_'.$lang})));
+			if(strtolower(str_replace('-', ' ', trim($link))) == strtolower(trim($res->{'title_'.$lang}))) {
 				$res->current_link = 1;
 				$cur_found = true;
 			} else {
