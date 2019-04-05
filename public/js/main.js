@@ -635,8 +635,9 @@ var kunsthalle = {
 					$('[name="termsofuse_files"]', modal).val(items.join(', '));
 				    var showDLDialog = false;
 				    var ar = [];
+				    is_protected = 0;
 				    for(var i in items) {
-				        ar = items[i].split('_');
+				        ar = items[i].split('_');				        
 				        if(ar[1] == '1') { showDLDialog = true; is_protected = 1; break; }
 				    }
 					if(showDLDialog) {
