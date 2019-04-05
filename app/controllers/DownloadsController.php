@@ -22,6 +22,7 @@ class DownloadsController extends BaseController {
 			fwrite($f, "\nlocal_file: ". $local_dir.$filename);
 
 			$page = Page::find(Input::get('page_id'));
+			$dl_files = [];
 
 			if($zip->open($local_dir. $filename, ZipArchive::CREATE) != FALSE) {
 				$data = [];
@@ -36,20 +37,20 @@ class DownloadsController extends BaseController {
                 fwrite($f, "\nProcessing dl..");
 				foreach($ids as $id) {
 					$dl = Download::find($id);
-					$data[] = $dl;          
+					$diata[] = $dl;
+					$dl_flename = str_replace(' ', '_', $dl->filename);
 	                $remote_file = $remote_dir.$dl->filename;
-	                $local_file = $local_dir.$dl->filename;
-
-	                fwrite($f, "\nremote_file:- ". $remote_file ."\nlocal_file:- ". $local_file);
+	                $local_file = $local_dir.$dl_flename;
+	                $dl_files[] = SITE_DOMAIN . '/downloads/'.$dl_flename;	                
+	                fwrite($f, "\nRemote_file:- ". $remote_file ."\nLocal_file:- ". $local_file);
 
 	                if(count($ids) == 1 && $dl->protected == 0) {
-						// return Response::json(array('error' => false, 'file' => DL_DOMAIN.'/downloads/'.$dl->filename), 200);
 						header('Content-Disposition: attachment; filename="'.$dl->filename.'"');
-						return Response::json(array('error' => false, 'file' => $SITE_DOMAIN.'/files/downloads/'.$dl->filename), 200);
+						return Response::json(array('error' => false, 'file' => $SITE_DOMAIN.'/downloads/'.$dl->filename), 200);
 	                }
 	                if(copy($remote_file, $local_file)) {
-						fwrite($f, "\nFile copied..");
-	                	$zip->addFile($local_file, $dl->filename);
+						fwrite($f, "\n\nFile copied..");
+	                	$zip->addFile($local_file, $dl_flename);
 	                }
 	                // Include protection / terms file
 	                if($dl->protected == 1) {
@@ -65,7 +66,7 @@ class DownloadsController extends BaseController {
 						$zip->addFile($remote_dir.$page->dl_terms_file, $page->dl_terms_file);	            	}
 	            }
 
-				$zip->close();		
+				$zip->close();
 				$zip_file = $SITE_DOMAIN .'/downloads/'. $filename;
 				fwrite($f, "\nzip_file: ". $zip_file);
 
@@ -97,7 +98,8 @@ $rec_emails = ['shahidm08@gmail.com'];
 
 				header('Access-Control-Allow-Origin: *');
 				header("Content-Security-Policy: default-src 'self'");
-				return Response::json(array('error' => false, 'item' => $zip_file), 200);
+
+				return Response::json(array('error' => false, 'item' => $zip_file, 'dl_files' => $dl_files), 200);
 			}
 		}
 

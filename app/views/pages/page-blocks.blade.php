@@ -688,7 +688,6 @@ function handleDownload() {
         return false;
     }
 
-    console.log('Continuing..');
     var list = $('#termsofuse_files').val();
     list = list.split(', ').join(',');
     var items = list.split(',');
@@ -715,7 +714,17 @@ function handleDownload() {
                         console.log('handleDownload success...');
                         console.log(data);
                         if(data.item != undefined) {
-                            window.location.href = data.item;
+                            var filename = data.item.substr(data.item.lastIndexOf('/')+1, data.item.length);
+                            // window.location.href = data.item;
+                            new_tab = (filename.indexOf('.zip') > -1) ? false : true;
+                            doDownload(data.file, filename, new_tab);
+                            if(data.dl_files != undefined) {
+                                var dl_files = data.dl_files;
+                                for(var i in dl_files) {
+                                    filename = dl_files[i].substr(dl_files[i].lastIndexOf('/')+1, dl_files[i].length);
+                                    doDownload(dl_files[i], filename, true);
+                                }
+                            }
                         }
                         if(data.file != undefined) {
                             if(isIE11) { 
@@ -723,7 +732,8 @@ function handleDownload() {
                             } else {
                               var filename = data.file.substr(data.file.lastIndexOf('/')+1, data.file.length);
                               console.log(filename + "\n"+ data.file);
-                              doDownload(data.file, filename);
+                              new_tab = (filename.indexOf('.zip') > -1) ? false : true;
+                              doDownload(data.file, filename, new_tab);
                             }
                         }
                         return false;
@@ -737,13 +747,15 @@ function handleDownload() {
     return false;
 }
 
-function doDownload(url, name) {
+function doDownload(url, name, new_tab) {
     var click, save_link, event;
     save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
     if( !("download" in save_link) ) return false; // a[download] not supported on this browser
     console.log('url: '+ url);
     save_link.href = url;
-    save_link.download = name;
+    if(new_tab) { save_link.target = '_blank'; }    
+    if(!new_tab) { save_link.download = name; }
+    console.log("save_link:\n", save_link);    
     event = document.createEvent("MouseEvents");
     event.initMouseEvent(
         "click", true, false, window, 0, 0, 0, 0, 0
