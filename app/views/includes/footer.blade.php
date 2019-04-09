@@ -16,6 +16,11 @@
             </a>
         </li>
         <li>
+            <a href="https://www.instagram.com/Kunsthalle.Bremen/" title="" target="_blank">
+                <span class="icon icon-instagram icon-l"></span>
+            </a>
+        </li>
+        <li>
             <a href="http://www.youtube.com/KunsthalleBremen" title="#" target="_blank">
                 <span class="icon icon-youtube icon-l"></span>
             </a>
@@ -23,11 +28,6 @@
         <li>
             <a href="https://www.voicerepublic.com/users/kunsthalle-bremen" title="Voice Republic" target="_blank">
                 <span class="icon icon-voice-republic icon-l"></span>
-            </a>
-        </li>
-        <li>
-            <a href="https://www.instagram.com/Kunsthalle.Bremen/" title="" target="_blank">
-                <span class="icon icon-instagram icon-l"></span>
             </a>
         </li>
         <li>
