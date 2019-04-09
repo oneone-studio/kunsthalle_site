@@ -1,3 +1,4 @@
+<?php $version = '201904091031'; ?>
     <ul id="footermenu" class="list-unstyled">
        @foreach($ftr_links as $href => $title)      
           <li><a href="/{{$lang}}/view/static/page/{{$href}}" title="#">{{$title}}</a></li>
@@ -78,7 +79,8 @@
     <!-- german validation messages -->
     <script src="/js/messages_de.js" type="text/javascript"></script>
     <!-- custom -->
-    <script src="/js/main.js?v=201903181722" type="text/javascript"></script>
+    <script src="/js/main.js?v={{$version}}" type="text/javascript"></script>
+    <script src="/js/page-blocks.js?v={{$version}}" type="text/javascript"></script>
 
 <script type="text/javascript">
 function subscribeForNewsletter(evt) {
