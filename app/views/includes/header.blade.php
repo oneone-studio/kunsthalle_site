@@ -1,7 +1,7 @@
 <!-- header start -->
 <div id="header">
     <div class="center">
-        <div id="menu-wrapper" class="logo-hidden">
+        <div id="menu-wrapper">
             <div id="logo-wrapper">
                 <a href="<?php echo SITE_DOMAIN;?>/index"><img class="logo" src="/images/kunsthalle_bremen_logo.svg" alt="Kunsthalle Bremen" title="Kunsthalle Bremen" /></a>
             </div>

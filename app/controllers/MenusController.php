@@ -257,7 +257,7 @@ class MenusController extends BaseController {
 		$lang = self::getLang();
 		$page_id = 0;
 		$query = 'select p.*, b.image from pages p, banners b
-		          where lower(replace(p.title_en, " ", "-")) = "'. $page_title . '"
+		          where lower(replace(p.title_'.$lang.', " ", "-")) = "'. $page_title . '"
 		            and p.active_'.$lang.' = 1
 		            and p.page_type = "exhibition"
 		            and b.page_id = p.id
@@ -325,7 +325,7 @@ class MenusController extends BaseController {
 		}
 
 		$pg_links = $this->getPageLinksByTitle($menu_item, $link);
-		// echo '<pre>'; print_r($pg_links); exit;		
+		// echo '<pre>'; print_r($pg_links); exit;
 		$page = [];		
 		$pg_sections = [];
 		$is_page = false;
@@ -395,7 +395,7 @@ class MenusController extends BaseController {
 			foreach($contacts as $d => $cts) {
 				$count = 0;
 				foreach($cts as $c) {
-					if(strlen($c->function) > 0) { ++$count; }
+					if(strlen($c->{'function_'.$lang}) > 0) { ++$count; }
 				}
 				if($count == 0) { unset($contacts[$d]); }
 			}
@@ -458,19 +458,28 @@ class MenusController extends BaseController {
 	public function getStartPage() {
 		$f = fopen('logs/page.log', 'w+');
 		fwrite($f, "getStartPage\n\n");
+		$lang = self::getLang();
 		$page = Page::with(['page_image_sliders', 'page_image_sliders.page_slider_images', 'page_image_sliders.page_slider_images.slide_text'])
 						->where('page_type', 'start_page')->first();
 		$slider = [];
 		if($page->page_image_sliders && count($page->page_image_sliders)) {
 			$slider = $page->page_image_sliders[0];
 		}
-		$slides = (array)$slider->page_slider_images;
+		$slides = $slider->page_slider_images;
+// echo '<br>L: '.$lang.'<br><br>';		
+		foreach($slides as $sl) {
+			// echo '<br>-- '. $sl->id.' --> '. $sl->{'active_'.$lang};
+			if($sl->{'active_'.$lang} == 1) { $_slides[] = $sl; }
+		}
+		$slides = (array)$_slides;
+// echo '<pre>C('.count($slides).')<BR><BR>'; print_r($slides);exit;
 		if(is_array($slides)) {
 			usort($slides, function($a, $b) {
 				if($a['sort_order'] == $b['sort_order']) return 0;
 				return ($a['sort_order'] < $b['sort_order']) ? -1 :1;
 			});
 		}
+		$page->page_slider_images = $slides;
 		fwrite($f, "\nSlides\n". print_r($slides, true));
 		// $slider->page_slider_images = $slides;
 
@@ -478,7 +487,7 @@ class MenusController extends BaseController {
 	}
 
 	public function getPageLinksByTitle($title, $link = '') {
-		// echo $title.'<br>'. $link; exit;		
+		// echo $title.'<br>'. $link; exit;
 		$lang = self::getLang();
 		$sql = 'select cs.*
 		        from content_sections cs, menu_items mi, pages p
@@ -486,10 +495,11 @@ class MenusController extends BaseController {
 		          and cs.active_'.$lang.' = 1
 		          and mi.title_'.$lang.' like "'. strtolower(str_replace('-', ' ', $title). '"		        
 		        group by cs.id
-		        order by cs.sort_order');		          
+		        order by cs.sort_order');
 		$results = DB::select($sql);
 
 		$f = fopen('logs/test_2.log', 'a+');
+		$cal_found = false;
 		$cur_found = false;
 		foreach($results as &$res) {
 			$res->link = strtolower(str_replace(' ', '-', trim($res->{'title_'.$lang})));
@@ -499,10 +509,16 @@ class MenusController extends BaseController {
 			} else {
 				$res->current_link = 0;
 			}
+			if(strtolower($title) == 'calendar' || strtolower($title) == 'kalendar') { $cal_found = true; }
 		}
 		if(count($results) && !$cur_found) {
 			$results[0]->current_link = 1;
 		}
+// 		if(strtolower(trim($res->{'title_'.$lang})) == 'kunsthalle-bremen' && !$cal_found) {
+// 			echo '<h4>Adding cal</h4>';
+// 			array_$results
+// 		}
+		// echo '<pre>'; print_r($results);exit;		
 
 		return $results;
 	}
@@ -580,9 +596,13 @@ class MenusController extends BaseController {
 
 	public static function setLang($lang = 'de') {
 		$lang = Input::has('lang') ? Input::get('lang') : 'de';
-		// echo $lang;exit;		
+		// echo $lang;exit;
 		Session::put('lang', $lang);
 		Session::save();
+
+		// Redirect to home page
+// echo '<pre>'; print_r(get_class_methods('Response')); exit;		
+		return Redirect::to('/'.$lang.'/');
 
 		$uri = Input::get('uri');
 		if($uri == '/') { $uri .= 'index'; }

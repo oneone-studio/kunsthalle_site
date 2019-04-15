@@ -79,6 +79,7 @@ View::composer(['includes.footer'], function($view) {
 });
 
 Route::get('/', 'MenusController@getStartPage');
+Route::get('/{lang}', 'MenusController@getStartPage');
 Route::get('/view/static/page/{link}', 'MenusController@getFooterPage');
 Route::get('/{lang}/view/static/page/{link}', 'MenusController@getFooterPage');
 Route::get('/index', 'MenusController@getStartPage');

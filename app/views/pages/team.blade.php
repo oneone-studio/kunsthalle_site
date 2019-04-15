@@ -28,9 +28,9 @@
 					</h3>
 					<div id="{{strtolower(str_replace(' ', '-', $dep))}}" class="collapse">
 					    @foreach($cts as $c)							
-							@if(strlen($c->function) > 0)
+							@if(strlen($c->{'function_'.$lang}) > 0)
 								<div class="ce ce-contact container-small">
-									<h4>{{$c->function}}:</h4>
+									<h4><?php echo $c->{'function_'.$lang}; ?>:</h4>
 									<div>
 										<a href="javascript:showContactForm('{{$c->id}}')">
 											<span class="icon icon-mail icon-m"></span> 

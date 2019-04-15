@@ -15,20 +15,21 @@
 				<div class="container-fluid">
 					<div class="teaser-wrapper pa-10 mb-30">
 						<div class="teaser-item">
-							<a href="/{{$lang}}/view/exhibitions/exb-page/{{ strtolower(str_replace(' ', '-', $main_exb->title_en)) }}">
+							<?php $link = "/$lang/view/exhibitions/exb-page/".strtolower(str_replace(' ', '-', $main_exb->{'title_'.$lang} )); ?>
+							<a href="{{$link}}">
 							<img src="{{$DOMAIN}}/files/teasers/{{$main_exb->teaser->filename}}" alt="" class="img-responsive"></a>
 						</div>
 						<div class="teaser-item text pa-15">
 							<h1>
 	                            @if($main_exb->teaser)    
-	                                @if(isset($main_exb->teaser->caption) && strlen($main_exb->teaser->caption) > 0)
-										<span class="text-xl">{{$main_exb->teaser->caption}}</span>
+	                                @if(isset($main_exb->teaser->{'caption_'.$lang}) && strlen($main_exb->teaser->{'caption_'.$lang}) > 0)
+										<span class="text-xl"><?php echo $main_exb->teaser->{'caption_'.$lang}; ?></span>
 									@endif
-	                                @if(isset($main_exb->teaser->line_1) && strlen($main_exb->teaser->line_1) > 0)
-										<span class="text-l">{{$main_exb->teaser->line_1}}</span>
+	                                @if(isset($main_exb->teaser->{'line_1_'.$lang}) && strlen($main_exb->teaser->{'line_1_'.$lang}) > 0)
+										<span class="text-l"><?php echo $main_exb->teaser->{'line_1_'.$lang}; ?></span>
 									@endif
-	                                @if(isset($main_exb->teaser->line_2) && strlen($main_exb->teaser->line_2) > 0)
-										<br><span class="text-s">{{$main_exb->teaser->line_2}}</span>
+	                                @if(isset($main_exb->teaser->{'line_2_'.$lang}) && strlen($main_exb->teaser->{'line_2_'.$lang}) > 0)
+										<br><span class="text-s"><?php echo $main_exb->teaser->{'line_2_'.$lang}; ?></span>
 									@endif
 	                            @endif    
 							</h1>
@@ -80,17 +81,18 @@
 						  	foreach($p->tags as $tag) { $tag_classes .= ' tag-'. $tag->id; }
 						  ?>
 						 <article class="grid-item {{$tag_classes}}">
-						   <a href="/{{$lang}}/view/exhibitions/exb-page/{{ strtolower(str_replace(' ', '-', $p->title_en)) }}">
+						 	<?php $link = "/$lang/view/exhibitions/exb-page/".strtolower(str_replace(' ', '-', $p->{'title_'.$lang})); ?>
+						   <a href="{{$link}}">
 							<img src="{{$DOMAIN}}/files/teasers/{{$p->teaser->filename}}" alt="" class="img-responsive"></a>
 							<header>
 								<div>
-									<h2>{{$p->teaser->caption}}</h2>
+									<h2><?php echo $p->teaser->{'caption_'.$lang}; ?></h2>
 									<div>
 										@if($p->teaser->line_1 && strlen($p->teaser->line_1) > 0) 
-										   {{$p->teaser->line_1}} 
+										   <?php echo $p->teaser->{'line_1_'.$lang}; ?> 
 										@endif
 										@if($p->teaser->line_2 && strlen($p->teaser->line_2) > 0)
-											<br />{{$p->teaser->line_2}}
+											<br /><?php echo $p->teaser->{'line_2_'.$lang}; ?>
 										@endif
 									</div>
 								</div>
