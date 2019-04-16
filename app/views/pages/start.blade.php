@@ -13,7 +13,8 @@
                     <div class="swiper-slide">
                             <div class="bg-ct picture-container" style="background-image: url('{{$DOMAIN}}/files/sliders/{{$slide->filename}}');">
                                 <h1 class="text-center title-{{$slide->text_position}}">
-                                 <a href="{{$slide->url}}" title="" style="display: block;">
+                                <?php $url = $slide->{'url_'.$lang}; ?>
+                                 <a href="{{$url}}" title="" style="display: block;">
                                     @if($slide->slide_text)    
                                        @foreach($slide->slide_text as $t)
                                         <?php $size = 's';
