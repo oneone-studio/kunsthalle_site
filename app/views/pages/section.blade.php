@@ -2,7 +2,7 @@
 @section('content')
         <div class="ce ce-submenu container-fluid">
             <div class="ce-submenu-title text-center">
-                {{$section->title_de}}
+                <?php echo $section->{'title_'.$lang}; ?>
             </div>
             <div class="opener">
                 <a href="#" class="opener-close-link">
@@ -17,20 +17,20 @@
             <?php $link = '/'.$lang.'/'.$menu_item.'/'.$pl->link;
             $has_calendar = false;
             $is_calendar = false;
-            if(strtolower($pl->title_en) == 'calendar' || strtolower($pl->title_de) == 'kalender') {  $link = '/'.$pl->link .'/'. $menu_item; $is_calendar = true; 
+            if(strtolower($pl->{'title_'.$lang}) == 'calendar' || strtolower($pl->{'title_'.$lang}) == 'kalender') {  $link = '/'.$pl->link .'/'. $menu_item; $is_calendar = true; 
                 if(count($calendar) > 0) { $has_calendar = true; }
             }
             ?>
-                <li><a href="{{$link}}" class="btn btn-default btn-raised @if($pl->current_link) active @endif">{{$pl->title_de}}</a></li>
+                <li><a href="{{$link}}" class="btn btn-default btn-raised @if($pl->current_link) active @endif"><?php echo $pl->{'title_'.$lang}; ?></a></li>
         @endforeach    
                 <li><a href="#" class="btn btn-default btn-raised close-link"><span class="icon icon-up icon-white"></span></a></li>
 	        </ul>
 	    </div>
-		@if($section->headline_de)
+		@if($section->{'headline_'.$lang})
 			<div class="ce ce-text container">
-				<h2>{{$section->headline_de}}</h2>
-				@if($section->detail_de)
-					<p>{{$section->detail_de}}</p>
+				<h2><?php echo $section->{'headline_'.$lang}; ?></h2>
+				@if($section->{'detail_'.$lang})
+					<p><?php echo $section->{'detail_'.$lang}; ?></p>
 				@endif
 			</div>
 		@endif
@@ -75,7 +75,7 @@
 					                 @foreach($tags as $tag)
 					                    @if(in_array($tag->id, $tag_ids))
 						                    <li onclick="filterItems({{$tag->id}})"><span class="icon icon-inline"></span> <a href="#" 
-						                    		data-filter=".filter-guidances">{{$tag->tag_de}}</a></li>
+						                    		data-filter=".filter-guidances"><?php echo $tag->{'tag_'.$lang}; ?></a></li>
 					                    @endif
 					                 @endforeach
 					              @endif							
@@ -101,7 +101,10 @@
 						  	foreach($p->tags as $tag) { $tag_classes .= ' tag-'. $tag->id; }
 						  ?>
 							<article class="grid-item {{$tag_classes}}">
-							   <a href="/{{$lang}}/sb-page/{{$menu_item}}/{{$section_title}}/{{ strtolower(str_replace(' ', '-', $p->title_en)) }}">
+							   <?php 
+							     $link = '/'.$lang.'/sb-page/'.$menu_item.'/'.$section_title.'/'.strtolower(str_replace(' ', '-', $p->{'title_'.$lang})); 
+							   ?>
+							   <a href="{{$link}}">
 								<img src="{{$DOMAIN}}/files/teasers/{{$p->teaser->filename}}" alt="" class="img-responsive">
 								</a>
 								<header>
@@ -133,21 +136,23 @@
 					  @if($p->teaser && $p->teaser->filename)
 						  <?php $tag_classes = ' tagged';
 						  	foreach($p->tags as $tag) { $tag_classes .= ' tag-'. $tag->id; }
+							   $slug = (isset($p->{'slug_'.$lang}) && trim($p->{'slug_'.$lang}) != '') ? $p->{'slug_'.$lang} : strtolower(str_replace(' ', '-', $p->{'title_'.$lang}));
+							   $link = '/'.$lang.'/sb-page/'.$menu_item.'/'.$section_title.'/'.$slug;
 						  ?>
 						  @if($p->is_main_teaser)					  
 						
 							<article class="grid-item grid-item--width2 filter-guidances filter-members filter-youngsters filter-holiday-courses filter-seminars filter-movies filter-lectures {{$tag_classes}}">
-							  <a href="/{{$lang}}/sb-page/{{$menu_item}}/{{$section_title}}/{{ strtolower(str_replace(' ', '-', $p->title_en)) }}">
+							  <a href="{{$link}}">
 								<img src="{{$DOMAIN}}/files/teasers/{{$p->teaser->filename}}" alt="" class="img-responsive">
-								<header>{{$p->teaser->caption}}</header></a>
+								<header>{{$p->teaser->{'caption_'.$lang} }}</header></a>
 							</article>						
 
 						  @else	
 
 							<article class="grid-item filter-guidances {{$tag_classes}}">
-							  <a href="/{{$lang}}/sb-page/{{$menu_item}}/{{$section_title}}/{{ strtolower(str_replace(' ', '-', $p->title_en)) }}">
+							  <a href="{{$link}}">
 								<img src="{{$DOMAIN}}/files/teasers/{{$p->teaser->filename}}" alt="" class="img-responsive">
-								<header>{{$p->teaser->caption}}</header></a>
+								<header>{{$p->teaser->{'caption_'.$lang} }}</header></a>
 							</article>
 						
 						  @endif	

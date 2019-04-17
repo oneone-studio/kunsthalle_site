@@ -94,6 +94,9 @@ Route::post('/members/register-member', 'MembersController@registerMember');
 
 Route::get('/get-calendar-json', 'KEventsController@getCalendarJson');
 Route::get('/calendar/{menu_item?}/{json?}/{page_cluster_id?}', 'KEventsController@getEventsCalendar');
+Route::get('/{lang?}/calendar/{menu_item?}/{json?}/{page_cluster_id?}', 'KEventsController@getEventsCalendar');
+Route::get('/kalender/{menu_item?}/{json?}/{page_cluster_id?}', 'KEventsController@getEventsCalendar');
+Route::get('/{lang}/kalender/{menu_item?}/{json?}/{page_cluster_id?}', 'KEventsController@getEventsCalendar');
 Route::get('get-event-cal', 'KEventsController@getEventsCalendarJson');
 
 Route::get('/get-exb-calendar-json', 'ExhibitionsController@getExhibitionCalendarJson');
@@ -129,7 +132,7 @@ Route::get('/{lang?}/sb-page/{menu_item}/{section}/{page_id}', 'MenusController@
 // Exb
 // Route::get('/view/exhibitions/exb-page/{page_title}', 'MenusController@getExbPage');
 // Route::get('/view/exhibitions/exb-page/{page_title}/{lang?}', 'MenusController@getExbPage');
-Route::get('/{lang?}/view/exhibitions/exb-page/{page_title}', 'MenusController@getExbPage');
+Route::get('/{lang?}/view/exhibitions/exb-page/{slug}', 'MenusController@getExbPage');
 
 // Route::get('/exhibitions/list/{category?}', ['as' => 'exhibitions', 'uses' => 'MenusController@getExhibitions']);
 Route::get('/{lang?}/view/exhibitions/list/{category?}/{tag?}', 'MenusController@getExhibitions');

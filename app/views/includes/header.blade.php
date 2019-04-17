@@ -55,12 +55,6 @@
                     Your Visit
                 </span>
             </a>
-            <a href="/calendar/besuch-planen" title="Besuch Planen">
-                <span class="icon icon-calendar icon-is"></span>
-                <span class="hidden-xs">
-                    EVENTS
-                </span>
-            </a>
         @endif
             
     </div>

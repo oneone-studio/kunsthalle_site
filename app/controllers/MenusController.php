@@ -186,18 +186,30 @@ class MenusController extends BaseController {
 		return (($d1 < $d2) ? 1 : -1);
 	}
 
-	public function getSubPage($lang = 'de', $menu_item, $section, $page_title) {		
+	public function getSubPage($lang = 'de', $menu_item, $section, $page_title) {
 		$lang = self::getLang();
 		$page_id = 0;
 		$query = 'select p.* from pages p, content_sections cs, menu_items mi 
 		          where p.content_section_id = cs.id 
 		            and p.active_'.$lang.' = 1
 		            and cs.menu_item_id = mi.id 
-		            and lower(replace(cs.title_en, " ", "-")) = "'. $section . '" 
-		            and lower(replace(mi.title_en, " ", "-")) = "'. $menu_item . '"
-		            and lower(replace(p.title_en, " ", "-")) = "'. $page_title . '"
+		            and lower(replace(cs.title_'.$lang.', " ", "-")) = "'. $section . '" 
+		            and lower(replace(mi.title_'.$lang.', " ", "-")) = "'. $menu_item . '"
+		            and lower(replace(p.slug_'.$lang.', " ", "-")) = "'. $page_title . '"
 		          limit 1';
 		$page = DB::select($query);
+		if(!isset($page) || !isset($page[0]->id)) {
+			$query = 'select p.* from pages p, content_sections cs, menu_items mi 
+			          where p.content_section_id = cs.id 
+			            and p.active_'.$lang.' = 1
+			            and cs.menu_item_id = mi.id 
+			            and lower(replace(cs.title_'.$lang.', " ", "-")) = "'. $section . '" 
+			            and lower(replace(mi.title_'.$lang.', " ", "-")) = "'. $menu_item . '"
+			            and lower(replace(p.title_'.$lang.', " ", "-")) = "'. $page_title . '"
+			          limit 1';
+			$page = DB::select($query);			
+		}
+
 		if($page) {
 			$page_id = $page[0]->id;
 		}
@@ -520,7 +532,7 @@ class MenusController extends BaseController {
 			} else {
 				$res->current_link = 0;
 			}
-			if(strtolower($title) == 'calendar' || strtolower($title) == 'kalendar') { $cal_found = true; }
+			if(strtolower($title) == 'calendar' || strtolower($title) == 'kalender') { $cal_found = true; }
 		}
 		if(count($results) && !$cur_found) {
 			$results[0]->current_link = 1;
@@ -560,7 +572,7 @@ class MenusController extends BaseController {
 			$arr = explode('_', $return_url);
 			$url = '';
 			$has_event_index = false;
-			if(($arr[0] == 'calendar' && $arr[1] == 'besuch-planen') && ((count($arr) > 2) && (strlen($arr[2]) > 8) && isset($arr[3]))) {
+			if((($arr[0] == 'calendar' || $arr[0] == 'kalender') && $arr[1] == 'besuch-planen') && ((count($arr) > 2) && (strlen($arr[2]) > 8) && isset($arr[3]))) {
 				$arr[2] = $arr[2].'_'.$arr[3];
 				array_splice($arr, 3, 1);
 				$has_event_index = true;
