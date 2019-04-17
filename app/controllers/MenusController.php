@@ -253,24 +253,36 @@ class MenusController extends BaseController {
 		return Redirect::action('MenusController@getPage', [$menu_item, $page_title]);
 	}
 
-	public function getExbPage($lang = 'de', $page_title) {
+	public function getExbPage($lang = 'de', $slug) {
 		$lang = self::getLang();
 		$page_id = 0;
+		$slug = strtolower($slug);
+		// First try slug match
 		$query = 'select p.*, b.image from pages p, banners b
-		          where lower(replace(p.title_'.$lang.', " ", "-")) = "'. $page_title . '"
+		          where lower(replace(p.slug_'.$lang.', " ", "-")) = "'. $slug . '"
 		            and p.active_'.$lang.' = 1
 		            and p.page_type = "exhibition"
 		            and b.page_id = p.id
 		          limit 1';
 		$_page = DB::select($query);
+		if(!isset($_page) || !isset($_page[0]->id)) {
+			$query = 'select p.*, b.image from pages p, banners b
+			          where lower(replace(p.title_'.$lang.', " ", "-")) = "'. $slug . '"
+			            and p.active_'.$lang.' = 1
+			            and p.page_type = "exhibition"
+			            and b.page_id = p.id
+			          limit 1';
+			$_page = DB::select($query);
+		}
 
 		// Redirect to home page if page not found in chosen language
 		if(!$_page) { 
 			return Redirect::action('MenusController@getStartPage'); 
 		}
-
+		$page_title = '';
 		if($_page) {
 			$page_id = $_page[0]->id;
+			$page_title = $_page[0]->{'title_'.$lang};
 		}
 		if($page_id > 0) {
 			$pg_sections = $this->getPageSections($page_id);
@@ -466,13 +478,12 @@ class MenusController extends BaseController {
 			$slider = $page->page_image_sliders[0];
 		}
 		$slides = $slider->page_slider_images;
-// echo '<br>L: '.$lang.'<br><br>';		
+		$_slides = [];
 		foreach($slides as $sl) {
-			// echo '<br>-- '. $sl->id.' --> '. $sl->{'active_'.$lang};
 			if($sl->{'active_'.$lang} == 1) { $_slides[] = $sl; }
 		}
 		$slides = (array)$_slides;
-// echo '<pre>C('.count($slides).')<BR><BR>'; print_r($slides);exit;
+
 		if(is_array($slides)) {
 			usort($slides, function($a, $b) {
 				if($a['sort_order'] == $b['sort_order']) return 0;
