@@ -81,7 +81,10 @@
 						  	foreach($p->tags as $tag) { $tag_classes .= ' tag-'. $tag->id; }
 						  ?>
 						 <article class="grid-item {{$tag_classes}}">
-						 	<?php $link = "/$lang/view/exhibitions/exb-page/".strtolower(str_replace(' ', '-', $p->{'title_'.$lang})); ?>
+						   <?php 
+						    $slug = (isset($p->{'slug_'.$lang}) && strlen(trim($p->{'slug_'.$lang})) > 0) ? $p->{'slug_'.$lang} : strtolower(str_replace(' ', '-', $p->{'title_'.$lang}));
+						   	$link = "/$lang/view/exhibitions/exb-page/".$slug; 
+						   ?>
 						   <a href="{{$link}}">
 							<img src="{{$DOMAIN}}/files/teasers/{{$p->teaser->filename}}" alt="" class="img-responsive"></a>
 							<header>
