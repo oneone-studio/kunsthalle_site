@@ -17,7 +17,8 @@
             <?php $link = '/'.$lang.'/'.$menu_item.'/'.$pl->link;
             $has_calendar = false;
             $is_calendar = false;
-            if(strtolower($pl->{'title_'.$lang}) == 'calendar' || strtolower($pl->{'title_'.$lang}) == 'kalender') {  $link = '/'.$pl->link .'/'. $menu_item; $is_calendar = true; 
+            if(strtolower($pl->{'title_'.$lang}) == 'calendar' || strtolower($pl->{'title_'.$lang}) == 'kalender') {  
+                $is_calendar = true; 
                 if(count($calendar) > 0) { $has_calendar = true; }
             }
             ?>
