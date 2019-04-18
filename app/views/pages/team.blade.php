@@ -137,8 +137,7 @@ function sendMessage() {
     console.log('sendMessage() called'+"\ncontact id: "+$('#contact_id').val()+"\nname: "+$('#emailrequestName').val()+"\nemail: "+
         $('#emailrequestEmail').val()+"\ncomment: "+ $('#emailrequestComment').val());
     var email = $('#emailrequestEmail').val();
-    if(validateEmail(email))
-    {
+    if(validateEmail(email)) {
 	    $.ajax({
 	        type: 'POST',
 	        url: '/send-message',
@@ -148,17 +147,19 @@ function sendMessage() {
 	                    console.log('sendMessage success..');
 	                    console.log(data);
 	 					kunsthalle.hideModal('email_request');
-	 					showConfirmation();
+	 					// showConfirmation();
+	 					showCfmMsg('confirm_email_request');
 	                },
 	        error:  function(jqXHR, textStatus, errorThrown) {
 	                    console.log('sendMessage failed.. ');
 	                    return false;
 	                }
-	    }); 	
+	    });
     }    
 }
 
 function showConfirmation() {
+	console.log('showConfirmation called');
     kunsthalle.showModal('confirm_email_request');
 }
 </script>

@@ -717,3 +717,7 @@ function detectIE() {
   // other browser
   return false;
 }
+
+function showCfmMsg(modal) {
+    kunsthalle.showModal(modal);
+}
