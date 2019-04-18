@@ -379,7 +379,10 @@ class MenusController extends BaseController {
 		$calendar = [];
 		if($lang == 'de') {
 			if(isset($page->cluster_id) && is_numeric($page->cluster_id) && intval($page->cluster_id) > 0) {
-				$calendar = KEventsController::getEventsCalendar(null, false, $page->cluster_id);	
+				$calendar = KEventsController::getEventsCalendar(null, false, $page->cluster_id);
+			}
+			if(strtolower($link) == 'kalender' || strtolower($link) == 'calendar') {
+				$calendar = KEventsController::getEventsCalendar($menu_item, false);
 			}
 		}
 		$sponsors = [];
@@ -436,7 +439,7 @@ class MenusController extends BaseController {
 						return $a['sort_order'] > $b['sort_order'] ? 1 : -1;
 					});
 				}
-				
+
 				return View::make($view, ['page' => $page, 'menu_item' => $menu_item, 'pg_links' => $pg_links, 'calendar' => $calendar, 
 						'pg_sections' => $pg_sections, 'sponsors' => $sponsors, 'contacts' => $contacts, 'settings' => $settings, 
 						'show_membership_form' => $show_membership_form, 'dl_found' => $dl_found, 'hasMembersForm' => $hasMembersForm, 'link' => $link, 
