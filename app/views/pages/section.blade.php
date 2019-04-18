@@ -37,7 +37,7 @@
 		
 		@if($section->contacts && count($section->contacts))
 			<div class="ce ce-contact container">
-				<h4>Ansprechpartner/innen:</h4>
+				<h4>{{$contact_hdr_text}}</h4>
 				@foreach($section->contacts as $c)
 					<div>
 						<a href="javascript:showContactForm('{{$c->id}}')">

@@ -3,9 +3,9 @@
 
 	    <div class="ce ce-menu container-fluid">
 	        <ul class="list-inline">
-	            <li><a href="/{{$lang}}/view/exhibitions/list/current" class="btn btn-default btn-raised @if($category && $category == 'current') active @endif">Aktuelle Ausstellungen</a></li>
-	            <li><a href="/{{$lang}}/view/exhibitions/list/upcoming" class="btn btn-default btn-raised @if($category && $category == 'upcoming') active @endif">Kommende Ausstellungen</a></li>
-	            <li><a href="/{{$lang}}/view/exhibitions/list/past" class="btn btn-default btn-raised @if($category && $category == 'past') active @endif">Vergangene Ausstellungen</a></li>
+	            <li><a href="/{{$lang}}/view/exhibitions/list/current" class="btn btn-default btn-raised @if($category && $category == 'current') active @endif">{{$current_exbs_text}}</a></li>
+	            <li><a href="/{{$lang}}/view/exhibitions/list/upcoming" class="btn btn-default btn-raised @if($category && $category == 'upcoming') active @endif">{{$upcoming_exbs_text}}</a></li>
+	            <li><a href="/{{$lang}}/view/exhibitions/list/past" class="btn btn-default btn-raised @if($category && $category == 'past') active @endif">{{$past_exbs_text}}</a></li>
 	        </ul>
 	    </div>
 

@@ -16,7 +16,7 @@
     </div>
 	<!-- team start -->
 	<div class="ce ce-team container container-nogap-sm">
-		<h3 class="anchor">Das Team der Kunsthalle Bremen</h3>
+		<h3 class="anchor">{{$team_of_the_kh_text}}</h3>
 		<ul class="list-unstyled">
 			@if($contacts && count($contacts))
 			  @foreach($contacts as $dep => $cts)
@@ -67,22 +67,22 @@
 				</div>
 				<div class="content">
 					<div class="ce-emailrequest">
-						<h4>Ihre E-Mail an die Kunsthalle Bremen:</h4>
+						<h4>{{$your_msg_to_kh_text}}:</h4>
 						<form id="contact_form" method="POST">
 							<div class="form-group label-placeholder">
-								<label for="emailrequestEmail" class="control-label">Ihre E-Mail</label>
+								<label for="emailrequestEmail" class="control-label">{{$your_email_text}}:</label>
 								<input type="email" class="form-control" name="email" id="emailrequestEmail" required />
 							</div>
 							<div class="form-group label-placeholder">
-								<label for="emailrequestName" class="control-label">Ihr Name, Vorname</label>
+								<label for="emailrequestName" class="control-label">{{$your_name_text}}:</label>
 								<input type="text" class="form-control" name="name" id="emailrequestName" required>
 							</div>
 							<div class="form-group label-placeholder">
-								<label for="emailrequestComment" class="control-label">Ihre Nachricht</label>
+								<label for="emailrequestComment" class="control-label">{{$your_msg_text}}:</label>
 								<textarea class="form-control" name="comment" id="emailrequestComment" rows="5" required></textarea>
 							</div>
 							<div class="mt-30">
-								<button type="button" class="btn btn-default btn-raised active" onclick="sendMessage()">Jetzt abschicken</button>
+								<button type="button" class="btn btn-default btn-raised active" onclick="sendMessage()">{{$send_now_text}}</button>
 							</div>
 							<input name="receiver_email" id="receiver_email" type="hidden">
 							<input name="contact_id" id="contact_id" type="hidden">
@@ -101,8 +101,8 @@
 				</div>
 				<div class="content">
 					<div class="ce-confirmation">
-						<h4>VIELEN DANK FÜR IHRE NACHRICHT</h4>
-						<p>Wir werden Ihre Mail so schnell wie möglich beantworten.</p>
+						<h4>{{$ty_for_your_msg_h4_text}}</h4>
+						<p>{{$mail_resp_text}}</p>
 						<a href="javascript:kunsthalle.hideModal()" class="btn btn-default btn-raised active">OK</a>
 					</div>
 				</div>

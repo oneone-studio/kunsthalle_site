@@ -41,7 +41,40 @@ View::composer(['includes.header'], function($view) {
 View::share('pg_links_used', false);
 $lang = 'de';
 if(Session::has('lang')) { $lang = Session::get('lang'); }
+
+$back_btn_text = ($lang == 'de') ? 'ZURÜCK' : 'back';
+$contact_hdr_text = ($lang == 'de') ? 'Ansprechpartner/innen:' : 'Contact us:';
+$download_all_text = ($lang == 'de') ? 'Alle markieren' : 'Select all';
+$download_selection_text = ($lang == 'de') ? 'Auswahl downloaden' : 'Download Selection';
+$current_exbs_text = ($lang == 'de') ? 'Aktuelle Ausstellungen' : 'Current Exhibitions';
+$upcoming_exbs_text = ($lang == 'de') ? 'Kommende Ausstellungen' : 'Upcoming Exhibitions';
+$past_exbs_text = ($lang == 'de') ? 'Vergangene Ausstellungen' : 'Past Exhibitions';
+$team_of_the_kh_text = ($lang == 'de') ? 'Das Team der Kunsthalle Bremen' : 'The Team of the Kunsthalle Bremen';
+$your_msg_to_kh_text = ($lang == 'de') ? 'Ihre E-Mail an die Kunsthalle Bremen' : 'Your Message to the Kunsthalle Bremen';
+$your_email_text = ($lang == 'de') ? 'Ihre E-Mail' : 'Your Email Adress';
+$your_name_text = ($lang == 'de') ? 'Ihr Name, Vorname' : 'Your Full name (first and last)';
+$your_msg_text = ($lang == 'de') ? 'Ihre Nachricht' : 'Your Message';
+$send_now_text = ($lang == 'de') ? 'Jetzt abschicken' : 'Send Now';
+$ty_for_your_msg_h4_text = ($lang == 'de') ? 'VIELEN DANK FÜR IHRE NACHRICHT' : 'Thank you for your Message';
+$mail_resp_text = ($lang == 'de') ? 'Wir werden Ihre Mail so schnell wie möglich beantworten.' : 'We will answer your Email as soon as possible.';
+
 View::share('lang', strtolower($lang));
+View::share('back_btn_text', $back_btn_text);
+View::share('contact_hdr_text', $contact_hdr_text);
+View::share('download_all_text', $download_all_text);
+View::share('download_selection_text', $download_selection_text);
+View::share('current_exbs_text', $current_exbs_text);
+View::share('upcoming_exbs_text', $upcoming_exbs_text);
+View::share('past_exbs_text', $past_exbs_text);
+View::share('team_of_the_kh_text', $team_of_the_kh_text);
+View::share('your_msg_to_kh_text', $your_msg_to_kh_text);
+View::share('your_email_text', $your_email_text);
+View::share('your_name_text', $your_name_text);
+View::share('your_msg_text', $your_msg_text);
+View::share('send_now_text', $send_now_text);
+View::share('ty_for_your_msg_h4_text', $ty_for_your_msg_h4_text);
+View::share('mail_resp_text', $mail_resp_text);
+
 
 // define('FILES_DOMAIN', 'http://kunsthalle-cms.dev');
 View::composer(['pages.page','pages.sub-page','pages.section','pages.exhibitions','pages.exb-page', 'pages.calendar', 'pages.start'], function($view) {
@@ -85,6 +118,7 @@ Route::get('/{lang}/view/static/page/{link}', 'MenusController@getFooterPage');
 Route::get('/index', 'MenusController@getStartPage');
 
 Route::get('get-event-data', 'KEventsController@getEventData');
+Route::get('/event-data/{id}/{index?}', 'KEventsController@getEventData');
 Route::post('register-for-event', 'KEventsController@registerForEvent');
 Route::post('/register-for-event', 'KEventsController@registerForEvent');
 Route::post('/events/register', 'KEventsController@registerForEvent');

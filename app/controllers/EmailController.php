@@ -17,18 +17,26 @@ class EmailController extends BaseController {
 				$email = Input::get('email');
 				$comment = Input::get('comment');
 				$rec_email = $contact->email;
+				$lang = MenusController::getLang();
 
 				$body = 'Diese E-Mail wurde über das Online-Formular der Kunsthalle Bremen verschickt.<br><br>'.
 				        'Gesendet von:<br>'.
 						$name .'<br>'.
 				        $email .'<br><br>'.
 				        'Ihre Nachricht:<br>'. $comment;
+				if($lang == 'en') {
+					$body = 'This email was sent via online form of the Kunsthalle Bremen.<br><br>'.
+					        'Sent by:<br>'.
+							$name .'<br>'.
+					        $email .'<br><br>'.
+					        'Your Message:<br>'. $comment;					
+				}				        
 
 				$rec_emails = [ Input::get('email'), $rec_email ];
+				$subject = ($lang == 'de') ? "Ihre Nachricht an die Kunsthalle Bremen" : "Your message to the Kunsthalle Bremen";
 				foreach($rec_emails as $r_email) {
-					mail($r_email, "Ihre Nachricht an die Kunsthalle Bremen", $body, $headers);
+					mail($r_email, $subject, $body, $headers);
 				}
-				// mail('shahidm08@gmail.com', "Ihre Nachricht an die Kunsthalle Bremen", $body, $headers);
 				$resp = [];
 				$resp['data'] = Input::all();
 				$resp['contact'] = $contact->email;

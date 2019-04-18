@@ -476,6 +476,7 @@ span.icon-googleplus {
 span.icon-youtube {
   background-position: 0 8px;
   background-size: 70% auto;
+  background-position: center;
   background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDIzLjAuMiwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkViZW5lXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IgoJIHZpZXdCb3g9IjAgMCA1MCA1MCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTAgNTA7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHN0eWxlIHR5cGU9InRleHQvY3NzIj4KCS5zdDB7Y2xpcC1wYXRoOnVybCgjU1ZHSURfMl8pO30KPC9zdHlsZT4KPGc+Cgk8ZGVmcz4KCQk8cmVjdCBpZD0iU1ZHSURfMV8iIHg9IjAuMTIiIHk9IjYuNTYiIHdpZHRoPSI0OS43OSIgaGVpZ2h0PSIzNC44NiIvPgoJPC9kZWZzPgoJPGNsaXBQYXRoIGlkPSJTVkdJRF8yXyI+CgkJPHVzZSB4bGluazpocmVmPSIjU1ZHSURfMV8iICBzdHlsZT0ib3ZlcmZsb3c6dmlzaWJsZTsiLz4KCTwvY2xpcFBhdGg+Cgk8cGF0aCBjbGFzcz0ic3QwIiBkPSJNNDguOTgsMTIuMjJjLTAuNTUtMi4xNC0yLjIyLTMuODQtNC4zNi00LjQ0Yy0zLjg3LTEuMDctMTkuNDQtMS4yMS0xOS40NC0xLjIxUzkuNjEsNi40NCw1LjcxLDcuNDQKCQlDMy41Niw3Ljk5LDEuODYsOS42NiwxLjI3LDExLjhDMC4yLDE1LjY4LDAuMTIsMjMuNzgsMC4xMiwyMy43OHMtMC4wNyw4LjEsMC45NCwxMS45OWMwLjU1LDIuMTQsMi4yMiwzLjg0LDQuMzYsNC40NAoJCWMzLjg4LDEuMDcsMTkuNDQsMS4yMSwxOS40NCwxLjIxczE1LjU3LDAuMTMsMTkuNDYtMC44N2MyLjE0LTAuNTUsMy44NC0yLjIzLDQuNDQtNC4zNmMxLjA3LTMuODcsMS4xNC0xMS45NywxLjE0LTExLjk3CgkJUzQ5Ljk4LDE2LjExLDQ4Ljk4LDEyLjIyIE0xOS45OCwzMS40MmwwLjEzLTE0Ljk0bDEyLjg3LDcuNThMMTkuOTgsMzEuNDJ6Ii8+CjwvZz4KPC9zdmc+Cg=="); }
 
 span.icon-voice-republic {
@@ -519,10 +520,10 @@ span.icon-calendar {
   margin-right: 0px; }
 
 .de-flag {
-  width:22px; height:16px; display:inline-block; position:relative;top:3px;left:-10px; background:url('/images/de-flag.png') no-repeat; background-size:20px 14px;
+  width:30px; height:21px; display:inline-block; position:relative;top:1px;left:-2px; background:url('/images/lang_de.svg') no-repeat; background-size:30px 21px;
 }
 .en-flag {
-  width:22px; height:16px; display:inline-block; position:relative;top:3px;left:-10px; background:url('/images/en-flag.png') no-repeat; background-size:20px 14px;
+  width:30px; height:21px; display:inline-block; position:relative;top:1px;left:-2px; background:url('/images/lang_en.svg') no-repeat; background-size:30px 21px;
 }
 
 

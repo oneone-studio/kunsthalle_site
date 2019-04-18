@@ -17,7 +17,7 @@
     @endif    
 
     <div class="ce container-fluid">
-        <button type="button" class="btn btn-default btn-raised" onclick="history.go(-1)">ZURÜCK</button>
+        <button type="button" class="btn btn-default btn-raised" onclick="history.go(-1)">{{$back_btn_text}}</button>
     </div>    
 
     @include('pages.page-blocks')  

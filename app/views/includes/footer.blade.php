@@ -37,25 +37,27 @@
             </a>
         </li>
     </ul>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6">
-                <form id="newsletter_form" action="//kunsthalle-bremen.us15.list-manage.com/subscribe/post?u=d96402a89ce6a567920593b13&amp;id=014f5dc121" method="post" name="mc-embedded-subscribe-form"><!--  onsubmit="return subscribeForNewsletter(event)" -->
-                    <p>Regelmäßig über Ausstellungen und Aktivitäten der Kunsthalle informiert werden - abonnieren Sie unseren Newsletter:</p>
-                    <div class="form-group label-placeholder">
-                      <label for="mce-EMAIL">Bitte hier E-Mail-Adresse eintragen </label>
-                      <input type="email" value="" name="EMAIL" class="form-control" id="mce_EMAIL" required>
-                    </div>
-                    <div style="position: absolute; left: -5000px;" aria-hidden="true">
-                      <input type="text" name="b_d96402a89ce6a567920593b13_014f5dc121" tabindex="-1" value="">
-                    </div>
-                    <div class="clear">
-                      <button type="submit" class="btn btn-link">OK</button>
-                    </div>
-                </form>
+    @if($lang == 'de')
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6">
+                    <form id="newsletter_form" action="//kunsthalle-bremen.us15.list-manage.com/subscribe/post?u=d96402a89ce6a567920593b13&amp;id=014f5dc121" method="post" name="mc-embedded-subscribe-form"><!--  onsubmit="return subscribeForNewsletter(event)" -->
+                        <p>Regelmäßig über Ausstellungen und Aktivitäten der Kunsthalle informiert werden - abonnieren Sie unseren Newsletter:</p>
+                        <div class="form-group label-placeholder">
+                          <label for="mce-EMAIL">Bitte hier E-Mail-Adresse eintragen </label>
+                          <input type="email" value="" name="EMAIL" class="form-control" id="mce_EMAIL" required>
+                        </div>
+                        <div style="position: absolute; left: -5000px;" aria-hidden="true">
+                          <input type="text" name="b_d96402a89ce6a567920593b13_014f5dc121" tabindex="-1" value="">
+                        </div>
+                        <div class="clear">
+                          <button type="submit" class="btn btn-link">OK</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+    @endif    
 <!-- footer ende -->
 <!-- jquery -->
     <!-- jquery -->

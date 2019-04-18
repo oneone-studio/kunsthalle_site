@@ -146,7 +146,7 @@
     @if($page->contacts && count($page->contacts) > 0)
         <!-- contact start -->
         <div class="ce ce-contact container">
-            <h4 class="anchor">Ansprechpartner/innen:</h4>            
+            <h4 class="anchor">{{$contact_hdr_text}}</h4>            
             @foreach($page->contacts as $c)
                 <div>
                     <a href="javascript:showContactForm('{{$c->id}}')">
@@ -496,8 +496,8 @@
                 <div class="next"><span class="icon icon-right icon-l" /></div>
                 <div class="prev"><span class="icon icon-left icon-l" /></div>
             </div>
-            <button type="button" class="btn btn-default btn-raised active ce-download-mark">Alle markieren</button>
-            <button type="button" class="btn btn-default btn-raised active ce-download-load">Auswahl downloaden</button>
+            <button type="button" class="btn btn-default btn-raised active ce-download-mark">{{$download_all_text}}</button>
+            <button type="button" class="btn btn-default btn-raised active ce-download-load">{{$download_selection_text}}</button>
         </div>
         <!-- download end -->
     @endif    
@@ -590,22 +590,22 @@
                 </div>
                 <div class="content">
                     <div class="ce-emailrequest">
-                        <h4>Ihre E-Mail an die Kunsthalle Bremen:</h4>
+                        <h4>{{$your_msg_to_kh_text}}:</h4>
                         <form id="contact_form" method="POST">
                             <div class="form-group label-placeholder">
-                                <label for="emailrequestEmail" class="control-label">Ihre E-Mail</label>
+                                <label for="emailrequestEmail" class="control-label">{{$your_email_text}}:</label>
                                 <input type="email" class="form-control" name="email" id="emailrequestEmail" required />
                             </div>
                             <div class="form-group label-placeholder">
-                                <label for="emailrequestName" class="control-label">Ihr Name, Vorname</label>
+                                <label for="emailrequestName" class="control-label">{{$your_name_text}}:</label>
                                 <input type="text" class="form-control" name="name" id="emailrequestName" required>
                             </div>
                             <div class="form-group label-placeholder">
-                                <label for="emailrequestComment" class="control-label">Ihre Nachricht</label>
+                                <label for="emailrequestComment" class="control-label">{{$your_msg_text}}:</label>
                                 <textarea class="form-control" name="comment" id="emailrequestComment" rows="5" required></textarea>
                             </div>
                             <div class="mt-30">
-                                <button type="button" class="btn btn-default btn-raised active" onclick="sendMessage()">Jetzt abschicken</button>
+                                <button type="button" class="btn btn-default btn-raised active" onclick="sendMessage()">{{$send_now_text}}</button>
                             </div>
                             <input name="receiver_email" id="receiver_email" type="hidden">
                             <input name="contact_id" id="contact_id" type="hidden">
@@ -624,8 +624,8 @@
                 </div>
                 <div class="content">
                     <div class="ce-confirmation">
-                        <h4>VIELEN DANK FÜR IHRE NACHRICHT</h4>
-                        <p>Wir werden Ihre Mail so schnell wie möglich beantworten.</p>
+                        <h4>{{$ty_for_your_msg_h4_text}}</h4>
+                        <p>{{$mail_resp_text}}</p>
                         <a href="javascript:kunsthalle.hideModal()" class="btn btn-default btn-raised active">OK</a>
                     </div>
                 </div>
@@ -743,5 +743,4 @@ function copySectionLink(section) {
 function noImgUrl() { 
     console.log('noImgUrl()');
 }
-
 </script>

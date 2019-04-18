@@ -195,7 +195,7 @@ class MenusController extends BaseController {
 		            and cs.menu_item_id = mi.id 
 		            and lower(replace(cs.title_'.$lang.', " ", "-")) = "'. $section . '" 
 		            and lower(replace(mi.title_'.$lang.', " ", "-")) = "'. $menu_item . '"
-		            and lower(replace(p.slug_'.$lang.', " ", "-")) = "'. $page_title . '"
+		            and p.slug_'.$lang.' = "'. $page_title . '"
 		          limit 1';
 		$page = DB::select($query);
 		if(!isset($page) || !isset($page[0]->id)) {
@@ -436,6 +436,7 @@ class MenusController extends BaseController {
 						return $a['sort_order'] > $b['sort_order'] ? 1 : -1;
 					});
 				}
+				
 				return View::make($view, ['page' => $page, 'menu_item' => $menu_item, 'pg_links' => $pg_links, 'calendar' => $calendar, 
 						'pg_sections' => $pg_sections, 'sponsors' => $sponsors, 'contacts' => $contacts, 'settings' => $settings, 
 						'show_membership_form' => $show_membership_form, 'dl_found' => $dl_found, 'hasMembersForm' => $hasMembersForm, 'link' => $link, 

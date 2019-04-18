@@ -27,7 +27,7 @@ function setEventId(id, reg_event_date, index, slideNo, hasImage) {
     // Get event data and embed form
     $.ajax({
         type: 'GET',
-        url: '/get-event-data',
+        url: '/event-data/'+id+'/'+index,
         data: {'id': id, 'index': index},
         dataType: 'json',
         success:function(data) { 
@@ -40,14 +40,14 @@ function setEventId(id, reg_event_date, index, slideNo, hasImage) {
                 // inject form HTML
                 var html = getFormHTML(data.event, reg_event_date, index, slideNo);
                 $(':not(.swiper-slide-duplicate) #event_block_'+index).html(html);
-                var scrollPos = $('.event_no_'+index).offset().top - 68;
-                $('html, body').animate({ scrollTop: scrollPos }, 500);
+                // var scrollPos = $('.event_no_'+index).offset().top - 68;
+                // $('html, body').animate({ scrollTop: scrollPos }, 500);
                 // update slider
                 refreshSwiper();
             }
         },
         error:  function(jqXHR, textStatus, errorThrown) {
-                    console.log('Get event data failed..');
+                    console.log("Get event data failed..\n", errorThrown);
         }
     }); 
 }
@@ -159,7 +159,7 @@ function setCalEvents(date_ch, from_date, is_active) {
 function refreshSwiper() {
     $('.swiper-container.detail').data('swiper').onResize(); 
     // Initiate validator
-    $.material.init();
+    // $.material.init();
     $('#calendar form').each(function() {
         $(this).validate({
             rules: {
@@ -311,10 +311,8 @@ function applyPackagePrice(index,
                             <span class="icon icon-arrow icon-s icon-inline"></span>
                             <span class="filter-name">Alle</span>
                         </a>
-                        <a href="#" class="open-filter-dateselector"><!--
-                            --><span class="icon icon-calendar" style="position:relative;top:0px;width:40px;background-size:50px 50px;"></span>Datum suchen<!--
-                            - -><span class="icon icon-arrow icon-s icon-inline ml-5 mr-5"></span>--><!--
-                            - -><span class="filter-dateselector-name" data-date="{{date('d/m/Y')}}">{{ strftime('%d. %B')}}</span>-->
+                        <a href="#" class="open-filter-dateselector">
+                            <span class="icon icon-calendar" style="position:relative;top:0px;width:40px;background-size:50px 50px;"></span>Datum suchen
                         </a>
                     </div>
                     <div class="menu panel-collapse collapse">
@@ -599,11 +597,22 @@ function checkForm(form) {
 //     return true;
 // }
 
+function checkEnter(e) {
+    if (e.keyCode == 13) {
+        alert('Pressed enter..');
+        e.preventDefault();
+        return false;
+    }
+}
+
 </script>
 <style>
 .price-inp { border:none !important; outline:none !important; color:#000000; cursor: none !important; 
   color: transparent;
   text-shadow: 0 0 0 #000;
   &:focus { outline: none; }
+}
+input[type="text"]:disabled {
+    border-bottom:1px solid red !important;
 }
 </style>

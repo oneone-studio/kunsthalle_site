@@ -73,9 +73,9 @@ class KEventsController extends BaseController {
 	public function registerForEvent() {
 		$f = fopen('logs/event_reg.log', 'a+');
 		fwrite($f, "[".date('Y-m-d H:i')."] - registerForEvent() called\n\nUser Agent: ". $_SERVER['HTTP_USER_AGENT']."\n\n".print_r(Input::all(), true)."\n\n");
-		// echo '<pre>'; print_r(Input::all()); exit;
+
 		$inp = Input::all();
-		$data = Input::all();// (array)$inp;
+		$data = Input::all();
 
 		$ref_url = $_SERVER['HTTP_REFERER'];
 		$controller_action = 'MenusController@getEventRegResponse';
@@ -84,7 +84,7 @@ class KEventsController extends BaseController {
 		$pkg_price = false;
 		if(array_key_exists('pay_as_package', $data) && strtolower($data['pay_as_package']) == 'on') {
 			$pkg_price = true;
-		}          
+		}
 		if(isset($data['id'])) {
 			// Store inputs in DB
 			$input_ser = serialize($inp);
@@ -105,7 +105,7 @@ class KEventsController extends BaseController {
 			}
 
 			$event = KEvent::with(['kEventCost', 'clusters', 'clusters.k_events', 'clusters.kEventCost', 'event_dates'])->find($data['id']);
-			// fwrite($f, "\n\n--Event --\n". print_r($event, true));
+
 			$headers = "MIME-Version: 1.0" . "\r\n";
 			$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 			$headers .= 'From: Kunsthalle Bremen <info@kunsthalle-bremen.de>' . "\r\n";
@@ -148,13 +148,10 @@ class KEventsController extends BaseController {
 					if(Input::has('reg_event_date')) {
 						$body .= date('d/m/y', strtotime(Input::get('reg_event_date')));
 					} else {
-						$body .= date('d/m/y', strtotime($event->start_date)); // . ' - ' . date('d/m/y', strtotime($event->end_date));
+						$body .= date('d/m/y', strtotime($event->start_date));
 					}
 				}
 			}
-
-			// fwrite($f, "\n\nEvent Dates:-\n". print_r($event->event_dates, true));
-
 			$body .= '<br>'. $start_time .' - '. $event->end_time .'<br><br>';
 			$event_cost_obj = $event->kEventCost;
 
@@ -168,10 +165,8 @@ class KEventsController extends BaseController {
 					}
 				}
 			}
-			// echo '<pre>'; print_r($event_cost_obj); exit;
 			$total_price = 0;
 	        // 'Gesamtbetrag für alle von Ihnen angemeldeten Teilnehmer:<br>'.
-	        // str_replace('.', ',', $data['total']) .' EURO';
 			if(array_key_exists('regular_adult_price', $data) && is_numeric($data['regular_adult_price'])) {
 				$body .= $data['regular_adult_price']. ' Erwachsene(r) ';
 				if($pkg_price == true && $event->clusters) {
@@ -183,9 +178,6 @@ class KEventsController extends BaseController {
 				}  
 				$body .= ' Euro<br>';
 			}          
-			// if(Input::has('regular_child_price')) {
-			// 	$body .= Input::get('regular_child_price'). ' Kinder '. $event->kEventCost->regular_child_price .' Euro<br>';
-			// }
 			if(array_key_exists('member_adult_price', $data) && is_numeric($data['member_adult_price'])) {
 				$body .= $data['member_adult_price']. ' Mitglied(er) ';
 				if($pkg_price == true && $event->clusters) {
@@ -222,9 +214,6 @@ class KEventsController extends BaseController {
 				$body .= ' Euro<br>';
 				fwrite($f, "\Kinder ");
 			}
-			// if(Input::has('sibling_child_price')) {
-			// 	$body .= Input::get('sibling_child_price'). ' Geschwisterkinder '. $event->kEventCost->sibling_child_price .' Euro<br>';
-			// }
 			if(array_key_exists('sibling_member_price', $data) && is_numeric($data['sibling_member_price'])) {
 				$body .= $data['sibling_member_price']. ' Geschwisterkind(er) / Mitglied ';
 				if($pkg_price == true && $event->clusters) {
@@ -265,7 +254,6 @@ class KEventsController extends BaseController {
 			}
 			$body .= '<br>Gesamtbetrag für alle von Ihnen angemeldeten Teilnehmer: '. $total_price . ' Euro<br>';
 			          
-			// fwrite($f, $body);
 			if(strlen($event->place) > 0) {
 				$body .= '<br><br>Ort der Veranstaltung:<br>'. $event->place .'';
 			}
@@ -385,8 +373,6 @@ class KEventsController extends BaseController {
 					}	
 				}
 			}			
-			// $body .= '<br>Weitere angemeldete Personen:<span style="margin-left:5px;">';			
-			// $body .= $people_count . '</span><br>'; 
 			// Children
 			$body .= $children_list;
 			// Sibling's children
@@ -415,21 +401,18 @@ class KEventsController extends BaseController {
 				$body .= '<br>Newsletter: Ja';
 			}
 
-			$rec_emails = [ $data['email'], 'programm@kunsthalle-bremen.de' ];
+			$rec_emails = [ $data['email']];//, 'programm@kunsthalle-bremen.de' ];
 			if($data['email'] == 'shahidm08@gmail.com' || $data['email'] == 'manzoor@oneone-studio.com') { $rec_emails = [ $data['email'] ]; }
-			foreach($rec_emails as $rec_email) {
-				mail($rec_email, "Veranstaltungs-Anmeldung", $body, $headers);		   
-			}
+			// foreach($rec_emails as $rec_email) {
+			// 	mail($rec_email, "Veranstaltungs-Anmeldung", $body, $headers);		   
+			// }
 		}
 
-		// fwrite($f, "\n\n----------------\nEmail body:\n\n". $body);
-		// fwrite($f, "\nREF\n". print_r($_SERVER['HTTP_REFERER'], true));
 		$ref_url = $_SERVER['HTTP_REFERER'];
 		$ref_url = str_replace('https://', '', str_replace('http://', '', str_replace('www.', '', $ref_url)));
 		$ref_url = str_replace('/', '_', str_replace('kunsthalle-bremen.de', '', $ref_url));
 		$ref_url = str_replace('/err=1', '', $ref_url);
 
-		// fwrite($f, "\n\nref_url: ". $ref_url . "\n\n\n\n". $body);
 		$controller_action = 'MenusController@getEventRegResponse';
 		$params = [ 'menu_item' => 'calendar', 'link' => 'besuch-planen', 'return_url' => $ref_url];
 
@@ -437,8 +420,27 @@ class KEventsController extends BaseController {
 		$link = Input::has('link') ? Input::get('link') : 'besuch-planen';
 		$action = 'bestaetigung';
 
-		// return Redirect::action($controller_action, [ 'menu_item' => $menu_item, 'link' => $link, 'action' => $action ]);
+		$ref_url = str_replace($_SERVER['SERVER_NAME'].'_', '', $ref_url);		
+		// echo 'action: '. $controller_action.'<br>ref_url: '. $ref_url; exit;
+
+		// $arr = explode('_', $ref_url);
+		// $url = '';
+		// $has_event_index = false;
+		// if(strpos($ref_url, '_calendar_besuch-planen') && (count($arr) > 3) && (strlen($arr[3]) > 8) && isset($arr[4])) {
+		// 	$arr[3] = $arr[3].'_'.$arr[4];
+		// 	array_splice($arr, 4, 1);
+		// 	$has_event_index = true;
+		// }
+
+		// if(count($arr) > 1) {
+		// 	for($i=1;$i<count($arr);$i++) { $url .= '/'. $arr[$i]; }
+		// 	$return_url = $url;
+		// } else {
+		// 	$return_url = str_replace('_', '/', $return_url);
+		// }
+
 		return Redirect::action($controller_action, [ 'return_url' => $ref_url ]);
+		// return View::make('pages.event-reg-resp');
 	}
 
 	public function registerForEventUsingLog() {
@@ -1664,7 +1666,6 @@ class KEventsController extends BaseController {
 				}
 			}
 		}
-fwrite($f, "\nrec_eids:\n". print_r($rec_eids, true));
 		Session::put('events', $event_list);
 		Session::put('event_dates', $event_dates);
 
@@ -1742,17 +1743,32 @@ fwrite($f, "\nrec_eids:\n". print_r($rec_eids, true));
 			return Response::json(array('error' => false, 'filtered_dates' => $filtered_dates, 'event_dates' => Session::get('event_dates'),
 				'current_date' => date('Y-m-d'), 200)); 
 		}
-		return Response::json(array('error' => true, 'event_dates' => []), 200); 
+		return Response::json(array('error' => true, 'event_dates' => []), 400); 
+	}
+
+	public function getEventData2($id = null, $index = null) {
+			$f = fopen('logs/event_reg.log', 'w+');
+			fwrite($f, "\ngetEventData() called\n".$id."\n".$index."\n\nInputs:\n".print_r(Input::all(), true));
+		return Response::json(array('error' => false, 'event' => []), 200); 
 	}
 
 	// It returns HTML for event form based on selected event
-	public function getEventData() {
+	public function getEventData($id = null, $indx = null) {
 		date_default_timezone_set('Europe/Berlin'); 
 		// setlocale(LC_TIME, "de_DE");
-		$f = fopen('logs/test.log', 'w+');
-		fwrite($f, "\nInputs:\n".print_r(Input::all(), true));
-		$indx = Input::get('index');
-		$indx = substr($indx, strlen($indx)-8, strlen($indx));
+		$f = fopen('logs/event.log', 'w+');
+		fwrite($f, "\ngetEventData() called\n\nInputs:\n".print_r(Input::all(), true));
+		if(!isset($id) && Input::has('id')) {
+			$id = Input::get('id');
+		}
+		$event_index = $indx;
+		if(!isset($indx) && Input::has('index')) {
+			$indx = Input::get('index');
+			$event_index = $indx;
+		}
+		if(isset($indx)) {
+			$indx = substr($indx, strlen($indx)-8, strlen($indx));
+		}
 		// $ar = explode('', $indx);
 		$active_event_date = $indx[4].$indx[5].$indx[6].$indx[7].'-'.$indx[2].$indx[3].'-'.$indx[0].$indx[1];
 		fwrite($f, "\n\nactive_event_date: ". $active_event_date);
@@ -1766,9 +1782,8 @@ fwrite($f, "\nrec_eids:\n". print_r($rec_eids, true));
 		$d_de = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
 
 		$event = [];
-		if(Input::has('id')) {
-			$id = Input::get('id');
-			$event_index = Input::get('index');
+		if($id) {
+			// $event_index = Input::get('index');
 			$event_dates = [];
 			$cal_months = [];
 			$_event_dates = [];
@@ -2070,11 +2085,6 @@ fwrite($f, "\nrec_eids:\n". print_r($rec_eids, true));
 			}
 			$event->priceFieldCount = $priceFieldCount;
 		}
-		// fwrite($f, "\n\nhas Clusters: ". (isset($event->clusters) && count($event->clusters)));
-		// fwrite($f, "\n-----------------\nEvent:-\n\n". print_r($event, true));
-
-		// $html = $this->getEventFormHTML($event, $event_index);
-		// return Response::json(array('error' => false, 'event' => $event, 'form_html' => $html), 200); 
 
 		$event->detail_de = html_entity_decode($event->detail_de);
 
