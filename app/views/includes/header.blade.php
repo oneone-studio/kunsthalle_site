@@ -67,14 +67,17 @@
         <?php if($lang == 'de'): ?>      
                 <a href="/{{$lang}}/kh/top/main/set-lang?lang=en&uri=<?php echo $_SERVER['REQUEST_URI'];?>"><div 
                     class="en-flag">&nbsp;</div></a>
+                <span class="link tickets text-white">
+                    <a href="https://www.mus-ticket.de/new/app/Shopping?ref=shp157393406&n=KHBremen" title="Buy Tickets" target="_blank">Tickets</a>
+                </span>
         <?php endif; ?>
         <?php if($lang == 'en'): ?>
                 <a href="/{{$lang}}/kh/top/main/set-lang?lang=de&uri=<?php echo $_SERVER['REQUEST_URI'];?>"><div 
                     class="de-flag">&nbsp;</div></a>
+                <span class="link tickets text-white">
+                    <a href="https://www.mus-ticket.de/new/app/Shopping?ref=shp157393406&n=KHBremen" title="Tickets kaufen" target="_blank">Tickets</a>
+                </span>
         <?php endif; ?>
-        <span class="link tickets text-white">
-            <a href="https://www.mus-ticket.de/new/app/Shopping?ref=shp157393406&n=KHBremen" title="Tickets kaufen" target="_blank">Tickets</a>
-        </span>
     </div>
 </div>
 <!-- header ende -->
