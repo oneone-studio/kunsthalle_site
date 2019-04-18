@@ -91,10 +91,10 @@
 								<div>
 									<h2><?php echo $p->teaser->{'caption_'.$lang}; ?></h2>
 									<div>
-										@if($p->teaser->line_1 && strlen($p->teaser->line_1) > 0) 
+										@if($p->teaser->{'line_1_'.$lang} && strlen($p->teaser->{'line_1_'.$lang} ) > 0) 
 										   <?php echo $p->teaser->{'line_1_'.$lang}; ?> 
 										@endif
-										@if($p->teaser->line_2 && strlen($p->teaser->line_2) > 0)
+										@if($p->teaser->{'line_2_'.$lang}  && strlen($p->teaser->{'line_2_'.$lang} ) > 0)
 											<br /><?php echo $p->teaser->{'line_2_'.$lang}; ?>
 										@endif
 									</div>

@@ -110,13 +110,13 @@
 								</a>
 								<header>
 									<div>
-										<h2>{{$p->teaser->caption}}</h2>
+										<h2>{{$p->teaser->{'caption_'.$lang} }}</h2>
 										<div>
-											@if($p->teaser->line_1 && strlen($p->teaser->line_1) > 0) 
-												{{$p->teaser->line_1}} 
+											@if($p->teaser->{'line_1_'.$lang} && strlen($p->teaser->{'line_1_'.$lang} ) > 0) 
+												{{$p->teaser->{'line_1_'.$lang} }} 
 											@endif
-											@if($p->teaser->line_2 && strlen($p->teaser->line_2) > 0)
-												<br />{{$p->teaser->line_2}}
+											@if($p->teaser->{'line_2_'.$lang} && strlen($p->teaser->{'line_2_'.$lang} ) > 0)
+												<br />{{$p->teaser->{'line_2_'.$lang} }}
 											@endif
 										</div>
 									</div>
