@@ -73,11 +73,11 @@ function handleDownload() {
             success:function(data) { 
                         console.log('handleDownload success...');
                         console.log(data);
-                        if(data.item != undefined) {
-                            var filename = data.item.substr(data.item.lastIndexOf('/')+1, data.item.length);
+                        if(data.zip != undefined) {
+                            var filename = data.zip.substr(data.zip.lastIndexOf('/')+1, data.zip.length);
                             // window.location.href = data.item;
                             new_tab = (filename.indexOf('.zip') > -1) ? false : true;
-                            doDownload(data.file, filename, new_tab);
+                            doDownload(data.zip, filename, new_tab);
                             if(data.dl_files != undefined) {
                                 var dl_files = data.dl_files;
                                 for(var i in dl_files) {

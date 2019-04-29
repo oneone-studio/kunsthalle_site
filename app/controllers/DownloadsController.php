@@ -5,7 +5,7 @@ class DownloadsController extends BaseController {
 
 	public function handleDownloads() {
 		$f = fopen('logs/download.log', 'w+');
-		fwrite($f, "\nDownloadsController -> handleDownloads() called [date('Y-m-d H:i')]..\n\n". print_r(Input::all(), true));
+		fwrite($f, "\nDownloadsController -> handleDownloads() called [".date('Y-m-d H:i')."]..\n\n". print_r(Input::all(), true));
 		if(Input::has('ids')) {
 			$CMS_DOMAIN = FILES_DOMAIN; // 'http://kunsthalle-cms.dev';
 			$SITE_DOMAIN = SITE_DOMAIN; // 'http://kunsthalle-site.dev';
@@ -28,7 +28,7 @@ class DownloadsController extends BaseController {
 				$data = [];
 				$error_list = [];
 				$ids = Input::get('ids');
-                $host = CMS_HOST; // "136.243.166.47";
+                $host = CMS_HOST; // "136.243.166.47";	
                 $port = CMS_PORT; // 22;
                 $user = CMS_USER; // "kunsthvr_1";
                 $pass = CMS_PW;   // "25XcWIqAFiVcSwAP";
@@ -38,19 +38,19 @@ class DownloadsController extends BaseController {
 				foreach($ids as $id) {
 					$dl = Download::find($id);
 					$diata[] = $dl;
-					$dl_flename = str_replace(' ', '_', $dl->filename);
+					$dl_filename = str_replace(' ', '_', $dl->filename);
 	                $remote_file = $remote_dir.$dl->filename;
-	                $local_file = $local_dir.$dl_flename;
-	                $dl_files[] = SITE_DOMAIN . '/downloads/'.$dl_flename;	                
-	                fwrite($f, "\nRemote_file:- ". $remote_file ."\nLocal_file:- ". $local_file);
+	                $local_file = $local_dir.$dl_filename;
+	                $dl_files[] = SITE_DOMAIN . '/downloads/'.$dl_filename;	                
+	                fwrite($f, "\nRemote_file: ". $remote_file ."\nLocal_file: ". $local_file."\ndl name: ".$dl_filename);
 
 	                if(count($ids) == 1 && $dl->protected == 0) {
 						header('Content-Disposition: attachment; filename="'.$dl->filename.'"');
 						return Response::json(array('error' => false, 'file' => $SITE_DOMAIN.'/downloads/'.$dl->filename), 200);
 	                }
 	                if(copy($remote_file, $local_file)) {
-						fwrite($f, "\n\nFile copied..");
-	                	$zip->addFile($local_file, $dl_flename);
+						fwrite($f, "\n\nCopied file: ".$dl_filename);
+	                	$zip->addFile($local_file, $dl_filename);
 	                }
 	                // Include protection / terms file
 	                if($dl->protected == 1) {
@@ -90,7 +90,7 @@ class DownloadsController extends BaseController {
 				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 				$headers .= 'From: Kunsthalle Bremen <info@kunsthalle-bremen.de>' . "\r\n";
 
-				$rec_emails  = [ 'pfeffer@oneone-studio.com', 'pressebereich1@kunsthalle-bremen.de' ];//  'shahidm08@gmail.com']; // 'pfeffer@oneone-studio.com']; //, 'shahidm08@gmail.com'];
+				// $rec_emails  = [ 'pfeffer@oneone-studio.com', 'pressebereich1@kunsthalle-bremen.de' ];//  'shahidm08@gmail.com']; // 'pfeffer@oneone-studio.com']; //, 'shahidm08@gmail.com'];
 $rec_emails = ['shahidm08@gmail.com'];
 				foreach($rec_emails as $rec_email) {
 					mail($rec_email, "Bilder-Download: ". $firm .'/'. $publication_date, $body, $headers);
@@ -99,7 +99,7 @@ $rec_emails = ['shahidm08@gmail.com'];
 				header('Access-Control-Allow-Origin: *');
 				header("Content-Security-Policy: default-src 'self'");
 
-				return Response::json(array('error' => false, 'item' => $zip_file, 'dl_files' => $dl_files), 200);
+				return Response::json(array('error' => false, 'zip' => $zip_file, 'dl_files' => $dl_files), 200);
 			}
 		}
 
