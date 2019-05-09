@@ -187,13 +187,14 @@ class MenusController extends BaseController {
 	}
 
 	public function getSubPage($lang = 'de', $menu_item, $section, $page_title) {
+		// echo $menu_item .' / '.$section .' / '.$page_title;exit;
 		$lang = self::getLang();
 		$page_id = 0;
 		$query = 'select p.* from pages p, content_sections cs, menu_items mi 
 		          where p.content_section_id = cs.id 
 		            and p.active_'.$lang.' = 1
 		            and cs.menu_item_id = mi.id 
-		            and lower(replace(cs.title_'.$lang.', " ", "-")) = "'. $section . '" 
+		            and cs.slug_'.$lang.' = "'. $section . '" 
 		            and lower(replace(mi.title_'.$lang.', " ", "-")) = "'. $menu_item . '"
 		            and p.slug_'.$lang.' = "'. $page_title . '"
 		          limit 1';
@@ -203,11 +204,11 @@ class MenusController extends BaseController {
 			          where p.content_section_id = cs.id 
 			            and p.active_'.$lang.' = 1
 			            and cs.menu_item_id = mi.id 
-			            and lower(replace(cs.title_'.$lang.', " ", "-")) = "'. $section . '" 
-			            and lower(replace(mi.title_'.$lang.', " ", "-")) = "'. $menu_item . '"
-			            and lower(replace(p.title_'.$lang.', " ", "-")) = "'. $page_title . '"
+			            and cs.slug_'.$lang.' = "'. $section . '" 
+			            and mi.slug_'.$lang.' = "'. $menu_item . '"
+			            and p.slug_'.$lang.' = "'. $page_title . '"
 			          limit 1';
-			$page = DB::select($query);			
+			$page = DB::select($query);	
 		}
 
 		if($page) {
@@ -520,7 +521,7 @@ class MenusController extends BaseController {
 		        from content_sections cs, menu_items mi, pages p
 		        where mi.id = cs.menu_item_id
 		          and cs.active_'.$lang.' = 1
-		          and mi.title_'.$lang.' like "'. strtolower(str_replace('-', ' ', $title). '"		        
+		          and lower(mi.slug_'.$lang.') like "'. strtolower(str_replace(' ', '-', $title). '"		        
 		        group by cs.id
 		        order by cs.sort_order');
 		$results = DB::select($sql);
