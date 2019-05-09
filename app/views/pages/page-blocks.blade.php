@@ -149,19 +149,21 @@
         <div class="ce ce-contact container">
             <h4 class="anchor">{{$contact_hdr_text}}</h4>            
             @foreach($page->contacts as $c)
-                <div>
-                    <a href="javascript:showContactForm('{{$c->id}}')">
-                        <span class="icon icon-mail icon-m"></span> 
-                        {{$c->title}} {{$c->first_name}} {{$c->last_name}}
-                    </a>
-                </div>
-                @if(isset($c->phone) && !empty(trim($c->phone)))
-                <div>
-                    <a href="tel:{{$c->phone}}">
-                        <span class="icon icon-phone icon-m"></span> 
-                        {{$c->phone}}
-                    </a>
-                </div>
+                @if(strlen(trim($c->first_name)) > 0 || strlen(trim($c->first_name)) > 0)
+                    <div>
+                        <a href="javascript:showContactForm('{{$c->id}}')">
+                            <span class="icon icon-mail icon-m"></span> 
+                            {{$c->title}} {{$c->first_name}} {{$c->last_name}}
+                        </a>
+                    </div>
+                    @if(isset($c->phone) && !empty(trim($c->phone)))
+                    <div>
+                        <a href="tel:{{$c->phone}}">
+                            <span class="icon icon-phone icon-m"></span> 
+                            {{$c->phone}}
+                        </a>
+                    </div>
+                    @endif
                 @endif
             @endforeach
         </div>
@@ -706,7 +708,7 @@ function sendMessage() {
                         console.log('sendMessage success..');
                         console.log(data);
                         kunsthalle.hideModal('email_request');
-                        showConfirmation();
+                        showCfmMsg('confirm_email_request');
                     },
             error:  function(jqXHR, textStatus, errorThrown) {
                         console.log('sendMessage failed.. ');
