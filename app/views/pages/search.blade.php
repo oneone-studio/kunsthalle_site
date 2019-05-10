@@ -9,7 +9,7 @@
 
 		<ul class="list-unstyled">
 			@foreach($results as $res)	
-				    @if(isset($res['page_type']))
+				    @if(isset($res['page_type']) && isset($res['url']))
 				        @if($res['page_type'] != 'event') 
 							<li><a href="{{$res['url']}}">{{$res['page_title_de']}} 
 						        @if($res['page_type'] != 'exhibition')

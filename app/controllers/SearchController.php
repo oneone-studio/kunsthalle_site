@@ -25,6 +25,21 @@ class SearchController extends BaseController {
 			$upr_term = strtoupper($term);
 			$terms = [$uc_term, $ucf_term, $lc_term, $upr_term];
 			// Non exhibition pages
+			// $query = 'select p.id, 
+			// 		    p.title_'.$lang.' as page_title_'.$lang.', 
+			// 		    p.title_'.$lang.' as page_title_'.$lang.', p.slug_'.$lang.' as page_slug,
+			// 		    cs.title_'.$lang.' as cs_title_'.$lang.', mi.title_'.$lang.' as menu_title_'.$lang.', 
+			// 		    mi.slug_'.$lang.' as menu_item_slug,
+			// 		    cs.slug_'.$lang.' as cs_item_slug, cs.type as page_type
+			// 		  from pages p, page_contents pc, content_sections cs, menu_items mi
+			//           where ( pc.content_'.$lang.' like "%'. $term . '%"';
+			// 	        foreach($terms as $trm) { $query .= ' or pc.content_'.$lang.' like "%'. $trm . '%"'; }
+		 //    $query .= ') 
+			// 			and pc.page_id = p.id
+			//             and p.page_type != "exhibition"
+			//             and lower(mi.title_'.$lang.') != "exhibitions"
+			//             and cs.id = p.content_section_id 
+			//             and mi.id = cs.menu_item_id ';
 			$query = 'select p.id, 
 					    p.title_'.$lang.' as page_title_'.$lang.', 
 					    p.title_'.$lang.' as page_title_'.$lang.', p.slug_'.$lang.' as page_slug,
@@ -32,8 +47,8 @@ class SearchController extends BaseController {
 					    mi.slug_'.$lang.' as menu_item_slug,
 					    cs.slug_'.$lang.' as cs_item_slug, cs.type as page_type
 					  from pages p, page_contents pc, content_sections cs, menu_items mi
-			          where ( pc.content_'.$lang.' like "%'. $term . '%"';
-				        foreach($terms as $trm) { $query .= ' or pc.content_'.$lang.' like "%'. $trm . '%"'; }
+			          where ( lower(pc.content_'.$lang.') like "%'. $lc_term . '%"';
+				        // foreach($terms as $trm) { $query .= ' or pc.content_'.$lang.' like "%'. $trm . '%"'; }
 		    $query .= ') 
 						and pc.page_id = p.id
 			            and p.page_type != "exhibition"
@@ -90,7 +105,8 @@ class SearchController extends BaseController {
 					if($pg->h2text) {
 						foreach($pg->h2text as $h2t) {
 							// Headline
-							if(stripos($h2t->{'headline_'.$lang}, $term) || stripos($h2t->{'headline_'.$lang}, $enc_term)) { $match = true; 
+							if(stripos(strtolower($h2t->{'headline_'.$lang}), $lc_term) || 
+									stripos($h2t->{'headline_'.$lang}, $enc_term)) { $match = true; 
 							}
 							// Intro
 							// if(stripos($h2t->{'intro_'.$lang}, $term) || stripos($h2t->{'intro_'.$lang}, $enc_term)) { $match = true; }
@@ -109,11 +125,11 @@ class SearchController extends BaseController {
 				// Content Section
 				$cs_match = false;
 				if(isset($pg->content_section)) {
-					if(strcasecmp($term, $pg->content_section->{'title_'.$lang}) == 0) { $cs_match = true; }
-					if(stripos($pg->content_section->{'headline_'.$lang}, $term)) { 
+					if(strcasecmp($lc_term, strtolower($pg->content_section->{'title_'.$lang})) == 0) { $cs_match = true; }
+					if(stripos(strtolower($pg->content_section->{'headline_'.$lang}), $lc_term)) { 
 						$cs_match = true;
 					}
-					if(stripos($pg->content_section->{'detail_'.$lang}, $term)) { $cs_match = true; }
+					if(stripos(strtolower($pg->content_section->{'detail_'.$lang}), $lc_term)) { $cs_match = true; }
 					if($results && count($results) && $cs_match) {
 						$url = $_url.$results[0]->menu_item_slug.'/'. strtolower(str_replace(' ', '-', $pg->content_section->{'title_'.$lang}));
 						if(!in_array($url, $urls) && !in_array($pg->id, $page_ids)) {
@@ -134,7 +150,7 @@ class SearchController extends BaseController {
 					foreach($contents as $c) {
 						$content = $c->{'content_'.$lang};
 						$content = html_entity_decode($content);
-						if(strpos($content, $term) !== false || strpos($content, htmlentities($term)) !== false) {
+						if(strpos(strtolower($content), $lc_term) !== false || strpos($content, htmlentities($term)) !== false) {
 							$match = true;
 						}
 					}
@@ -155,12 +171,12 @@ class SearchController extends BaseController {
 
 					foreach($pg->h2text as $h2t) {
 						// Headline
-						if(stripos($h2t->{'headline_'.$lang}, $term) || stripos($h2t->{'headline_'.$lang}, $enc_term)) {
+						if(stripos(strtolower($h2t->{'headline_'.$lang}), $lc_term) || stripos($h2t->{'headline_'.$lang}, $enc_term)) {
 							$match = true; 
 							fwrite($f, "\n\n-->> Found match for page_id: ".$pg->id." and h2text_id: ".$h2t->id."\n\n");
 						}
 						// Intro
-						// if((stripos($h2t->{'intro_'.$lang}, $term) || stripos($h2t->{'intro_'.$lang}, $enc_term)) {
+						// if((stripos(strtolower($h2t->{'intro_'.$lang}), $lc_term) || stripos($h2t->{'intro_'.$lang}, $enc_term)) {
 						// 	$match = true; 
 						// 	fwrite($f, "\n\n-->> Found match for page_id: ".$pg->id." and h2text_id: ".$h2t->id."\n\n");
 						// }
@@ -183,7 +199,7 @@ class SearchController extends BaseController {
 			$query = 'select p.id, p.content_section_id, p.title_'.$lang.' as page_title_'.$lang.', p.page_type, 
 					  	p.slug_'.$lang.' as page_slug 
 					  from pages p, page_contents pc
-			          where ( pc.content_'.$lang.' like "%'. $term . '%"';
+			          where ( lower(pc.content_'.$lang.') like "%'. $lc_term . '%"';
 		    foreach($terms as $trm) {
 		    	$query .= ' or pc.content_'.$lang.' like "%'. $trm . '%"';
 		    }      
@@ -205,14 +221,14 @@ class SearchController extends BaseController {
 				if($eps) {
 					foreach($eps as $ep) {
 						$do_add = false;
-						if(strpos(strtolower($ep->{'title_'.$lang}), strtolower($term))) {
+						if(strpos(strtolower($ep->{'title_'.$lang}), $lc_term)) {
 							$do_add = true;
 						}
-						if($ep->teaser && strpos(strtolower($ep->teaser->{'caption_'.$lang}), strtolower($term))) {
+						if($ep->teaser && strpos(strtolower($ep->teaser->{'caption_'.$lang}), $lc_term)) {
 							$do_add = true;
 						}
-						if($ep->teaser && (strpos(strtolower($ep->teaser->{'line_1_'.$lang}), strtolower($term)) || 
-							strpos(strtolower($ep->teaser->{'line_2_'.$lang}), strtolower($term)))) {
+						if($ep->teaser && (strpos(strtolower($ep->teaser->{'line_1_'.$lang}), $lc_term) || 
+							strpos(strtolower($ep->teaser->{'line_2_'.$lang}), $lc_term))) {
 							$do_add = true;
 						}
 						if($do_add) {
