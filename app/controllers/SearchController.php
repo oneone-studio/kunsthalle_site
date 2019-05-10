@@ -10,10 +10,11 @@ class SearchController extends BaseController {
 	
 	public function handleSearch() {
 		$lang = MenusController::getLang();
-		$domain = Config::get('kh.domain');
+		$domain = Config::get('vars.domain');
 		$f = fopen('logs/search.log', 'w+');
 		fwrite($f, "sendMessage\n\n". print_r(Input::all(), true));
 		$data = [];
+		$page_ids = [];
 		$urls = [];
 		if(Input::has('search_term')) {
 			$term = trim(Input::get('search_term'));
@@ -53,7 +54,8 @@ class SearchController extends BaseController {
 							$url .= $res->menu_item_slug.'/';
 						}
 						$url .= $res->page_slug;
-						if(!in_array($url, $urls)) {
+						if(!in_array($url, $urls) && !in_array($res->id, $page_ids)) {
+							$page_ids[] = $res->id;
 							$res->url = $url;
 							$data[] = (array)$res;
 							$urls[] = $url;
@@ -95,7 +97,8 @@ class SearchController extends BaseController {
 						}
 					}
 					if($match) {											
-						if(!in_array($url, $urls)) {
+						if(!in_array($url, $urls) && !in_array($pg->id, $page_ids)) {
+							$page_ids[] = $pg->id;
 							$results[0]->url = $url;
 							$data[] = (array)$results[0];
 							$urls[] = $url;
@@ -113,10 +116,11 @@ class SearchController extends BaseController {
 					if(stripos($pg->content_section->{'detail_'.$lang}, $term)) { $cs_match = true; }
 					if($results && count($results) && $cs_match) {
 						$url = $_url.$results[0]->menu_item_slug.'/'. strtolower(str_replace(' ', '-', $pg->content_section->{'title_'.$lang}));
-						if(!in_array($url, $urls)) {
+						if(!in_array($url, $urls) && !in_array($pg->id, $page_ids)) {
 							$res_item = self::getResItem($pg->id, 'content_section', $pg->content_section->{'title_'.$lang});
 							$res_item['page_type'] = $pg->page_type;
 							$data[] = $res_item;
+							$page_ids[] = $pg->id;
 							$urls[] = $url;
 						}
 					}
@@ -130,17 +134,17 @@ class SearchController extends BaseController {
 					foreach($contents as $c) {
 						$content = $c->{'content_'.$lang};
 						$content = html_entity_decode($content);
-						// $content_en = $c->content_en;
-						// $content_en = html_entity_decode($content_en);
 						if(strpos($content, $term) !== false || strpos($content, htmlentities($term)) !== false) {
 							$match = true;
 						}
 					}
 					if($match) {
 						$res_item = self::getResItem($pg->id, 'page_content');
-						if(is_array($res_item) && array_key_exists('url', $res_item) && !in_array($res_item['url'], $urls)) {
+						if(is_array($res_item) && array_key_exists('url', $res_item) && !in_array($res_item['url'], $urls) 
+								&& !in_array($pg->id, $page_ids)) {
 							$res_item['page_type'] = $pg->page_type;
 							$data[] = $res_item;
+							$page_ids[] = $pg->id;
 							$urls[] = $res_item['url'];
 						}
 					}
@@ -163,18 +167,18 @@ class SearchController extends BaseController {
 					}
 					if($match) {
 						$res_item = self::getResItem($pg->id, 'h2_text');
-						if(is_array($res_item) && array_key_exists('url', $res_item) && !in_array($res_item['url'], $urls)) {
+						if(is_array($res_item) && array_key_exists('url', $res_item) && !in_array($res_item['url'], $urls) 
+								&& !in_array($pg->id, $page_ids)) {
 							$res_item['page_type'] = $pg->page_type;
 							$data[] = $res_item;
-// echo '<pre>';print_r($res_item);exit;
-// echo '<br>'.$res_item['url'];							
+							$page_ids[] = $pg->id;
 							$urls[] = $res_item['url'];
 						}
 					}
 				}
 			}
 			// Check exhibition pages
-			$url = Config::get('kh.domain').$lang.'/'.'view/exhibitions/exb-page/';
+			$url = Config::get('vars.domain').$lang.'/'.'view/exhibitions/exb-page/';
 
 			$query = 'select p.id, p.content_section_id, p.title_'.$lang.' as page_title_'.$lang.', p.page_type, 
 					  	p.slug_'.$lang.' as page_slug 
@@ -190,8 +194,9 @@ class SearchController extends BaseController {
 			if($results) {
 				foreach($results as $res) {
 					$res->url = $url. $res->page_slug;
-					if(!in_array($res->url, $urls)) {
+					if(!in_array($res->url, $urls) && !in_array($res->id, $page_ids)) {
 						$data[] = (array)$res;
+						$page_ids[] = $res->id;
 						$urls[] = $res->url;
 					}
 				}
@@ -203,16 +208,16 @@ class SearchController extends BaseController {
 						if(strpos(strtolower($ep->{'title_'.$lang}), strtolower($term))) {
 							$do_add = true;
 						}
-						if(strpos(strtolower($ep->teaser->{'caption_'.$lang}), strtolower($term))) {
+						if($ep->teaser && strpos(strtolower($ep->teaser->{'caption_'.$lang}), strtolower($term))) {
 							$do_add = true;
 						}
-						if(strpos(strtolower($ep->teaser->{'line_1_'.$lang}), strtolower($term)) || 
-							strpos(strtolower($ep->teaser->{'line_2_'.$lang}), strtolower($term))) {
+						if($ep->teaser && (strpos(strtolower($ep->teaser->{'line_1_'.$lang}), strtolower($term)) || 
+							strpos(strtolower($ep->teaser->{'line_2_'.$lang}), strtolower($term)))) {
 							$do_add = true;
 						}
 						if($do_add) {
 							$ep_url = $url.$ep->{'slug_'.$lang};
-							if(!in_array($ep_url, $urls)) { $urls[] = $ep_url; }
+							if(!in_array($ep_url, $urls) && !in_array($ep->id, $page_ids)) { $page_ids[] = $ep->id; $urls[] = $ep_url; }
 						}
 					}
 				}
@@ -221,7 +226,8 @@ class SearchController extends BaseController {
 
 			// Find events
 			$srch_term = strtoupper($term); // ucwords($term);//strtolower($term);
-			$query = 'select id, title_'.$lang.' as page_title_'.$lang.', start_date, event_day, event_day_repeat, repeat_month, end_date from k_events 
+			$query = 'select id, title_'.$lang.' as page_title_'.$lang.', start_date, event_day, event_day_repeat, repeat_month, end_date 
+					  from k_events 
 					  where upper(title_'.$lang.') like "%'.$srch_term.'%" or upper(subtitle_'.$lang.') like "%'.$srch_term.'%" 
 					    and start_date >= "'. date('Y-m-d').'"';
 			$results = DB::select($query);
@@ -229,7 +235,7 @@ class SearchController extends BaseController {
 			$start_date = '';
 			$list = [];
 			$evt_list = [];
-			$url = $domain.'calendar/besuch-planen/'; //27105082017_1';
+			$url = $domain.'calendar/besuch-planen/';
 			if($results) {
 				fwrite($f, "\n\nResults:-\n". print_r($results, true));
 				foreach($results as $evt) {
@@ -336,7 +342,7 @@ class SearchController extends BaseController {
 		if($pgid == 190) { $f = fopen('logs/search_190.log', 'w+'); }
 		fwrite($f, "\ngetResItem($pgid) called..");
 		$res = [];
-		$domain = Config::get('kh.domain');
+		$domain = Config::get('vars.domain');
 		$query = 'select p.content_section_id, mi.slug_'.$lang.' as menu_item_slug, 
 				    p.title_'.$lang.' as page_title_'.$lang.',
 				    mi.title_'.$lang.' as menu_title_'.$lang.',
@@ -397,7 +403,7 @@ class SearchController extends BaseController {
 
 	public static function getSearchResUrl($page_type = 'normal', $menu_item_slug = '', $cs_item_slug = '', $page_slug = '') {
 		$lang = MenusController::getLang();
-		$domain = Config::get('kh.domain');
+		$domain = Config::get('vars.domain');
 		$_url = $domain.$lang.'/';
 		$url = $_url;
 		$exb_url = $domain.$lang.'/'.'view/exhibitions/exb-page/';
