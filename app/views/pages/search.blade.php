@@ -15,7 +15,7 @@
 						        @if($res['page_type'] != 'exhibition')
 									<small>
 									  @if(isset($res['menu_title_de'])) {{$res['menu_title_de']}} @endif
-									  @if($res['page_type'] == 'page_section') > {{$res['cs_item_slug']}} @endif
+									  @if($res['page_type'] == 'page_section' && isset($res['cs_item_slug'])) > {{$res['cs_item_slug']}} @endif
 									</small>
 								@else
 									<small>Ausstellungen</small>	
