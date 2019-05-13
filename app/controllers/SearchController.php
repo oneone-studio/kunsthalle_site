@@ -346,9 +346,9 @@ class SearchController extends BaseController {
 	public static function getResItem($pgid, $type, $_page_title = '') {
 		$lang = MenusController::getLang();
 		$f = fopen('logs/search.log', 'a+');
-		if($pgid == 190) { $f = fopen('logs/search_190.log', 'w+'); }
 		fwrite($f, "\ngetResItem($pgid) called..");
 		$res = [];
+		$pc_types = ['page_content', 'h2', 'h2_intro', 'h2_text'];
 		$domain = Config::get('vars.domain');
 		$query = 'select p.title_'.$lang.', p.content_section_id, mi.slug_'.$lang.' as menu_item_slug, 
 				    p.title_'.$lang.' as page_title_'.$lang.',
@@ -405,8 +405,8 @@ class SearchController extends BaseController {
 				$res['res_type'] = $type;
 				if(isset($mr->{'menu_title_'.$lang})) { 
 					$res['menu_title_'.$lang] = $mr->{'menu_title_'.$lang};
-					if($type == 'page_content') {
-						$res['menu_title_'.$lang] = $mr->{'cs_title_'.$lang}. ' > '.$mr->{'menu_title_'.$lang};
+					if(in_array($type, $pc_types)) {
+						$res['menu_title_'.$lang] = $mr->{'menu_title_'.$lang}.' > '.$mr->{'cs_title_'.$lang};
 					}
 				}			
 				$res['url'] = $url;
