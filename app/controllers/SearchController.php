@@ -25,21 +25,6 @@ class SearchController extends BaseController {
 			$upr_term = strtoupper($term);
 			$terms = [$uc_term, $ucf_term, $lc_term, $upr_term];
 			// Non exhibition pages
-			// $query = 'select p.id, 
-			// 		    p.title_'.$lang.' as page_title_'.$lang.', 
-			// 		    p.title_'.$lang.' as page_title_'.$lang.', p.slug_'.$lang.' as page_slug,
-			// 		    cs.title_'.$lang.' as cs_title_'.$lang.', mi.title_'.$lang.' as menu_title_'.$lang.', 
-			// 		    mi.slug_'.$lang.' as menu_item_slug,
-			// 		    cs.slug_'.$lang.' as cs_item_slug, cs.type as page_type
-			// 		  from pages p, page_contents pc, content_sections cs, menu_items mi
-			//           where ( pc.content_'.$lang.' like "%'. $term . '%"';
-			// 	        foreach($terms as $trm) { $query .= ' or pc.content_'.$lang.' like "%'. $trm . '%"'; }
-		 //    $query .= ') 
-			// 			and pc.page_id = p.id
-			//             and p.page_type != "exhibition"
-			//             and lower(mi.title_'.$lang.') != "exhibitions"
-			//             and cs.id = p.content_section_id 
-			//             and mi.id = cs.menu_item_id ';
 			$query = 'select p.id, 
 					    p.title_'.$lang.' as page_title_'.$lang.', 
 					    p.title_'.$lang.' as page_title_'.$lang.', p.slug_'.$lang.' as page_slug,
@@ -69,7 +54,8 @@ class SearchController extends BaseController {
 							$url .= $res->menu_item_slug.'/';
 						}
 						$url .= $res->page_slug;
-						if(!in_array($url, $urls) && !in_array($res->id, $page_ids)) {
+						// if(!in_array($url, $urls) && !in_array($res->id, $page_ids)) {
+						if(!in_array($url, $urls)) {
 							$page_ids[] = $res->id;
 							$res->url = $url;
 							$data[] = (array)$res;
@@ -109,11 +95,12 @@ class SearchController extends BaseController {
 									stripos($h2t->{'headline_'.$lang}, $enc_term)) { $match = true; 
 							}
 							// Intro
-							// if(stripos($h2t->{'intro_'.$lang}, $term) || stripos($h2t->{'intro_'.$lang}, $enc_term)) { $match = true; }
+							if(stripos(strtolower($h2t->{'intro_'.$lang}), $lc_term) || stripos($h2t->{'intro_'.$lang}, $enc_term)) { $match = true; }
 						}
 					}
 					if($match) {											
-						if(!in_array($url, $urls) && !in_array($pg->id, $page_ids)) {
+						// if(!in_array($url, $urls) && !in_array($pg->id, $page_ids)) {
+						if(!in_array($url, $urls)) {
 							$page_ids[] = $pg->id;
 							$results[0]->url = $url;
 							$data[] = (array)$results[0];
@@ -133,7 +120,7 @@ class SearchController extends BaseController {
 					if($results && count($results) && $cs_match) {
 						$url = $_url.$results[0]->menu_item_slug.'/'. strtolower(str_replace(' ', '-', $pg->content_section->{'title_'.$lang}));
 						if(!in_array($url, $urls) && !in_array($pg->id, $page_ids)) {
-							$res_item = self::getResItem($pg->id, 'content_section', $pg->content_section->{'title_'.$lang});
+							$res_item = self::getResItem($pg->content_section->id, 'content_section', $pg->content_section->{'title_'.$lang});
 							$res_item['page_type'] = $pg->page_type;
 							$data[] = $res_item;
 							$page_ids[] = $pg->id;
@@ -156,8 +143,9 @@ class SearchController extends BaseController {
 					}
 					if($match) {
 						$res_item = self::getResItem($pg->id, 'page_content');
-						if(is_array($res_item) && array_key_exists('url', $res_item) && !in_array($res_item['url'], $urls) 
-								&& !in_array($pg->id, $page_ids)) {
+						// if(is_array($res_item) && array_key_exists('url', $res_item) && !in_array($res_item['url'], $urls) 
+						// 		&& !in_array($pg->id, $page_ids)) {
+						if(is_array($res_item) && array_key_exists('url', $res_item) && !in_array($res_item['url'], $urls)) {
 							$res_item['page_type'] = $pg->page_type;
 							$data[] = $res_item;
 							$page_ids[] = $pg->id;
@@ -176,15 +164,16 @@ class SearchController extends BaseController {
 							fwrite($f, "\n\n-->> Found match for page_id: ".$pg->id." and h2text_id: ".$h2t->id."\n\n");
 						}
 						// Intro
-						// if((stripos(strtolower($h2t->{'intro_'.$lang}), $lc_term) || stripos($h2t->{'intro_'.$lang}, $enc_term)) {
-						// 	$match = true; 
-						// 	fwrite($f, "\n\n-->> Found match for page_id: ".$pg->id." and h2text_id: ".$h2t->id."\n\n");
-						// }
+						if(stripos(strtolower($h2t->{'intro_'.$lang}), $lc_term) || stripos($h2t->{'intro_'.$lang}, $enc_term)) {
+							$match = true; 
+							fwrite($f, "\n\n-->> Found match for page_id: ".$pg->id." and h2text_id: ".$h2t->id."\n\n");
+						}
 					}
 					if($match) {
 						$res_item = self::getResItem($pg->id, 'h2_text');
-						if(is_array($res_item) && array_key_exists('url', $res_item) && !in_array($res_item['url'], $urls) 
-								&& !in_array($pg->id, $page_ids)) {
+						// if(is_array($res_item) && array_key_exists('url', $res_item) && !in_array($res_item['url'], $urls) 
+						// 		&& !in_array($pg->id, $page_ids)) {
+						if(is_array($res_item) && array_key_exists('url', $res_item) && !in_array($res_item['url'], $urls)) {
 							$res_item['page_type'] = $pg->page_type;
 							$data[] = $res_item;
 							$page_ids[] = $pg->id;
@@ -210,7 +199,8 @@ class SearchController extends BaseController {
 			if($results) {
 				foreach($results as $res) {
 					$res->url = $url. $res->page_slug;
-					if(!in_array($res->url, $urls) && !in_array($res->id, $page_ids)) {
+					// if(!in_array($res->url, $urls) && !in_array($res->id, $page_ids)) {
+					if(!in_array($res->url, $urls)) {
 						$data[] = (array)$res;
 						$page_ids[] = $res->id;
 						$urls[] = $res->url;
@@ -233,7 +223,8 @@ class SearchController extends BaseController {
 						}
 						if($do_add) {
 							$ep_url = $url.$ep->{'slug_'.$lang};
-							if(!in_array($ep_url, $urls) && !in_array($ep->id, $page_ids)) { $page_ids[] = $ep->id; $urls[] = $ep_url; }
+							// if(!in_array($ep_url, $urls) && !in_array($ep->id, $page_ids)) { $page_ids[] = $ep->id; $urls[] = $ep_url; }
+							if(!in_array($ep_url, $urls)) { $page_ids[] = $ep->id; $urls[] = $ep_url; }
 						}
 					}
 				}
@@ -354,13 +345,14 @@ class SearchController extends BaseController {
 
 	public static function getResItem($pgid, $type, $_page_title = '') {
 		$lang = MenusController::getLang();
-		$f = fopen('logs/search.log', 'w+');
+		$f = fopen('logs/search.log', 'a+');
 		if($pgid == 190) { $f = fopen('logs/search_190.log', 'w+'); }
 		fwrite($f, "\ngetResItem($pgid) called..");
 		$res = [];
 		$domain = Config::get('vars.domain');
-		$query = 'select p.content_section_id, mi.slug_'.$lang.' as menu_item_slug, 
+		$query = 'select p.title_'.$lang.', p.content_section_id, mi.slug_'.$lang.' as menu_item_slug, 
 				    p.title_'.$lang.' as page_title_'.$lang.',
+				    cs.title_'.$lang.' as cs_title_'.$lang.',
 				    mi.title_'.$lang.' as menu_title_'.$lang.',
 				    p.slug_'.$lang.' as page_slug,
 				    cs.slug_'.$lang.' as cs_item_slug, p.page_type
@@ -387,7 +379,13 @@ class SearchController extends BaseController {
 			$static_pg_url = $domain.'view/static/page/';
 
 			if(((isset($mr->content_section_id) && $pgid != $mr->content_section_id) || $mr->page_type == 'page_section') && isset($mr->menu_item_slug) && isset($mr->cs_item_slug)) {
-				$url = $_url. 'sb-page/'.$mr->menu_item_slug .'/'. $mr->cs_item_slug.'/';
+				if(strtolower($mr->{'title_'.$lang}) != strtolower($mr->{'cs_title_'.$lang})) {
+					if($mr->page_type != 'content_section') {
+						$url = $_url. 'sb-page/'.$mr->menu_item_slug .'/'. $mr->cs_item_slug.'/';
+					}
+				} else {
+					$url = $_url. $mr->menu_item_slug .'/'. $mr->cs_item_slug.'/';
+				}
 			} elseif($mr->page_type == 'exhibition') {
 				$url = $exb_url;
 			} elseif($mr->page_type == 'footer') {
@@ -397,18 +395,19 @@ class SearchController extends BaseController {
 					$url = $_url. $mr->menu_item_slug.'/';
 				}
 			}
-			// $page_slug = ($_page_title == '') ? strtolower(str_replace(' ', '-', $mr->{'page_title_'.$lang})) : $_page_title;
 			$page_slug = ($_page_title == '') ? $mr->page_slug : strtolower(str_replace(' ', '-', $_page_title));
 			if(isset($mr->menu_item_slug)) {
 				$url .= $page_slug;
 				$page_title = ($_page_title == '') ? $mr->{'page_title_'.$lang} : $_page_title;
-
 				$res['page_id'] = $pgid;
 				$res['page_title_'.$lang] = $page_title;
 				$res['page_type'] = $mr->page_type;
 				$res['res_type'] = $type;
 				if(isset($mr->{'menu_title_'.$lang})) { 
-					$res['menu_title_'.$lang] = $mr->{'menu_title_'.$lang}; 
+					$res['menu_title_'.$lang] = $mr->{'menu_title_'.$lang};
+					if($type == 'page_content') {
+						$res['menu_title_'.$lang] = $mr->{'cs_title_'.$lang}. ' > '.$mr->{'menu_title_'.$lang};
+					}
 				}			
 				$res['url'] = $url;
 			}
