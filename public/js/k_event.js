@@ -1,7 +1,7 @@
 var showErr = false;
 
 function getFormHTML(evt, reg_event_date, index, slideNo) {
-    console.log('getFormHTML() called for '+ index);
+    console.log('getFormHTML() called for '+ index);console.log(evt);
     var h = html = '';
     var isIE = detectIE();
     var disabled = (isIE == true) ? " disabled": '';
@@ -14,8 +14,8 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
     }
 
     if(evt.event_image != undefined && evt.event_image.length > 0) {
-        h += '<figure id="evt_image_'+evt.index+'">'+
-                '<img class="img-responsive" src="http://cms.kunsthalle-bremen.net/'+evt.event_image+'" alt="" title="" />'+
+        h += '<figure id="evt_image_'+evt.index+'" class="evt-image">'+
+                '<img class="img-responsive" src="'+files_domain+'/'+evt.event_image+'" alt="" title="" />'+
                 '<figcaption>'+ evt.caption_de+ '</figcaption>'+
             '</figure>';
     }
@@ -446,23 +446,23 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                 }
                 h += '<fieldset>'+
                     '<legend class="reg-inp"><h4>Persönliche Angaben *</h4></legend>'+
-                    '<div class="form-group label-placeholder">'+
+                    '<div class="form-group label-placeholder is-empty">'+
                         '<label for="first_name" class="control-label">Vorname</label>'+
                         '<input type="text" class="form-control" name="first_name" id="first_name_'+evt.index+'" required />'+
                     '</div>'+
-                    '<div class="form-group label-placeholder reg-inp">'+
+                    '<div class="form-group label-placeholder is-empty reg-inp">'+
                         '<label for="last_name" class="control-label">Nachname</label>'+
                         '<input type="text" class="form-control" name="last_name" id="last_name_'+evt.index+'" required />'+
                     '</div>'+
                     '<div class="row reg-inp">'+
                         '<div class="col-md-8">'+
-                            '<div class="form-group label-placeholder">'+
+                            '<div class="form-group label-placeholder is-empty">'+
                                 '<label for="street" class="control-label">Straße</label>'+
                                 '<input type="text" class="form-control" name="street" id="street_'+evt.index+'" required />'+
                             '</div>'+
                         '</div>'+
                         '<div class="col-md-4">'+
-                            '<div class="form-group label-placeholder">'+
+                            '<div class="form-group label-placeholder is-empty">'+
                                 '<label for="streetno" class="control-label">Hausnummer</label>'+
                                 '<input type="text" class="form-control" name="streetno" id="streetno_'+evt.index+'" required />'+
                             '</div>'+
@@ -470,23 +470,23 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                     '</div>'+
                     '<div class="row reg-inp">'+
                         '<div class="col-md-4">'+
-                            '<div class="form-group label-placeholder">'+
+                            '<div class="form-group label-placeholder is-empty">'+
                                 '<label for="zip" class="control-label">PLZ</label>'+
                                 '<input type="text" class="form-control" name="zip" id="zip_'+evt.index+'" required />'+
                             '</div>'+
                         '</div>'+
                         '<div class="col-md-8">'+
-                            '<div class="form-group label-placeholder">'+
+                            '<div class="form-group label-placeholder is-empty">'+
                                 '<label for="city" class="control-label">Ort</label>'+
                                 '<input type="text" class="form-control" name="city" id="city_'+evt.index+'" required />'+
                             '</div>'+
                         '</div>'+
                     '</div>'+
-                    '<div class="form-group label-placeholder reg-inp">'+
+                    '<div class="form-group label-placeholder is-empty reg-inp">'+
                         '<label for="phon" class="control-label">Telefonnummer</label>'+
                         '<input type="text" class="form-control" name="phone" id="phone_'+evt.index+'" required />'+
                     '</div>'+
-                    '<div class="form-group label-placeholder reg-inp email-inp">'+
+                    '<div class="form-group label-placeholder is-empty reg-inp email-inp">'+
                         '<label for="email" class="control-label">E-Mail</label>'+
                         '<input type="email" class="form-control" name="email" id="email_'+evt.index+'" required />'+
                         '<div style="clear:both;"></div>'+
@@ -496,11 +496,11 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                     '<div class="form-group">'+
                         '<div class="checkbox">'+
                             '<label>'+
-                                '<input type="checkbox" name="member_chk" id="member_chk'+evt.index+'" /> Mitglied im Kunstverein in Bremen'+
+                                '<input type="checkbox" name="member_chk" id="member_chk'+evt.index+'" /><span class="checkbox-material"><span class="check"></span></span> Mitglied im Kunstverein in Bremen'+
                             '</label>'+
                         '</div>'+
                     '</div>'+
-                    '<div class="form-group label-placeholder disabled">'+
+                    '<div class="form-group label-placeholder is-empty disabled">'+
                         '<label for="artclubnumber" class="control-label">Kunstverein-Mitgliedsnummer</label>'+
                         '<input type="text" class="form-control" name="member_no" id="member_no_'+evt.index+'" required disabled />'+
                     '</div>'+
@@ -509,13 +509,13 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                     '<legend><h4>Angaben zu den Kindern *</h4></legend>'+
                     '<div class="row registration-children-info-dummy">'+
                         '<div class="col-sm-8 col-md-10">'+
-                            '<div class="form-group label-placeholder">'+
+                            '<div class="form-group label-placeholder is-empty">'+
                                 '<label class="control-label">Name</label>'+
                                 '<input type="text" class="form-control" name="children_names[placeholder]" />'+
                             '</div>'+
                         '</div>'+
                         '<div class="col-sm-4 col-md-2">'+
-                            '<div class="form-group label-placeholder">'+
+                            '<div class="form-group label-placeholder is-empty">'+
                                 '<label class="control-label">Alter</label>'+
                                 '<input type="number" min="1" max="21" class="form-control" name="children_ages[placeholder]" required />'+
                             '</div>'+
@@ -526,13 +526,13 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                     '<legend><h4>Angaben zu den Kindern / Mitglied *</h4></legend>'+
                     '<div class="row registration-children-info-dummy">'+
                         '<div class="col-sm-8 col-md-10">'+
-                            '<div class="form-group label-placeholder">'+
+                            '<div class="form-group label-placeholder is-empty">'+
                                 '<label class="control-label">Name</label>'+
                                 '<input type="text" class="form-control" name="children_member_names[placeholder]" />'+
                             '</div>'+
                         '</div>'+
                         '<div class="col-sm-4 col-md-2">'+
-                            '<div class="form-group label-placeholder">'+
+                            '<div class="form-group label-placeholder is-empty">'+
                                 '<label class="control-label">Alter</label>'+
                                 '<input type="number" min="1" max="21" class="form-control" name="children_member_ages[placeholder]" required />'+
                             '</div>'+
@@ -543,13 +543,13 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                     '<legend><h4>Angaben zu den Geschwisterkindern *</h4></legend>'+
                     '<div class="row registration-children-info-dummy">'+
                         '<div class="col-sm-8 col-md-10">'+
-                            '<div class="form-group label-placeholder">'+
+                            '<div class="form-group label-placeholder is-empty">'+
                                 '<label class="control-label">Name</label>'+
                                 '<input type="text" class="form-control" name="children_sibling_names[placeholder]" />'+
                             '</div>'+
                         '</div>'+
                         '<div class="col-sm-4 col-md-2">'+
-                            '<div class="form-group label-placeholder">'+
+                            '<div class="form-group label-placeholder is-empty">'+
                                 '<label class="control-label">Alter</label>'+
                                 '<input type="number" min="1" max="21" class="form-control" name="children_sibling_ages[placeholder]" required />'+
                             '</div>'+
@@ -560,13 +560,13 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                     '<legend><h4>Angaben zu den Geschwisterkindern / Mitglied *</h4></legend>'+
                     '<div class="row registration-children-info-dummy">'+
                         '<div class="col-sm-8 col-md-10">'+
-                            '<div class="form-group label-placeholder">'+
+                            '<div class="form-group label-placeholder is-empty">'+
                                 '<label class="control-label">Name</label>'+
                                 '<input type="text" class="form-control" name="member_sibling_names[placeholder]" />'+
                             '</div>'+
                         '</div>'+
                         '<div class="col-sm-4 col-md-2">'+
-                            '<div class="form-group label-placeholder">'+
+                            '<div class="form-group label-placeholder is-empty">'+
                                 '<label class="control-label">Alter</label>'+
                                 '<input type="number" min="1" max="21" class="form-control" name="member_sibling_ages[placeholder]" required />'+
                             '</div>'+
@@ -579,15 +579,15 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
             if(!evt.hasZeroPrice) {
                 h += '<legend><h4>Zahlung *</h4></legend>'+
                         '<p>Die Zahlung erfolgt per Bankeinzug. Diese Einzugsermächtigung gilt nur für die hier aufgeführten Veranstaltungen. Danach erlischt sie. Den ggf. gesondert anfallenden Eintritt bezahle ich an der Kasse der Kunsthalle Bremen.</p>'+
-                        '<div class="form-group label-placeholder">'+
+                        '<div class="form-group label-placeholder is-empty">'+
                             '<label for="iban" class="control-label">IBAN</label>'+
                             '<input type="text" class="form-control" name="iban" id="iban_'+evt.index+'" required />'+
                         '</div>'+
-                        '<div class="form-group label-placeholder">'+
+                        '<div class="form-group label-placeholder is-empty">'+
                             '<label for="depositor" class="control-label">Kontoinhaber</label>'+
                             '<input type="text" class="form-control" name="depositor" id="depositor_'+evt.index+'" required />'+
                         '</div>'+
-                        '<div class="form-group label-placeholder">'+
+                        '<div class="form-group label-placeholder is-empty">'+
                             '<label for="bank" class="control-label">Kreditinstitut</label>'+
                             '<input type="text" class="form-control" name="bank" id="bank_'+evt.index+'" required />'+
                         '</div><input type="hidden" name="iban_required" value="1">';
@@ -596,14 +596,14 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
             h += '<div class="form-group">'+
                         '<div class="checkbox">'+
                             '<label class="links-underlined">'+
-                                '<input type="checkbox" name="conditions_of_participation" id="conditions_of_participation_'+evt.index+'" required /> Mit den <a href="http://kunsthalle-bremen.de/view/static/page/anmeldebedingungen" target="_blank">Anmelde- und Teilnahmebedingungen</a> bin ich einverstanden.'+
+                                '<input type="checkbox" name="conditions_of_participation" id="conditions_of_participation_'+evt.index+'" required /><span class="checkbox-material"><span class="check"></span></span> Mit den <a href="http://kunsthalle-bremen.de/view/static/page/anmeldebedingungen" target="_blank">Anmelde- und Teilnahmebedingungen</a> bin ich einverstanden.'+
                             '</label>'+
                         '</div>'+
                     '</div>'+
                     '<div class="form-group">'+
                         '<div class="checkbox" style="margin-top:25px;">'+
                             '<label class="links-underlined">'+
-                                '<input type="checkbox" name="newsletter" id="newsletter_chk_evt.id" /> Ich m&ouml;chte den E-Mail-Newsletter der Kunsthalle Bremen erhalten. Der Erhalt des Newsletters kann jederzeit durch einen telefonischen Hinweis oder &uuml;ber eine E-Mail an <a href="mailto:info@kunsthalle-bremen.de">info@kunsthalle-bremen.de</a> widerrufen werden.'+
+                                '<input type="checkbox" name="newsletter" id="newsletter_chk_evt.id" /><span class="checkbox-material"><span class="check"></span></span> Ich m&ouml;chte den E-Mail-Newsletter der Kunsthalle Bremen erhalten. Der Erhalt des Newsletters kann jederzeit durch einen telefonischen Hinweis oder &uuml;ber eine E-Mail an <a href="mailto:info@kunsthalle-bremen.de">info@kunsthalle-bremen.de</a> widerrufen werden.'+
                             '</label>'+
                         '</div>'+
                     '</div>'+
