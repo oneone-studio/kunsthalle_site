@@ -9,7 +9,7 @@ class DownloadsController extends BaseController {
 		if(Input::has('ids')) {
 			$CMS_DOMAIN = FILES_DOMAIN; // 'http://kunsthalle-cms.dev';
 			$SITE_DOMAIN = SITE_DOMAIN; // 'http://kunsthalle-site.dev';
-			$local_dir= '../public/downloads/';
+			$local_dir= public_path().'/downloads/';
 			$remote_dir = $CMS_DOMAIN . '/files/downloads/';
 			$files_dir = $SITE_DOMAIN .'/files/downloads/';
 
@@ -28,11 +28,24 @@ class DownloadsController extends BaseController {
 				$data = [];
 				$error_list = [];
 				$ids = Input::get('ids');
-                $host = CMS_HOST; // "136.243.166.47";	
-                $port = CMS_PORT; // 22;
-                $user = CMS_USER; // "kunsthvr_1";
-                $pass = CMS_PW;   // "25XcWIqAFiVcSwAP";
-                $remote_dir = '../../'.CMS_ROOT_DIR.'/public/files/downloads/';
+
+		        $host = Config::get('vars.SFTP_HOST');
+		        $port = Config::get('vars.SFTP_PORT');
+		        $user = Config::get('vars.SFTP_USER');
+		        $pass = Config::get('vars.SFTP_PW');
+		        $ssh = ssh2_connect($host);
+		        // if (!$sftp_c->login($user, $pass)) {
+		        if(!$ssh) {
+		            return Response::json(array('error' => true, 'message' => 'sftp login failed..'), 400);    
+		        }
+		        if(ssh2_auth_password($ssh, $user, $pass)) {
+		        	fwrite($f, "\nAuthenticated!");
+		        } else {
+		        	fwrite($f, "\nAuth failed!");
+		        }
+
+                // $remote_dir = '../../'.CMS_ROOT_DIR.'/public/files/downloads/';
+        		$remote_dir = 'public/files/downloads/';
                 $inc_terms_file = false;
                 fwrite($f, "\nProcessing dl..");
 				foreach($ids as $id) {
@@ -41,15 +54,15 @@ class DownloadsController extends BaseController {
 					$dl_filename = str_replace(' ', '_', $dl->filename);
 	                $remote_file = $remote_dir.$dl->filename;
 	                $local_file = $local_dir.$dl_filename;
-	                $dl_files[] = SITE_DOMAIN . '/downloads/'.$dl_filename;	                
+	                // $dl_files[] = SITE_DOMAIN . '/downloads/'.$dl_filename;	                
 	                fwrite($f, "\nRemote_file: ". $remote_file ."\nLocal_file: ". $local_file."\ndl name: ".$dl_filename);
 
 	                if(count($ids) == 1 && $dl->protected == 0) {
 						header('Content-Disposition: attachment; filename="'.$dl->filename.'"');
 						return Response::json(array('error' => false, 'file' => $SITE_DOMAIN.'/downloads/'.$dl->filename), 200);
 	                }
-	                if(copy($remote_file, $local_file)) {
-						fwrite($f, "\n\nCopied file: ".$dl_filename);
+	                if(ssh2_scp_recv($ssh, $remote_file, $local_file)) {
+	                	fwrite($f, "\n\nCoped file using SSH\n".$remote_file . ' => '.$local_file);
 	                	$zip->addFile($local_file, $dl_filename);
 	                }
 	                // Include protection / terms file
@@ -57,13 +70,15 @@ class DownloadsController extends BaseController {
 	                	$inc_terms_file = true;
 	                }	
 	            }
+				fwrite($f, "\n\ninc_terms_file ? ". $inc_terms_file."\nterms filename: ".$page->dl_terms_file);
 
 	            if($inc_terms_file && strlen($page->dl_terms_file) > 4) {
-	            	if(file_exists($remote_dir.$page->dl_terms_file)) {
-	            		// if(copy($remote_dir.$page->dl_terms_file, $local_dir.$page->dl_terms_file)) {
-	            		// 	$zip->addFile($local_dir.$page->dl_terms_file, $page->dl_terms_file);
-	            		// }
-						$zip->addFile($remote_dir.$page->dl_terms_file, $page->dl_terms_file);	            	}
+	            	$terms_filename = str_replace(' ', '_', $page->dl_terms_file);
+
+	                if(ssh2_scp_recv($ssh, $remote_dir.$page->dl_terms_file, $local_dir.$terms_filename)) {
+	                	fwrite($f, "\n\nCopied terms file using SSH\n".$remote_dir.$page->dl_terms_file . ' => '.$local_dir.$terms_filename);
+	                	$zip->addFile($local_dir.$terms_filename, $terms_filename);
+	                }
 	            }
 
 				$zip->close();
@@ -74,26 +89,28 @@ class DownloadsController extends BaseController {
 				$firm = Input::has('firm') ? Input::get('firm') : '';
 				$publication_date = Input::has('publication_date') ? Input::get('publication_date') : '';
 
-				$body = 'Name, Vorname: '. $name . '<br>'.
-						'Firma / Redaktion: '. $firm . '<br>'.
-						'Veröffentlichungsdatum: '. $publication_date . '<br><br>';
+				if(trim($name) != '') {
+					$body = 'Name, Vorname: '. $name . '<br>'.
+							'Firma / Redaktion: '. $firm . '<br>'.
+							'Veröffentlichungsdatum: '. $publication_date . '<br><br>';
 
-				if(count($data)) {
-					$body .= 'Files:<br>';
-					$file_list = [];
-					foreach($data as $d) {
-						$file_list[] = $d->filename;
+					if(count($data)) {
+						$body .= 'Files:<br>';
+						$file_list = [];
+						foreach($data as $d) {
+							$file_list[] = $d->filename;
+						}
+						$body .= implode(', ', $file_list);
 					}
-					$body .= implode(', ', $file_list);
-				}
-				$headers = "MIME-Version: 1.0" . "\r\n";
-				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-				$headers .= 'From: Kunsthalle Bremen <info@kunsthalle-bremen.de>' . "\r\n";
+					$headers = "MIME-Version: 1.0" . "\r\n";
+					$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+					$headers .= 'From: Kunsthalle Bremen <info@kunsthalle-bremen.de>' . "\r\n";
 
-				// $rec_emails  = [ 'pfeffer@oneone-studio.com', 'pressebereich1@kunsthalle-bremen.de' ];//  'shahidm08@gmail.com']; // 'pfeffer@oneone-studio.com']; //, 'shahidm08@gmail.com'];
-$rec_emails = ['shahidm08@gmail.com'];
-				foreach($rec_emails as $rec_email) {
-					mail($rec_email, "Bilder-Download: ". $firm .'/'. $publication_date, $body, $headers);
+					$rec_emails  = [ 'pfeffer@oneone-studio.com', 'pressebereich1@kunsthalle-bremen.de' ];//  'shahidm08@gmail.com']; // 'pfeffer@oneone-studio.com']; //, 'shahidm08@gmail.com'];
+					$rec_emails = ['shahidm08@gmail.com'];
+					foreach($rec_emails as $rec_email) {
+						mail($rec_email, "Bilder-Download: ". $firm .'/'. $publication_date, $body, $headers);
+					}
 				}
 
 				header('Access-Control-Allow-Origin: *');
