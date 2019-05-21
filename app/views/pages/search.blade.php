@@ -11,10 +11,10 @@
 			@foreach($results as $res)	
 				    @if(isset($res['page_type']) && isset($res['url']))
 				        @if($res['page_type'] != 'event') 
-							<li><a href="{{$res['url']}}">{{$res['page_title_de']}} 
+							<li><a href="{{$res['url']}}">{{$res['page_title_'.$lang]}} 
 						        @if($res['page_type'] != 'exhibition')
 									<small>
-									  @if(isset($res['menu_title_de'])) {{$res['menu_title_de']}} @endif
+									  @if(isset($res['menu_title_'.$lang])) {{$res['menu_title_'.$lang]}} @endif
 									  @if($res['page_type'] == 'page_section' && isset($res['cs_item_slug'])) > {{$res['cs_item_slug']}} @endif
 									</small>
 								@else
@@ -23,7 +23,7 @@
 							</a></li>
 						@endif
 						@if($res['page_type'] == 'event')
-							<li><a href="{{$res['url']}}">{{$res['page_title_de']}} 
+							<li><a href="{{$res['url']}}">{{$res['page_title_'.$lang]}} 
 								<small>Veranstaltung > {{$res['date_info']}}</small>
 							</a></li>
 						@endif
