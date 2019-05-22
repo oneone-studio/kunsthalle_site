@@ -18,6 +18,7 @@ class DownloadsController extends BaseController {
 			$filename = 'kunsthalle_'. $rnd . '.zip';
 			$_zf = fopen($local_dir.$filename, 'w+');
 			$zip_file = '';
+			$use_ssh = false;
 
 			fwrite($f, "\nlocal_file: ". $local_dir.$filename);
 
@@ -33,19 +34,20 @@ class DownloadsController extends BaseController {
 		        $port = Config::get('vars.SFTP_PORT');
 		        $user = Config::get('vars.SFTP_USER');
 		        $pass = Config::get('vars.SFTP_PW');
-		        $ssh = ssh2_connect($host);
-		        // if (!$sftp_c->login($user, $pass)) {
-		        if(!$ssh) {
-		            return Response::json(array('error' => true, 'message' => 'sftp login failed..'), 400);    
-		        }
-		        if(ssh2_auth_password($ssh, $user, $pass)) {
-		        	fwrite($f, "\nAuthenticated!");
-		        } else {
-		        	fwrite($f, "\nAuth failed!");
-		        }
-
-                // $remote_dir = '../../'.CMS_ROOT_DIR.'/public/files/downloads/';
-        		$remote_dir = 'public/files/downloads/';
+		        if(!app()->isLocal()) {
+			        $ssh = ssh2_connect($host);
+			        // if (!$sftp_c->login($user, $pass)) {
+			        if($ssh) {
+				        if(ssh2_auth_password($ssh, $user, $pass)) {
+				        	fwrite($f, "\nAuthenticated!");
+				        } else {
+				        	fwrite($f, "\nAuth failed!");
+				        }
+				    }
+				    $use_ssh = true;
+		        }	
+                $remote_dir = '../../'.CMS_ROOT_DIR.'/public/files/downloads/';
+        		if(!app()->isLocal()) { $remote_dir = 'public/files/downloads/'; }
                 $inc_terms_file = false;
                 fwrite($f, "\nProcessing dl..");
 				foreach($ids as $id) {
@@ -54,16 +56,25 @@ class DownloadsController extends BaseController {
 					$dl_filename = str_replace(' ', '_', $dl->filename);
 	                $remote_file = $remote_dir.$dl->filename;
 	                $local_file = $local_dir.$dl_filename;
-	                // $dl_files[] = SITE_DOMAIN . '/downloads/'.$dl_filename;	                
 	                fwrite($f, "\nRemote_file: ". $remote_file ."\nLocal_file: ". $local_file."\ndl name: ".$dl_filename);
 
 	                if(count($ids) == 1 && $dl->protected == 0) {
 						header('Content-Disposition: attachment; filename="'.$dl->filename.'"');
 						return Response::json(array('error' => false, 'file' => $SITE_DOMAIN.'/downloads/'.$dl->filename), 200);
 	                }
-	                if(ssh2_scp_recv($ssh, $remote_file, $local_file)) {
-	                	fwrite($f, "\n\nCoped file using SSH\n".$remote_file . ' => '.$local_file);
-	                	$zip->addFile($local_file, $dl_filename);
+	                if(!$use_ssh) {
+		                if(copy($remote_file, $local_file)) {
+							fwrite($f, "\n\nCopied file: ".$dl_filename);
+	                		$dl_files[] = SITE_DOMAIN . '/downloads/'.$dl_filename;	                
+		                	$zip->addFile($local_file, $dl_filename);
+		                }
+	                }
+	                if($use_ssh) {
+		                if(ssh2_scp_recv($ssh, $remote_file, $local_file)) {
+		                	fwrite($f, "\n\nCoped file using SSH\n".$remote_file . ' => '.$local_file);
+	                		$dl_files[] = SITE_DOMAIN . '/downloads/'.$dl_filename;
+		                	$zip->addFile($local_file, $dl_filename);
+		                }
 	                }
 	                // Include protection / terms file
 	                if($dl->protected == 1) {
@@ -75,10 +86,16 @@ class DownloadsController extends BaseController {
 	            if($inc_terms_file && strlen($page->dl_terms_file) > 4) {
 	            	$terms_filename = str_replace(' ', '_', $page->dl_terms_file);
 
-	                if(ssh2_scp_recv($ssh, $remote_dir.$page->dl_terms_file, $local_dir.$terms_filename)) {
-	                	fwrite($f, "\n\nCopied terms file using SSH\n".$remote_dir.$page->dl_terms_file . ' => '.$local_dir.$terms_filename);
-	                	$zip->addFile($local_dir.$terms_filename, $terms_filename);
-	                }
+	            	if($ssh) {
+		                if(ssh2_scp_recv($ssh, $remote_dir.$page->dl_terms_file, $local_dir.$terms_filename)) {
+		                	fwrite($f, "\n\nCopied terms file using SSH\n".$remote_dir.$page->dl_terms_file . ' => '.$local_dir.$terms_filename);
+		                	$zip->addFile($local_dir.$terms_filename, $terms_filename);
+		                }
+	            	} else {
+	            		if(copy($remote_dir.$page->dl_terms_file, $local_dir.$terms_filename)) {
+	            			$zip->addFile($local_dir.$terms_filename, $page->dl_terms_file);
+	            		}
+	            	}
 	            }
 
 				$zip->close();
