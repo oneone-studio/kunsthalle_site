@@ -401,13 +401,15 @@ class KEventsController extends BaseController {
 				$body .= '<br>Newsletter: Ja';
 			}
 
-			$rec_emails = [ $data['email']];//, 'programm@kunsthalle-bremen.de' ];
+			$rec_emails = [ $data['email'], 'programm@kunsthalle-bremen.de' ];
 			if($data['email'] == 'shahidm08@gmail.com' || $data['email'] == 'manzoor@oneone-studio.com') { $rec_emails = [ $data['email'] ]; }
-			// foreach($rec_emails as $rec_email) {
-			// 	mail($rec_email, "Veranstaltungs-Anmeldung", $body, $headers);		   
-			// }
+
+			foreach($rec_emails as $rec_email) {
+				mail($rec_email, "Veranstaltungs-Anmeldung", $body, $headers);		   
+			}
 		}
 
+		$lang = MenusController::getLang();
 		$ref_url = $_SERVER['HTTP_REFERER'];
 		$ref_url = str_replace('https://', '', str_replace('http://', '', str_replace('www.', '', $ref_url)));
 		$ref_url = str_replace('/', '_', str_replace('kunsthalle-bremen.de', '', $ref_url));
@@ -421,8 +423,10 @@ class KEventsController extends BaseController {
 		$action = 'bestaetigung';
 
 		$ref_url = str_replace($_SERVER['SERVER_NAME'].'_', '', $ref_url);		
-		// echo 'action: '. $controller_action.'<br>ref_url: '. $ref_url; exit;
 
+		$ref_url = $_SERVER['HTTP_REFERER'];
+		
+		// echo 'action: '. $controller_action.'<br>ref_url: '. $ref_url; exit;
 		// $arr = explode('_', $ref_url);
 		// $url = '';
 		// $has_event_index = false;
@@ -438,9 +442,8 @@ class KEventsController extends BaseController {
 		// } else {
 		// 	$return_url = str_replace('_', '/', $return_url);
 		// }
-
-		return Redirect::action($controller_action, [ 'return_url' => $ref_url ]);
-		// return View::make('pages.event-reg-resp');
+		// return Redirect::action('MenusController@getPage', ["calendar", "besuch-planen"]);
+		return Redirect::action('MenusController@getEvtRegResp', ['lang' => $lang]);
 	}
 
 	public function registerForEventUsingLog() {

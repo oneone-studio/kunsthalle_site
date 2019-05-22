@@ -103,7 +103,7 @@ Route::get('/exhibition/calendar', function()
 View::composer(['includes.footer'], function($view) {
 	$lang = MenusController::getLang();
 	$ftr_links = [];
-	$list = Page::where('page_type', 'footer')->get();
+	$list = Page::where('page_type', 'footer')->where('active_'.$lang, 1)->get();
 	foreach($list as $l) {
 		$ftr_links[strtolower(str_replace(' ', '-', $l->{'title_'.$lang}))] = $l->{'title_'.$lang};
 	}	
@@ -152,7 +152,8 @@ Route::get('/friends-of-art', function() {
 });
 
 // Route::get('/get-event-reg-response', 'MenusController@getEventRegResponse');
-Route::get('/event-reg-resp', 'MenusController@getEventRegResponse');
+// Route::get('/event-reg-resp', 'MenusController@getEventRegResponse');
+Route::get('/{lang?}/event-reg-resp', 'MenusController@getEvtRegResp');
 
 Route::get('/{lang?}/{menu_item}', 'MenusController@getMenuItem');
 // Route::get('/{menu_item}/{page}/{action?}', 'MenusController@getPage');

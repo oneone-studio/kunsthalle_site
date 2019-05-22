@@ -514,14 +514,14 @@ class MenusController extends BaseController {
 		return View::make('pages.start', ['page' => $page, 'slider' => $slider, 'slides' => $slides]);
 	}
 
-	public function getPageLinksByTitle($title, $link = '') {
+	public function getPageLinksByTitle($title, $slug = '') {
 		// echo $title.'<br>'. $link; exit;
 		$lang = self::getLang();
 		$sql = 'select cs.*
 		        from content_sections cs, menu_items mi, pages p
 		        where mi.id = cs.menu_item_id
 		          and cs.active_'.$lang.' = 1
-		          and lower(mi.slug_'.$lang.') like "'. strtolower(str_replace(' ', '-', $title). '"		        
+		          and mi.slug_'.$lang.' like "'. strtolower(str_replace(' ', '-', $title). '"		        
 		        group by cs.id
 		        order by cs.sort_order');
 		$results = DB::select($sql);
@@ -530,8 +530,10 @@ class MenusController extends BaseController {
 		$cal_found = false;
 		$cur_found = false;
 		foreach($results as &$res) {
-			$res->link = strtolower(str_replace(' ', '-', trim($res->{'title_'.$lang})));
-			if(strtolower(str_replace('-', ' ', trim($link))) == strtolower(trim($res->{'title_'.$lang}))) {
+			// $res->link = strtolower(str_replace(' ', '-', trim($res->{'title_'.$lang})));
+			$res->link = $res->{'slug_'.$lang};
+			// if(strtolower(str_replace('-', ' ', trim($link))) == strtolower(trim($res->{'title_'.$lang}))) {
+			if(trim($slug) == trim($res->{'slug_'.$lang})) {
 				$res->current_link = 1;
 				$cur_found = true;
 			} else {
@@ -570,8 +572,14 @@ class MenusController extends BaseController {
 		return View::make('pages.external.webmill');		
 	}
 
+	public function getEvtRegResp($lang = 'de') {
+		return View::make('pages.event-reg-resp');
+	}
+
 	public function getEventRegResponse($return_url = null) {
 		// echo 'getEventRegResponse<br>'.$return_url; print_r(Input::all());exit;
+		return Redirect::action('MenusController@getPage', ["calendar", "besuch-planen"]);
+
 		if(!isset($return_url) && Input::has('return_url')) { $return_url = Input::get('return_url'); }
 		if(isset($return_url)) {
 			$arr = explode('_', $return_url);
@@ -589,7 +597,7 @@ class MenusController extends BaseController {
 			} else {
 				$return_url = str_replace('_', '/', $return_url);
 			}
-			return View::make('pages.event-reg-resp', ['return_url' => $return_url]);		
+			return View::make('pages.event-reg-resp', ['return_url' => '']);
 		}
 		
 		return Redirect::action('MenusController@getPage', ["calendar", "besuch-planen"]);
