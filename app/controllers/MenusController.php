@@ -572,6 +572,11 @@ class MenusController extends BaseController {
 		return View::make('pages.external.webmill');		
 	}
 
+	public function getMembershipResp($lang = 'de') {
+		// echo 'getMembershipResp';exit;
+		return View::make('pages.membership-resp');
+	}
+
 	public function getEvtRegResp($lang = 'de') {
 		return View::make('pages.event-reg-resp');
 	}

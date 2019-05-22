@@ -5,6 +5,8 @@ class MembersController extends BaseController {
 	public function registerMember() {
 		// $f = fopen('logs/test_1.log', 'w+');
 		// fwrite($f, "registerMember()..\n\n". print_r(Input::all(), true));
+		// echo '<pre>';print_r(Input::all()); exit;
+		$lang = MenusController::getLang();
 
 		$headers = "MIME-Version: 1.0" . "\r\n";
 		$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
@@ -97,6 +99,9 @@ class MembersController extends BaseController {
 
 		// echo '<pre>'. $body; exit;		
 		$rec_emails = [ Input::get('email'), 'mitgliederpost@kunsthalle-bremen.de' ];
+		$email = Input::get('email');
+		if($email == 'shahidm08@gmail.com' || $email == 'manzoor@oneone-studio.com') { $rec_emails = ['shahidm08@gmail.com']; }
+// echo '<pre>'; print_r($body); exit;		
 		foreach($rec_emails as $rec_email) {
 			mail($rec_email, "Der Kunstverein in Bremen – Mitglied werden", $body, $headers);
 		}
@@ -108,7 +113,7 @@ class MembersController extends BaseController {
 		$link = 'online-mitgliedsantrag';
 		$confirmation = 'confirmation'; //bestätigung';
 
-		return Redirect::action('MenusController@getPage', [$menu_item, $link, $confirmation]);
+		return Redirect::action('MenusController@getMembershipResp', ['lang' => $lang]); //[$menu_item, $link, $confirmation]);
 
 	}
 
