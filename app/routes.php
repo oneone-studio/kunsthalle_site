@@ -56,7 +56,7 @@ $your_name_text = ($lang == 'de') ? 'Ihr Name, Vorname' : 'Your Full name (first
 $your_msg_text = ($lang == 'de') ? 'Ihre Nachricht' : 'Your Message';
 $send_now_text = ($lang == 'de') ? 'Jetzt abschicken' : 'Send Now';
 $ty_for_your_msg_h4_text = ($lang == 'de') ? 'VIELEN DANK FÜR IHRE NACHRICHT' : 'Thank you for your Message';
-$mail_resp_text = ($lang == 'de') ? 'Wir werden Ihre Mail so schnell wie möglich beantworten.' : 'We will answer your Email as soon as possible.';
+$mail_resp_text = ($lang == 'de') ? 'Wir werden Ihre E-Mail so schnell wie möglich beantworten.' : 'We will answer your Email as soon as possible.';
 
 View::share('lang', strtolower($lang));
 View::share('back_btn_text', $back_btn_text);
