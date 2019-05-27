@@ -65,14 +65,18 @@ class DownloadsController extends BaseController {
 	                if(!$use_ssh) {
 		                if(copy($remote_file, $local_file)) {
 							fwrite($f, "\n\nCopied file: ".$dl_filename);
-	                		$dl_files[] = SITE_DOMAIN . '/downloads/'.$dl_filename;	                
+							if($dl->protected == 0) {
+		                		$dl_files[] = SITE_DOMAIN . '/downloads/'.$dl_filename;	                
+							}
 		                	$zip->addFile($local_file, $dl_filename);
 		                }
 	                }
 	                if($use_ssh) {
 		                if(ssh2_scp_recv($ssh, $remote_file, $local_file)) {
 		                	fwrite($f, "\n\nCoped file using SSH\n".$remote_file . ' => '.$local_file);
-	                		$dl_files[] = SITE_DOMAIN . '/downloads/'.$dl_filename;
+							if($dl->protected == 0) {
+		                		$dl_files[] = SITE_DOMAIN . '/downloads/'.$dl_filename;
+							}
 		                	$zip->addFile($local_file, $dl_filename);
 		                }
 	                }
@@ -86,7 +90,7 @@ class DownloadsController extends BaseController {
 	            if($inc_terms_file && strlen($page->dl_terms_file) > 4) {
 	            	$terms_filename = str_replace(' ', '_', $page->dl_terms_file);
 
-	            	if($ssh) {
+	            	if($use_ssh) {
 		                if(ssh2_scp_recv($ssh, $remote_dir.$page->dl_terms_file, $local_dir.$terms_filename)) {
 		                	fwrite($f, "\n\nCopied terms file using SSH\n".$remote_dir.$page->dl_terms_file . ' => '.$local_dir.$terms_filename);
 		                	$zip->addFile($local_dir.$terms_filename, $terms_filename);
