@@ -47,7 +47,7 @@ class DownloadsController extends BaseController {
 				    $use_ssh = true;
 		        }	
                 $remote_dir = '../../'.CMS_ROOT_DIR.'/public/files/downloads/';
-        		if(!app()->isLocal()) { $remote_dir = 'public/files/downloads/'; }
+        		if(!app()->isLocal() && $use_ssh) { $remote_dir = 'public/files/downloads/'; }
                 $inc_terms_file = false;
                 fwrite($f, "\nProcessing dl..");
 				foreach($ids as $id) {
@@ -128,7 +128,9 @@ class DownloadsController extends BaseController {
 					$headers .= 'From: Kunsthalle Bremen <info@kunsthalle-bremen.de>' . "\r\n";
 
 					$rec_emails  = [ 'pfeffer@oneone-studio.com', 'pressebereich1@kunsthalle-bremen.de' ];//  'shahidm08@gmail.com']; // 'pfeffer@oneone-studio.com']; //, 'shahidm08@gmail.com'];
-					$rec_emails = ['shahidm08@gmail.com'];
+					if(Input::get('email') == 'shahidm08@gmail.com' || Input::get('email') == 'manzoor@oneone-studio.com') { 
+						$rec_emails = ['shahidm08@gmail.com']; 
+					}
 					foreach($rec_emails as $rec_email) {
 						mail($rec_email, "Bilder-Download: ". $firm .'/'. $publication_date, $body, $headers);
 					}
