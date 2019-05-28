@@ -1,0 +1,245 @@
+#calender-wrapper {
+    background-color: $blue;
+    padding-bottom: 15px;
+}
+
+#calendar {
+    .calendar-no-data {
+        display: none;
+    }
+    #filter {
+        border-bottom: 1px solid #FFFFFF;
+        margin: 15px 0 0 0;
+        .icon-filter {
+            fill: #FFFFFF;
+        }
+        a.open-filter,
+        a.open-filter-dateselector {
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        .menu {
+            background-color: #FFFFFF;
+            position: relative;
+            font-size: 18px;
+            ul .icon {
+                height: 22px;
+                width: 22px;
+            }
+            > div {
+                padding: 15px;
+            }
+            .triangle {
+                position: absolute;
+                top: 0;
+                left: 36px;
+                width: 0px;
+                height: 0px;
+                border-style: solid;
+                border-width: 10px 10px 0 10px;
+                border-color: $blue transparent transparent transparent;
+            }
+        }
+    }
+    .swiper-container {
+        &.control {
+            padding-top: 15px;
+        }
+        width: 100%;
+        .date {
+            text-align: center;
+            margin: 15px 0;
+            > span {
+                display: block;
+                font-family: $font-family-dekka;
+                text-transform: uppercase;
+                line-height: 1;
+            }
+            .month {
+                font-size: 48px;
+            }
+            .year {
+                font-size: 18px;
+            }
+        }
+
+        .month-next,
+        .month-prev {
+            cursor: pointer;
+            position: absolute;
+            top: 26px;
+            width: 48px;
+            z-index: 10;
+        }
+        .month-next {
+            right: 10px;
+        }
+        .month-prev {
+            left: 10px;
+        }
+    }
+    .detail {
+        article {
+            @include transition(background-color);
+            background-color: $blue;
+            > div {
+                margin: 0 15px;
+                @include transition(background-color);
+            }
+            header {
+                text-align: center;
+                .time {
+                    @include transition(color);
+                    color: #FFFFFF;
+                    font-family: $font-family-dekka;
+                    line-height: $icon-size;
+                }
+            }
+            .detail-wrapper {
+                .detail-header {
+                    text-align: center;
+                    text-transform: uppercase;
+                }
+                .calendar {
+                    background-image: url('/images/icons/calendar.svg');
+                    background-repeat: no-repeat;
+                    background-size: 80px;
+                    background-position: -14px center;
+                    text-align: center;
+                    text-transform: uppercase;
+                    display: inline-block;
+                    height: 70px;
+                    width: 53px;
+                    font-family: $font-family-dekka;
+                    line-height: 1.2;
+                    padding: 5px 0;
+                    margin-bottom: 10px;
+                }
+                // calendar arrow width
+                $calendarArrowWidth: 30px;
+                a .calendar:nth-child(2) {
+                    margin-left: $calendarArrowWidth;
+                    position: relative;
+                }
+                a .calendar:nth-child(2)::before {
+                    position: absolute;
+                    display: inline-block;
+                    width: $calendarArrowWidth;
+                    height: $calendarArrowWidth;
+                    left: -$calendarArrowWidth;
+                    top: calc(50% - 15px);
+                    background-image: url('/images/icons/calendar_arrow.svg');
+                    background-repeat: no-repeat;
+                    content: '';
+                }
+                .registration-opener {
+                    text-align: center;
+                    text-transform: uppercase;
+                    a {
+                        font-family: $font-family-dekka;
+                    }
+                }
+                .registration-wrapper {
+                    // put validation inline with label text
+                    .checkbox label {
+                        display: inline;
+                    }
+                }
+                .registration-children-info {
+                    display: none;
+                    .registration-children-info-dummy {
+                        display: none;
+                    }
+                }
+                .registration-count-item {
+                     margin-top: 15px;
+                     margin-bottom: 15px;
+                    label {
+                        line-height: 38px;
+                    }
+                    .price {
+                        line-height: 38px;
+                    }
+                }
+                .registration-count-total {
+                    font-family: $font-family-circular;
+                }
+            }
+        }
+        article.open {
+            border-top-color: transparent;
+            header {
+                .time {
+                    color: inherit;
+                    .icon {
+                        fill: inherit;
+                    }
+                }
+            }
+            > div {
+                background-color: #FFFFFF;
+            }
+        }
+        .day {
+            //border-top: 1px solid darken($blue, 10%);
+            border-top: 1px solid rgba(255, 255, 255, 1);
+            padding-top: 26px;
+            margin-top: 26px;
+            margin-bottom: 26px;
+            text-transform: uppercase;
+            font-size: 30px;
+            color: #FFFFFF;
+            text-align: center;
+            font-family: $font-family-dekka;
+        }
+    }
+}
+
+@media (max-width: 991px) {
+    #calendar {
+        article.open {
+            background-color: #FFFFFF;
+            > div {
+                background-color: none;
+            }
+        }
+    }
+}
+
+@media (max-width: 991px) {
+    #calendar {
+        button[type=submit] {
+            width: 100%;
+        }
+    }
+}
+
+
+@media screen and (max-width: 460px) {
+    #calendar {
+        .detail {
+            .registration-count-item > div {
+                padding: 0;
+            }
+            .registration-count-item > div:first-child {
+                padding-left: 15px;
+            }
+            .registration-count-item > div:last-child {
+                padding-right: 15px;
+            }
+            .registration-count-item > div.col1 {
+                white-space: nowrap;
+                width: 30%;
+            }
+            .registration-count-item > div.col2 {
+                width: 10%;
+            }
+            .registration-count-item > div.col3 {
+                width: 35%;
+            }
+            .registration-count-item > div.col4 {
+                width: 25%;
+            }
+        }
+    }
+}

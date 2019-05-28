@@ -1,0 +1,17 @@
+.ce-membership {
+    .membership-family-child-dummy,
+    .membership-couple,
+    .membership-family {
+        display: none;
+    }
+    #membership-family-child-configurator {
+        a {
+            color: $red;
+            font-size: $font-size-s;
+            font-family: $font-family-circular;
+        }
+        & span {
+           margin-right: 10px;
+        }
+    }
+}

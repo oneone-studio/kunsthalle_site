@@ -1,0 +1,16 @@
+.ce-anchors {
+    li {
+        cursor: pointer;
+        font-family: $font-family-dekka;
+        text-transform: uppercase;
+        span {
+            width: 8px;
+            height: 8px;
+            display: inline-block;
+            border-radius: 100%;
+            border: #000000 1px solid;
+            margin-right: 5px;
+            margin-bottom: 2px;
+        }
+    }
+}

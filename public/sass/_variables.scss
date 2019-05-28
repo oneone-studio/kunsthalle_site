@@ -1,0 +1,48 @@
+
+// Colors
+$bg-grey: #eeeeee;
+$text-default: #000;
+$red:#EB6E68;
+$lightgrey:#E4E4E4;
+$grey:#9E9B9B;
+$blue:#B5D5DD;
+$green:#01BA2A;
+
+// Color graduations
+$lighter-blue: lighten($blue, 18%);
+$light-blue: lighten($blue, 20%);
+$dark-blue: darken($blue, 10%);
+$darker-blue: darken($blue, 50%);
+$text-light-grey: #BDBDBD;
+$layer-red: #a01111;
+
+// Dimensions
+$icon-size-s:       16px;
+$icon-size-is:      24px;
+$icon-size:         32px;
+$icon-size-m:       38px;
+$icon-size-l:       48px;
+$icon-collapse:     22px;
+$logo-height:       100px;
+
+// Fonts
+$font-family-circular: 'Circular-Bold', Sans-Serif;
+$font-family-circular-book: 'Circular-Book', Helvetica, Helvetica Neue, Arial, sans-serif;
+$font-family-dekka: 'PFDekkaPro', Sans-Serif;
+$font-family-georgia: Georgia, Times, Times New Roman, serif;
+
+// Font sizes
+$font-size-xxs: 14px;
+$font-size-xs: 16px;
+$font-size-s: 18px;
+$font-size-m: 24px;
+$font-size-l: 30px;
+$font-size-xl: 48px;
+$font-size-xxl: 60px;
+
+// Font sizes teaser
+$teaser-font-size-xs: 34px;
+$teaser-font-size-s: 38px;
+$teaser-font-size-m: 74px;
+$teaser-font-size-l: 84px;
+$teaser-font-size-xl: 114px;
