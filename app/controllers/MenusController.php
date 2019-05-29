@@ -362,6 +362,14 @@ class MenusController extends BaseController {
 		$cs_id = 0;
 		$page_id = 0;
 		$pages = [];
+		$showFliters = false;
+		$tags = [];
+		$is_cal_page = false;
+		if($menu_item == '/besuch-planen/kalender' || $menu_item == '/besuch-planen/calendar' || 
+				$menu_item == '/plan-your-visit/your-visit') {
+			$is_cal_page = true;
+		}
+
 		if(is_array($pg_links) && count($pg_links)) {
 			foreach($pg_links as $pl) {
 				if($pl->current_link == 1) { 
@@ -391,6 +399,9 @@ class MenusController extends BaseController {
 				$jsn_data = KEventsController::getEventsCalendar($menu_item, false);
 				$all_event_dates = $jsn_data['all_event_dates'];
 				$calendar = $jsn_data['calendar'];
+				$tags = isset($jsn_data['tags']) ? $jsn_data['tags'] : [];
+				$tag_ids = isset($jsn_data['tag_ids']) ? $jsn_data['tag_ids'] : [];
+				$showFliters = true;
 			}
 		}
 		$sponsors = [];
@@ -451,7 +462,8 @@ class MenusController extends BaseController {
 				return View::make($view, ['page' => $page, 'menu_item' => $menu_item, 'pg_links' => $pg_links, 'calendar' => $calendar, 
 					'all_event_dates' => $all_event_dates, 'pg_sections' => $pg_sections, 'sponsors' => $sponsors, 'contacts' => $contacts, 
 					'settings' => $settings, 'show_membership_form' => $show_membership_form, 'dl_found' => $dl_found, 'hasMembersForm' => $hasMembersForm, 
-					'link' => $link, 'action' => $action, 'page_type' => 'normal', 'downloads' => $downloads]);
+					'link' => $link, 'action' => $action, 'page_type' => 'normal', 'downloads' => $downloads, 'tags' => $tags, 
+					'showFliters' => $showFliters, 'tag_ids' => $tag_ids]);
 			}
 
 			return Redirect::action('MenusController@getStartPage');
@@ -475,6 +487,7 @@ class MenusController extends BaseController {
 				}
 			}
 			$showFliters = (count($tag_ids)) ? true : false;
+			if($is_cal_page) { $showFliters = true; }
 			if($section) {
 				return View::make('pages.section', ['pages' => $pages, 'menu_item' => $menu_item, 'section' => $section, 
 					'section_title' =>$section_title, 'pg_links' => $pg_links, 'calendar' => $calendar, 'pg_sections' => $pg_sections, 
