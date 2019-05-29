@@ -1,6 +1,15 @@
 @extends('layouts.default')
 @section('content')
 
+<?php
+$all_event_dates = (isset($all_event_dates)) ? $all_event_dates : []; 
+if(isset($calendar) && is_array($calendar) && array_key_exists('all_event_dates', $calendar)) {
+    $arr = $calendar;
+    $all_event_dates = $arr['all_event_dates'];
+    $calendar = $arr['calendar'];
+}
+
+?>
     @if($page->banner)
          <header>
             <div class="bg-ct picture-container" style="background-image: url('{{$DOMAIN}}/files/exhibition_pages/{{$page->banner->image}}');">

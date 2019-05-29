@@ -385,6 +385,7 @@ class MenusController extends BaseController {
 					break; 
 				}
 			}
+// echo $page_id;exit;			
 			$pg_sections = $this->getPageSections($page_id);
 			$page = Page::with(['page_contents', 'page_image_sliders', 'sponsor_groups', 'sponsor_groups.sponsors', 'downloads', 
 								'cluster', 'banner', 'banner.banner_text', 'page_image_sliders.page_slider_images', 'h2text', 'image_grids', 
@@ -414,6 +415,7 @@ class MenusController extends BaseController {
 				}
 			}	
 		}
+// echo ($is_page);exit;		
 		if($is_page) {
 			$contacts = [];
 			$detps = Department::all()->sortBy('sort_order');
@@ -477,7 +479,8 @@ class MenusController extends BaseController {
 			if(!$section) {
 				return Redirect::action('MenusController@getStartPage');
 			}
-			$section_title = strtolower(str_replace(' ', '-', $section->title_en));
+			$section_title = isset($section->{'slug_'.$lang}) ? 
+				strtolower(str_replace(' ', '-', $section->{'slug_'.$lang})) : strtolower(str_replace(' ', '-', $section->{'title_'.$lang}));
 			$tags = Tag::all()->sortBy('tag_'.$lang);
 			$tag_ids = [];
 			foreach($pages as $p) {
@@ -536,7 +539,6 @@ class MenusController extends BaseController {
 	}
 
 	public function getPageLinksByTitle($title, $slug = '') {
-		// echo $title.'<br>'. $slug; exit;
 		$lang = self::getLang();
 		$sql = 'select cs.*, p.slug_'.$lang.' as page_slug
 		        from content_sections cs, menu_items mi, pages p
@@ -554,9 +556,11 @@ class MenusController extends BaseController {
 		if($_results) {
 			$results = $_results;
 			foreach($results as &$res) {
-				$res->{'slug_'.$lang} = $res->page_slug;
 				$res->link = $res->{'slug_'.$lang};
-				if(trim($slug) == trim($res->page_slug)) {
+				if(trim($slug) == trim($res->{'slug_'.$lang})) {
+					$res->current_link = 1;
+					$cur_found = true;
+				} elseif(trim($slug) == trim($res->page_slug)) {
 					$res->current_link = 1;
 					$cur_found = true;
 				} else {
@@ -568,7 +572,6 @@ class MenusController extends BaseController {
 		if(count($results) && !$cur_found) {
 			$results[0]->current_link = 1;
 		}
-
 		// echo '<pre>'; print_r($results);exit;		
 
 		return $results;

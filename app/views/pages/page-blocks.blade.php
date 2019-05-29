@@ -199,9 +199,16 @@
         </div>  
         <!-- sponsors end -->
     @endif    
-
+<?php 
+$all_event_dates = (isset($all_event_dates)) ? $all_event_dates : []; 
+if(isset($calendar) && is_array($calendar) && array_key_exists('all_event_dates', $calendar)) {
+    $arr = $calendar;
+    $all_event_dates = $arr['all_event_dates'];
+    $calendar = $arr['calendar'];
+}
+?>
     <!-- Calendar -->
-    @if($lang == 'de' && isset($calendar) && count($calendar))    
+    @if($lang == 'de' && isset($calendar) && count($calendar) > 0)    
         <!-- Event calender as module start -->
         @include('pages.calendar-section', ['excl_search' => false])
         <!-- Event calender as module end -->       

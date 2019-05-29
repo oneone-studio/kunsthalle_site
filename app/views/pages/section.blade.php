@@ -103,7 +103,7 @@
 						  ?>
 							<article class="grid-item {{$tag_classes}}">
 							   <?php 
-							     $link = '/'.$lang.'/sb-page/'.$menu_item.'/'.$section_title.'/'.strtolower(str_replace(' ', '-', $p->{'title_'.$lang})); 
+							     $link = '/'.$lang.'/sb-page/'.$menu_item.'/'.$section_title.'/'.$p->{'slug_'.$lang}; 
 							   ?>
 							   <a href="{{$link}}">
 								<img src="{{$DOMAIN}}/files/teasers/{{$p->teaser->filename}}" alt="" class="img-responsive">
