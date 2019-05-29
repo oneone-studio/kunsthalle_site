@@ -69,11 +69,15 @@ class MenusController extends BaseController {
 	}
 
 	public function getMenuItem($lang = 'de', $menu_item) {
-		$lang = self::getLang();
+		$_lang = self::getLang();
+		if(!isset($lang)) { $lang = $_lang; }
 		$rdr = DB::table('redirects')->where('slug', $menu_item)->first();
+		// echo $rdr->redirect_url; exit;		
 		if($rdr) {
 			$url = $rdr->redirect_url;
-			header("Location:$url"); return;
+			// header("Location: ". $url);
+			echo '<script type="text/javascript">location.href="'.$url.'";</script>';
+			return;
 		}
 
 		if($menu_item == 'online-katalog') {
@@ -383,7 +387,9 @@ class MenusController extends BaseController {
 				$calendar = KEventsController::getEventsCalendar(null, false, $page->cluster_id);
 			}
 			if(strtolower($link) == 'kalender' || strtolower($link) == 'calendar') {
-				$calendar = KEventsController::getEventsCalendar($menu_item, false);
+				$jsn_data = KEventsController::getEventsCalendar($menu_item, false);
+				$all_event_dates = $jsn_data['all_event_dates'];
+				$calendar = $jsn_data['calendar'];
 			}
 		}
 		$sponsors = [];
@@ -442,9 +448,9 @@ class MenusController extends BaseController {
 				}
 
 				return View::make($view, ['page' => $page, 'menu_item' => $menu_item, 'pg_links' => $pg_links, 'calendar' => $calendar, 
-						'pg_sections' => $pg_sections, 'sponsors' => $sponsors, 'contacts' => $contacts, 'settings' => $settings, 
-						'show_membership_form' => $show_membership_form, 'dl_found' => $dl_found, 'hasMembersForm' => $hasMembersForm, 'link' => $link, 
-						'action' => $action, 'page_type' => 'normal', 'downloads' => $downloads]);
+					'all_event_dates' => $all_event_dates, 'pg_sections' => $pg_sections, 'sponsors' => $sponsors, 'contacts' => $contacts, 
+					'settings' => $settings, 'show_membership_form' => $show_membership_form, 'dl_found' => $dl_found, 'hasMembersForm' => $hasMembersForm, 
+					'link' => $link, 'action' => $action, 'page_type' => 'normal', 'downloads' => $downloads]);
 			}
 
 			return Redirect::action('MenusController@getStartPage');
