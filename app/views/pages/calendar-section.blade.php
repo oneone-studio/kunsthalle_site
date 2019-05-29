@@ -336,7 +336,7 @@ function applyPackagePrice(index,
                             <div class="triangle"></div>
                             <ul class="list-unstyled">
                                 <li><span class="icon icon-inline icon-check"></span> <a href="#" data-filter="*">Alle</a></li>
-                                  @if(isset($tags))
+                                  @if(isset($tags) && count($tags))
                                      @foreach($tags as $tag)
                                         @if(in_array($tag->id, $tag_ids))
                                             <li onclick="setClickTarget('tag')"><span class="icon icon-inline"></span> <a id="filter_item_{{$tag['id']}}" href="#" 
