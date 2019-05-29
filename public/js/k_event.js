@@ -15,7 +15,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
 
     if(evt.event_image != undefined && evt.event_image.length > 0) {
         h += '<figure id="evt_image_'+evt.index+'" class="evt-image">'+
-                '<img class="img-responsive" src="'+files_domain+'/'+evt.event_image+'" alt="" title="" />'+
+                '<img class="img-responsive" src="'+cms_domain+'/'+evt.event_image+'" alt="" title="" />'+
                 '<figcaption>'+ evt.caption_de+ '</figcaption>'+
             '</figure>';
     }
@@ -596,7 +596,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
             h += '<div class="form-group">'+
                         '<div class="checkbox">'+
                             '<label class="links-underlined">'+
-                                '<input type="checkbox" name="conditions_of_participation" id="conditions_of_participation_'+evt.index+'" required /><span class="checkbox-material"><span class="check"></span></span> Mit den <a href="http://kunsthalle-bremen.de/view/static/page/anmeldebedingungen" target="_blank">Anmelde- und Teilnahmebedingungen</a> bin ich einverstanden.'+
+                                '<input type="checkbox" name="conditions_of_participation" id="conditions_of_participation_'+evt.index+'" required /><span class="checkbox-material"><span class="check"></span></span> Mit den <a href="https://www.kunsthalle-bremen.de/de/view/static/page/anmeldebedingungen" target="_blank">Anmelde- und Teilnahmebedingungen</a> bin ich einverstanden.'+
                             '</label>'+
                         '</div>'+
                     '</div>'+
