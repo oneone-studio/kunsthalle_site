@@ -16,7 +16,7 @@
                     <p>Vielen Dank für Ihre Anmeldung, die wir schnellstmöglich bearbeiten werden.
                     Eine Bestätigung Ihrer Teilnahme erhalten Sie nach Prüfung Ihrer Anmeldung.</p>
                     <p>Ihre Kunsthalle Bremen</p>
-                    <a href="/{{$lang}}/calendar/besuch-planen" class="btn btn-default btn-raised active">OK</a>
+                    <a href="/{{$lang}}{{$calendar_uri}}" class="btn btn-default btn-raised active">OK</a>
                 </div>
             </div>
         </div>
