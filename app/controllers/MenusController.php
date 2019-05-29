@@ -536,39 +536,39 @@ class MenusController extends BaseController {
 	}
 
 	public function getPageLinksByTitle($title, $slug = '') {
-		// echo $title.'<br>'. $link; exit;
+		// echo $title.'<br>'. $slug; exit;
 		$lang = self::getLang();
 		$sql = 'select cs.*
 		        from content_sections cs, menu_items mi, pages p
 		        where mi.id = cs.menu_item_id
 		          and cs.active_'.$lang.' = 1
-		          and mi.slug_'.$lang.' like "'. strtolower(str_replace(' ', '-', $title). '"		        
+		          and mi.slug_'.$lang.' like "'. strtolower(str_replace(' ', '-', $title)). '"
 		        group by cs.id
-		        order by cs.sort_order');
-		$results = DB::select($sql);
-
+		        order by cs.sort_order';
+		$_results = DB::select($sql);
 		$f = fopen('logs/test_2.log', 'a+');
 		$cal_found = false;
 		$cur_found = false;
-		foreach($results as &$res) {
-			// $res->link = strtolower(str_replace(' ', '-', trim($res->{'title_'.$lang})));
-			$res->link = $res->{'slug_'.$lang};
-			// if(strtolower(str_replace('-', ' ', trim($link))) == strtolower(trim($res->{'title_'.$lang}))) {
-			if(trim($slug) == trim($res->{'slug_'.$lang})) {
-				$res->current_link = 1;
-				$cur_found = true;
-			} else {
-				$res->current_link = 0;
+		$results = [];
+		if($_results) {
+			$results = $_results;
+			foreach($results as &$res) {
+				$pg = Page::where('slug_'.$lang, $slug)->first();
+				if($pg) { $res->{'slug_'.$lang} = $pg->{'slug_'.$lang}; }
+				$res->link = $res->{'slug_'.$lang};
+				if(trim($slug) == trim($res->{'slug_'.$lang})) {
+					$res->current_link = 1;
+					$cur_found = true;
+				} else {
+					$res->current_link = 0;
+				}
+				if(strtolower($title) == 'calendar' || strtolower($title) == 'kalender') { $cal_found = true; }
 			}
-			if(strtolower($title) == 'calendar' || strtolower($title) == 'kalender') { $cal_found = true; }
 		}
 		if(count($results) && !$cur_found) {
 			$results[0]->current_link = 1;
 		}
-// 		if(strtolower(trim($res->{'title_'.$lang})) == 'kunsthalle-bremen' && !$cal_found) {
-// 			echo '<h4>Adding cal</h4>';
-// 			array_$results
-// 		}
+
 		// echo '<pre>'; print_r($results);exit;		
 
 		return $results;
