@@ -57,6 +57,7 @@ $your_msg_text = ($lang == 'de') ? 'Ihre Nachricht' : 'Your Message';
 $send_now_text = ($lang == 'de') ? 'Jetzt abschicken' : 'Send Now';
 $ty_for_your_msg_h4_text = ($lang == 'de') ? 'VIELEN DANK FÜR IHRE NACHRICHT' : 'Thank you for your Message';
 $mail_resp_text = ($lang == 'de') ? 'Wir werden Ihre E-Mail so schnell wie möglich beantworten.' : 'We will answer your Email as soon as possible.';
+$calendar_uri = '/besuch-planen/kalender';
 
 View::share('lang', strtolower($lang));
 View::share('back_btn_text', $back_btn_text);
@@ -74,6 +75,7 @@ View::share('your_msg_text', $your_msg_text);
 View::share('send_now_text', $send_now_text);
 View::share('ty_for_your_msg_h4_text', $ty_for_your_msg_h4_text);
 View::share('mail_resp_text', $mail_resp_text);
+View::share('calendar_uri', strtolower($calendar_uri));
 
 
 // define('FILES_DOMAIN', 'http://kunsthalle-cms.dev');
