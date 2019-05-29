@@ -540,7 +540,7 @@ class MenusController extends BaseController {
 
 	public function getPageLinksByTitle($title, $slug = '') {
 		$lang = self::getLang();
-		$sql = 'select cs.*, p.slug_'.$lang.' as page_slug
+		$sql = 'select cs.*, p.title_'.$lang.' as page_title, p.slug_'.$lang.' as page_slug
 		        from content_sections cs, menu_items mi, pages p
 		        where mi.id = cs.menu_item_id
 		          and cs.active_'.$lang.' = 1
@@ -557,6 +557,10 @@ class MenusController extends BaseController {
 			$results = $_results;
 			foreach($results as &$res) {
 				$res->link = $res->{'slug_'.$lang};
+				if(strtolower(trim($res->{'title_'.$lang})) == strtolower(trim($res->page_title))) {
+					$res->link = $res->page_slug;
+				}
+
 				if(trim($slug) == trim($res->{'slug_'.$lang})) {
 					$res->current_link = 1;
 					$cur_found = true;
