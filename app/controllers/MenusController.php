@@ -553,8 +553,18 @@ class MenusController extends BaseController {
 		if($_results) {
 			$results = $_results;
 			foreach($results as &$res) {
-				$pg = Page::where('slug_'.$lang, $slug)->first();
-				if($pg) { $res->{'slug_'.$lang} = $pg->{'slug_'.$lang}; }
+				$pages = Page::where('content_section_id', $res->id)
+							->where('active_'.$lang, 1)
+							->get();
+				if($pages) {
+					foreach($pages as $pg) {
+						if($pg->{'slug_'.$lang} == $slug) { 
+							$res->{'slug_'.$lang} = $pg->{'slug_'.$lang};
+							break;
+						}
+					}
+				}
+
 				$res->link = $res->{'slug_'.$lang};
 				if(trim($slug) == trim($res->{'slug_'.$lang})) {
 					$res->current_link = 1;
