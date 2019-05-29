@@ -358,6 +358,7 @@ class MenusController extends BaseController {
 		$page = [];		
 		$pg_sections = [];
 		$is_page = false;
+		$all_event_dates = [];
 		$cs_id = 0;
 		$page_id = 0;
 		$pages = [];
@@ -477,7 +478,7 @@ class MenusController extends BaseController {
 			if($section) {
 				return View::make('pages.section', ['pages' => $pages, 'menu_item' => $menu_item, 'section' => $section, 
 					'section_title' =>$section_title, 'pg_links' => $pg_links, 'calendar' => $calendar, 'pg_sections' => $pg_sections, 
-					'tags' => $tags, 'showFliters' => $showFliters, 'tag_ids' => $tag_ids]);
+					'tags' => $tags, 'showFliters' => $showFliters, 'tag_ids' => $tag_ids, 'all_event_dates' => $all_event_dates]);
 			}
 
 			return Redirect::action('MenusController@getStartPage');
