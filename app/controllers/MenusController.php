@@ -364,6 +364,7 @@ class MenusController extends BaseController {
 		$pages = [];
 		$showFliters = false;
 		$tags = [];
+		$tag_ids = [];
 		$is_cal_page = false;
 		if($menu_item == '/besuch-planen/kalender' || $menu_item == '/besuch-planen/calendar' || 
 				$menu_item == '/plan-your-visit/your-visit') {
