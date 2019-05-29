@@ -560,10 +560,18 @@ class MenusController extends BaseController {
 	}
 
 	public function getFooterPage($lang = 'de', $link) {
+		// echo $link;exit;		
 		$lang = self::getLang();
+		$page = [];
+
 		$page = Page::with(['page_contents'])
 					  ->where('page_type', 'footer')
-					  ->where('title_'.$lang, 'like', str_replace('-', ' ', $link))->first();
+					  ->where('slug_'.$lang, '=', $link)->first();
+		if(!isset($page)) {
+			$page = Page::with(['page_contents'])
+						  ->where('page_type', 'footer')
+						  ->where('title_'.$lang, 'like', str_replace('-', ' ', $link))->first();
+		}
 
 		return View::make('pages.footer-page', ['page' => $page]);
 	}
