@@ -1683,7 +1683,11 @@ class KEventsController extends BaseController {
 		}
 		Session::put('cal_months', $calMonths); // used to determine slideNo for events etc..
 
-		if(!$json) { return $calendar; }
+		if(!$json) { 
+			$jsn_data = ['all_event_dates' => $all_event_date_list, 'calendar' => $calendar];
+
+			return $jsn_data; 
+		}
 		// fwrite($f, print_r($all_event_date_list, true));
 		fwrite($f, print_r($calendar, true));
 

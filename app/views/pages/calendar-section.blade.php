@@ -1,6 +1,11 @@
 <?php 
 date_default_timezone_set('Europe/Berlin'); 
 setlocale(LC_TIME, "de_DE");
+
+$uri = $_SERVER['REQUEST_URI'];
+if(stripos($uri, '/besuch-planen/kalender')) {
+    $showFliters = true;
+}
 ?>
 <script type="text/javascript">
 var curEventId = 0;
@@ -43,7 +48,8 @@ function setEventId(id, reg_event_date, index, slideNo, hasImage) {
                 // var scrollPos = $('.event_no_'+index).offset().top - 68;
                 // $('html, body').animate({ scrollTop: scrollPos }, 500);
                 // update slider
-                refreshSwiper();
+                doRefreshSwiper();
+                // refreshSwiper();
             }
         },
         error:  function(jqXHR, textStatus, errorThrown) {
@@ -52,13 +58,22 @@ function setEventId(id, reg_event_date, index, slideNo, hasImage) {
     }); 
 }
 
+var cnt = 0;
+function doRefreshSwiper() {
+    ++cnt;
+    console.log('refresh cnt: '+cnt);
+    if(cnt > 20) { cnt = 0; return; }
+    refreshSwiper();
+
+    setTimeout('doRefreshSwiper()', 300);
+}
+
 function setClickTarget(type) {
     eventSrc = type;
 }
 
 var cal_filter_date = '';
 function reloadCalendarFilter(filter, resetCurDate) {
-    // alert(resetCurDate);
     $.ajax({
         type: 'GET',
         url: '/get-filtered-dates',
@@ -71,7 +86,7 @@ function reloadCalendarFilter(filter, resetCurDate) {
                 if(data.event_dates != undefined) {
                     for(var i in data.event_dates) {
                         if($('.cal_filter_date_'+data.event_dates[i]).length) {
-                           $('.cal_filter_date_'+data.event_dates[i]).addClass('date-selector-nodates');//.removeClass('date-selector-currentdate'); 
+                           $('.cal_filter_date_'+data.event_dates[i]).addClass('date-selector-nodates');
                         }
                     }
                 }
@@ -321,7 +336,7 @@ function applyPackagePrice(index,
                             <div class="triangle"></div>
                             <ul class="list-unstyled">
                                 <li><span class="icon icon-inline icon-check"></span> <a href="#" data-filter="*">Alle</a></li>
-                                  @if($tags)
+                                  @if(isset($tags))
                                      @foreach($tags as $tag)
                                         @if(in_array($tag->id, $tag_ids))
                                             <li onclick="setClickTarget('tag')"><span class="icon icon-inline"></span> <a id="filter_item_{{$tag['id']}}" href="#" 
@@ -556,48 +571,6 @@ function checkForm(form) {
     return false;
 }
 
-// function checkParticipants(indx) {
-//     console.log("checkParticipants() called\nhas Cost? "+ hasCost);
-//     var count = 0;
-//     if(hasCost) {
-//         if($('#'+indx+'_regular_adult_price').length && $('#'+indx+'_regular_adult_price').val() != '') { 
-//             count += parseInt($('#'+indx+'_regular_adult_price').val()); 
-//         }
-//         if($('#'+indx+'_regular_child_price').length && $('#'+indx+'_regular_child_price').val() != '') { 
-//             count += parseInt($('#'+indx+'_regular_child_price').val()); 
-//         }
-//         if($('#'+indx+'_member_adult_price').length && $('#'+indx+'_member_adult_price').val() != '') { 
-//             count += parseInt($('#'+indx+'_member_adult_price').val()); 
-//         }
-//         if($('#'+indx+'_member_child_price').length && $('#'+indx+'_member_child_price').val() != '') { 
-//             count += parseInt($('#'+indx+'_member_child_price').val()); 
-//         }
-//         if($('#'+indx+'_sibling_child_price').length && $('#'+indx+'_sibling_child_price').val() != '') { 
-//             count += parseInt($('#'+indx+'_sibling_child_price').val()); 
-//         }
-//         if($('#'+indx+'_sibling_member_price').length && $('#'+indx+'_sibling_member_price').val() != '') { 
-//             count += parseInt($('#'+indx+'_sibling_member_price').val()); 
-//         }
-//         if($('#'+indx+'_reduced_price').length && $('#'+indx+'_reduced_price').val() != '') { 
-//             count += parseInt($('#'+indx+'_reduced_price').val()); 
-//         }
-
-//         console.log("Participant count: "+ count);
-//         console.log("_member_adult_price:- "+indx + " : " + $('#'+indx+'_member_adult_price').val());
-//         if(count == 0) {
-//             if($(".participants_"+indx).length) {
-//                 var scrollPos = $(".participants_"+indx).offset().top + 40;
-//                 $('html, body').animate({
-//                   scrollTop: scrollPos
-//                 }, 700);
-//             }
-//             return false;
-//         }
-//     }
-
-//     return true;
-// }
-
 function checkEnter(e) {
     if (e.keyCode == 13) {
         alert('Pressed enter..');
@@ -605,6 +578,19 @@ function checkEnter(e) {
         return false;
     }
 }
+
+var cnt = 0;
+function openDates() {
+    ++cnt;
+    if(cnt > 1) { cnt = 0; $('a.open-filter-dateselector').trigger('click'); return; }
+    setTimeout('openDates()', 5);
+}
+
+$(function() {
+    if($('a.open-filter-dateselector').length) {
+        openDates();
+    }
+});
 
 </script>
 <style>
