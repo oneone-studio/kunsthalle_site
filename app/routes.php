@@ -105,7 +105,7 @@ View::composer(['includes.footer'], function($view) {
 	$ftr_links = [];
 	$list = Page::where('page_type', 'footer')->where('active_'.$lang, 1)->get();
 	foreach($list as $l) {
-		$ftr_links[strtolower(str_replace(' ', '-', $l->{'title_'.$lang}))] = $l->{'title_'.$lang};
+		$ftr_links[$l->{'slug_'.$lang}] = $l->{'title_'.$lang};
 	}	
 
 	$view->with('ftr_links', $ftr_links);
