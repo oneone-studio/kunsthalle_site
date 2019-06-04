@@ -57,7 +57,7 @@
 		@endif
 			
 		<div class="ce ce-router">
-			@if($showFliters)
+			@if(isset($showFliters) && $showFliters == true)
 				<div class="filter">
 					<div class="container-fluid mb-15">
 						<a href="#" class="open-filter">

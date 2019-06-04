@@ -109,6 +109,7 @@ class DownloadsController extends BaseController {
 				$name = Input::has('name') ? Input::get('name') : '';
 				$firm = Input::has('firm') ? Input::get('firm') : '';
 				$publication_date = Input::has('publication_date') ? Input::get('publication_date') : '';
+				$email = Input::get('email');
 
 				if(trim($name) != '') {
 					$body = 'Name, Vorname: '. $name . '<br>'.
@@ -127,10 +128,9 @@ class DownloadsController extends BaseController {
 					$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 					$headers .= 'From: Kunsthalle Bremen <info@kunsthalle-bremen.de>' . "\r\n";
 
-					$rec_emails  = [ 'pfeffer@oneone-studio.com', 'pressebereich1@kunsthalle-bremen.de' ];//  'shahidm08@gmail.com']; // 'pfeffer@oneone-studio.com']; //, 'shahidm08@gmail.com'];
-					if(Input::get('email') == 'shahidm08@gmail.com' || Input::get('email') == 'manzoor@oneone-studio.com') { 
-						$rec_emails = ['shahidm08@gmail.com']; 
-					}
+					$rec_emails  = [ $email, 'pressebereich1@kunsthalle-bremen.de' ];
+					if($email == 'shahidm08@gmail.com' || $email == 'manzoor@oneone-studio.com') { $rec_emails = ['shahidm08@gmail.com']; }
+
 					foreach($rec_emails as $rec_email) {
 						mail($rec_email, "Bilder-Download: ". $firm .'/'. $publication_date, $body, $headers);
 					}
