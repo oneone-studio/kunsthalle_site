@@ -6,6 +6,12 @@ $uri = $_SERVER['REQUEST_URI'];
 if(stripos($uri, '/besuch-planen/kalender')) {
     $showFliters = true;
 }
+$all_event_dates = (isset($all_event_dates)) ? $all_event_dates : []; 
+if(isset($calendar) && is_array($calendar) && array_key_exists('all_event_dates', $calendar)) {
+    $arr = $calendar;
+    $all_event_dates = $arr['all_event_dates'];
+    $calendar = $arr['calendar'];
+}
 ?>
 <script type="text/javascript">
 var curEventId = 0;
@@ -318,7 +324,7 @@ function applyPackagePrice(index,
             @endif
 
             <section id="calendar">
-            @if(isset($showFliters))
+            @if(isset($showFliters) && $showFliters == true)
                 <div id="filter">
                     <div class="container-fluid mb-15">
                         <a href="#" class="open-filter">
@@ -359,73 +365,75 @@ function applyPackagePrice(index,
                     <div class="swiper-wrapper">
                     <?php $slideNo = 0; ?>    
                     @foreach($calendar as $k => $cal)
-                       <?php ++$slideNo; ?>
-                        <div class="swiper-slide">
-                            <div class="date">
-                                <span class="month">{{utf8_encode($cal['month'])}}</span>
-                                <span class="year">{{$cal['year']}}</span>
-                            </div>
-                            <div class="date-selector-wrapper collapse">
-                                <div class="pa-15">
-                                    <table class="date-selector">
-                                        <thead>
-                                            <tr>
-                                                <th>Mo</th>
-                                                <th>Di</th>
-                                                <th>Mi</th>
-                                                <th>Do</th>
-                                                <th>Fr</th>
-                                                <th>Sa</th>
-                                                <th>So</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                    <?php 
-                                        $day_count = 0;
-                                        $month_cal = [];
-                                        $first_dow = date('N', strtotime(date($cal['year'].'-'.$cal['month_no'].'-01')));
-                                        $mo_days = cal_days_in_month(CAL_GREGORIAN, $cal['month_no'], $cal['year']);
-                                        echo '<tr>';
-                                        for($d=1; $d<$first_dow; $d++) {
-                                            echo '<td></td>';
-                                            ++$day_count;
-                                        }
-                                        for($dom=1; $dom<=$mo_days; $dom++) {
-                                            ++$day_count;               
-                                            $data_date = date('m/d/Y', 
-                                                strtotime($cal['year'].'-'.$cal['month_no'].'-'.str_pad($dom, 2, '0', STR_PAD_LEFT)));
-                                            $cal_date = date('Y-m-d', strtotime($cal['year'].'-'.$cal['month_no'].'-'. str_pad($dom, 2, '0', STR_PAD_LEFT)));
-                                            $is_active = true;
-                                            if(isset($all_event_dates)) {
-                                                if(!in_array($cal_date, $all_event_dates)) {
-                                                    $is_active = false;
+                       @if(isset($cal['month']))
+                           <?php ++$slideNo; ?>
+                            <div class="swiper-slide">
+                                <div class="date">
+                                    <span class="month">{{utf8_encode($cal['month'])}}</span>
+                                    <span class="year">{{$cal['year']}}</span>
+                                </div>
+                                <div class="date-selector-wrapper collapse">
+                                    <div class="pa-15">
+                                        <table class="date-selector">
+                                            <thead>
+                                                <tr>
+                                                    <th>Mo</th>
+                                                    <th>Di</th>
+                                                    <th>Mi</th>
+                                                    <th>Do</th>
+                                                    <th>Fr</th>
+                                                    <th>Sa</th>
+                                                    <th>So</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                        <?php 
+                                            $day_count = 0;
+                                            $month_cal = [];
+                                            $first_dow = date('N', strtotime(date($cal['year'].'-'.$cal['month_no'].'-01')));
+                                            $mo_days = cal_days_in_month(CAL_GREGORIAN, $cal['month_no'], $cal['year']);
+                                            echo '<tr>';
+                                            for($d=1; $d<$first_dow; $d++) {
+                                                echo '<td></td>';
+                                                ++$day_count;
+                                            }
+                                            for($dom=1; $dom<=$mo_days; $dom++) {
+                                                ++$day_count;               
+                                                $data_date = date('m/d/Y', 
+                                                    strtotime($cal['year'].'-'.$cal['month_no'].'-'.str_pad($dom, 2, '0', STR_PAD_LEFT)));
+                                                $cal_date = date('Y-m-d', strtotime($cal['year'].'-'.$cal['month_no'].'-'. str_pad($dom, 2, '0', STR_PAD_LEFT)));
+                                                $is_active = true;
+                                                if(isset($all_event_dates)) {
+                                                    if(!in_array($cal_date, $all_event_dates)) {
+                                                        $is_active = false;
+                                                    }
                                                 }
-                                            }
-                                            $td = '<td><div data-date="'.$data_date.'" 
-                                                            onclick="setCalEvents(this, \''.$cal_date.'\', '.$is_active.')" ';
-                                            $td .= ' id="cal_filter_date_'.$cal_date.'" class="cal_filter_date_'.$cal_date;
-                                            if(!$is_active) { $td .= ' date-selector-nodates'; }
-                                            if($cal_date == date('Y-m-d')) { $td .= ' date-selector-currentdate'; }
-                                            $td .= '">'.str_pad($dom, 2, '0', STR_PAD_LEFT) .'</div></td>';
-                                            echo $td;
+                                                $td = '<td><div data-date="'.$data_date.'" 
+                                                                onclick="setCalEvents(this, \''.$cal_date.'\', '.$is_active.')" ';
+                                                $td .= ' id="cal_filter_date_'.$cal_date.'" class="cal_filter_date_'.$cal_date;
+                                                if(!$is_active) { $td .= ' date-selector-nodates'; }
+                                                if($cal_date == date('Y-m-d')) { $td .= ' date-selector-currentdate'; }
+                                                $td .= '">'.str_pad($dom, 2, '0', STR_PAD_LEFT) .'</div></td>';
+                                                echo $td;
 
-                                            if($day_count > 6 || $dom == $mo_days) { 
-                                                $day_count = 0; 
-                                                echo '</tr>';
+                                                if($day_count > 6 || $dom == $mo_days) { 
+                                                    $day_count = 0; 
+                                                    echo '</tr>';
+                                                }
+                                                // if($dom < $mo_days && $day_count > 0 && $day_count <= 7) { echo '<tr>'; }
                                             }
-                                            // if($dom < $mo_days && $day_count > 0 && $day_count <= 7) { echo '<tr>'; }
-                                        }
-                                    ?>
-                                        </tbody>
-                                    </table>
-                                    <div class="text-center">
-                                        <a href="#" class="close-filter-dateselector">
-                                            <span class="icon icon-close icon-red"></span>
-                                        </a>
+                                        ?>
+                                            </tbody>
+                                        </table>
+                                        <div class="text-center">
+                                            <a href="#" class="close-filter-dateselector">
+                                                <span class="icon icon-close icon-red"></span>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                     @endforeach
                     </div>
                     @if(count($calendar) > 1)
