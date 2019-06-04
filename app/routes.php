@@ -13,6 +13,30 @@ include_once 'config.inc.php';
 */
 /**/
 
+$uri = $_SERVER['REQUEST_URI'];
+$ar = explode('/', $uri);
+if($ar) { $uri = end($ar); }
+
+// echo '<pre>'; print_r($ar);
+$do_redirect = false;
+if((count($ar) > 1 && ($ar[1] == 'de' || $ar[1] == 'en')) || (count($ar) == 2 && trim($ar[0]) == '' && trim($ar[1]) != '')) {
+	$do_redirect = true;
+}
+if(count($ar) > 3) { $do_redirect = false; }
+// echo 'Check: '.($do_redirect == true);
+
+if($do_redirect === true) {
+// echo '<br>R';
+	if(isset($uri) && trim($uri) != '') {
+		$r = DB::table('redirects')->where('slug', trim($uri))->first();
+		if(isset($r) && isset($r->redirect_url) && !empty($r->redirect_url)) {
+			header('location: '.$r->redirect_url);
+			echo '<script type="text/javascript">location.href = '.$r->redirect_url.';</script>';
+		}
+	}
+}
+// echo '<br><br>Done.';exit;
+
 View::composer(['pages.calendar-block', 'pages.exhibitions.exhibition'], function($view) {
 	$viewdata= $view->getData();
 	$calendar = [];

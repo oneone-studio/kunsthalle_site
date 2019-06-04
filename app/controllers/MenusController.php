@@ -385,7 +385,7 @@ class MenusController extends BaseController {
 					break; 
 				}
 			}
-// echo $page_id;exit;			
+			// echo $page_id;exit;			
 			$pg_sections = $this->getPageSections($page_id);
 			$page = Page::with(['page_contents', 'page_image_sliders', 'sponsor_groups', 'sponsor_groups.sponsors', 'downloads', 
 								'cluster', 'banner', 'banner.banner_text', 'page_image_sliders.page_slider_images', 'h2text', 'image_grids', 
@@ -403,7 +403,7 @@ class MenusController extends BaseController {
 				$calendar = $jsn_data['calendar'];
 				$tags = isset($jsn_data['tags']) ? $jsn_data['tags'] : [];
 				$tag_ids = isset($jsn_data['tag_ids']) ? $jsn_data['tag_ids'] : [];
-				$showFliters = true;
+				// $showFliters = true;
 			}
 		}
 		$sponsors = [];
@@ -415,7 +415,7 @@ class MenusController extends BaseController {
 				}
 			}	
 		}
-// echo ($is_page);exit;		
+		// echo ($is_page);exit;		
 		if($is_page) {
 			$contacts = [];
 			$detps = Department::all()->sortBy('sort_order');
@@ -491,7 +491,7 @@ class MenusController extends BaseController {
 				}
 			}
 			$showFliters = (count($tag_ids)) ? true : false;
-			if($is_cal_page) { $showFliters = true; }
+			// if($is_cal_page) { $showFliters = true; }
 			if($section) {
 				return View::make('pages.section', ['pages' => $pages, 'menu_item' => $menu_item, 'section' => $section, 
 					'section_title' =>$section_title, 'pg_links' => $pg_links, 'calendar' => $calendar, 'pg_sections' => $pg_sections, 
@@ -540,7 +540,7 @@ class MenusController extends BaseController {
 
 	public function getPageLinksByTitle($title, $slug = '') {
 		$lang = self::getLang();
-		$sql = 'select cs.*, p.slug_'.$lang.' as page_slug
+		$sql = 'select cs.*, p.title_'.$lang.' as page_title, p.slug_'.$lang.' as page_slug
 		        from content_sections cs, menu_items mi, pages p
 		        where mi.id = cs.menu_item_id
 		          and cs.active_'.$lang.' = 1
@@ -557,6 +557,10 @@ class MenusController extends BaseController {
 			$results = $_results;
 			foreach($results as &$res) {
 				$res->link = $res->{'slug_'.$lang};
+				if(strtolower(trim($res->{'title_'.$lang})) == strtolower(trim($res->page_title))) {
+					$res->link = $res->page_slug;
+				}
+
 				if(trim($slug) == trim($res->{'slug_'.$lang})) {
 					$res->current_link = 1;
 					$cur_found = true;

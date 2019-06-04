@@ -127,10 +127,8 @@ class DownloadsController extends BaseController {
 					$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 					$headers .= 'From: Kunsthalle Bremen <info@kunsthalle-bremen.de>' . "\r\n";
 
-					$rec_emails  = [ 'pfeffer@oneone-studio.com', 'pressebereich1@kunsthalle-bremen.de' ];//  'shahidm08@gmail.com']; // 'pfeffer@oneone-studio.com']; //, 'shahidm08@gmail.com'];
-					if(Input::get('email') == 'shahidm08@gmail.com' || Input::get('email') == 'manzoor@oneone-studio.com') { 
-						$rec_emails = ['shahidm08@gmail.com']; 
-					}
+					$rec_emails  = [ 'pressebereich1@kunsthalle-bremen.de' ];
+
 					foreach($rec_emails as $rec_email) {
 						mail($rec_email, "Bilder-Download: ". $firm .'/'. $publication_date, $body, $headers);
 					}
