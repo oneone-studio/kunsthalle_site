@@ -67,7 +67,7 @@ function setEventId(id, reg_event_date, index, slideNo, hasImage) {
 var cnt = 0;
 function doRefreshSwiper() {
     ++cnt;
-    console.log('refresh cnt: '+cnt);
+    // console.log('refresh cnt: '+cnt);
     if(cnt > 20) { cnt = 0; return; }
     refreshSwiper();
 
