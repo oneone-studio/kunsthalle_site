@@ -217,8 +217,8 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                     '<p>Hiermit melde ich folgende Anzahl Personen verbindlich zu oben stehender Veranstaltung an:</p>';
                     
                     if(evt.package != undefined && evt.package == 1) {
-                        h += '<div class="form-group">'+'<div class="checkbox">'+'<label>';
-                        
+                        h += '<div class="form-group"><div class="checkbox">'+''+'<label>';
+
                         regular_adult_price = (evt.regular_adult_price > 0) ? evt.regular_adult_price : 0;
                         regular_child_price = (evt.regular_child_price > 0) ? evt.regular_child_price : 0;
                         member_adult_price = (evt.member_adult_price > 0) ? evt.member_adult_price : 0;
@@ -239,7 +239,10 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                                 regular_adult_price+','+regular_child_price+','+member_adult_price+','+member_child_price+','+sibling_child_price+','+
                                 sibling_member_price+','+reduced_price+','+pkg_regular_adult_price+','+pkg_regular_child_price+','+pkg_member_adult_price+','+
                                 pkg_member_child_price+','+pkg_sibling_child_price+','+pkg_sibling_member_price+','+pkg_reduced_price+')" />'+
+                                '<span class="checkbox-material"><span class="check"></span></span>'+
                                 ' Alle Veranstaltungen als Paket buchen.</label></div></div>';
+
+                        console.log("\nAdded pkg checkbox..\n"+h);
                     }
                     
                     h += '<div id="participant_err_msg_'+evt.index+'" class="row prt_err" style="display:none;"><div help-block" style="margin-left:20px;font-size:12px;color:red;">Dieses Feld ist ein Pflichtfeld.</div></div>';
