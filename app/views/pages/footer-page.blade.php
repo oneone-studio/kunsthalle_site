@@ -1,9 +1,5 @@
 @extends('layouts.default')
 @section('content')
-<style>
-a { text-decoration: underline; }
-a:visited { text-decoration: underline; }
-</style>
 <script>
 $(function() {
 	$('a').click(function() {

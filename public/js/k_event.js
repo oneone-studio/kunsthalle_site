@@ -160,11 +160,14 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
 
     // Page link for more details
     if(evt.page_link != '' && evt.page_link != undefined && evt.page_link.length > 0 && evt.page_link_title != undefined && evt.page_link_title.length > 0) {
+        var p_link = evt.page_link;
+        if(p_link.indexOf('http://') > -1) { p_link = p_link.replace('http://', 'https://'); }
+        if(p_link.indexOf('.de/de/') == -1) { p_link = p_link.replace('.de/', '.de/de/'); } 
         h += '<dt>Mehr Informationen</dt>'+'<dd><p>';
         if(evt.page_link_text != undefined && evt.page_link_text.length > 0) {
             h += decodeURIComponent(evt.page_link_text) + ' ';
         }
-        h += '<a href="'+evt.page_link+'" style="text-decoration:underline;">'+decodeURIComponent(evt.page_link_title)+'</a></p></dd>';
+        h += '<a href="'+p_link+'" style="text-decoration:underline;">'+decodeURIComponent(evt.page_link_title)+'</a></p></dd>';
     }
 
     h += '</dl>';
@@ -217,7 +220,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                     '<p>Hiermit melde ich folgende Anzahl Personen verbindlich zu oben stehender Veranstaltung an:</p>';
                     
                     if(evt.package != undefined && evt.package == 1) {
-                        h += '<div class="form-group">'+'<div class="checkbox">'+'<label>';
+                        h += '<div class="form-group"><div class="checkbox"><label>';
                         
                         regular_adult_price = (evt.regular_adult_price > 0) ? evt.regular_adult_price : 0;
                         regular_child_price = (evt.regular_child_price > 0) ? evt.regular_child_price : 0;
@@ -239,6 +242,7 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                                 regular_adult_price+','+regular_child_price+','+member_adult_price+','+member_child_price+','+sibling_child_price+','+
                                 sibling_member_price+','+reduced_price+','+pkg_regular_adult_price+','+pkg_regular_child_price+','+pkg_member_adult_price+','+
                                 pkg_member_child_price+','+pkg_sibling_child_price+','+pkg_sibling_member_price+','+pkg_reduced_price+')" />'+
+                                '<span class="checkbox-material"><span class="check"></span></span>'+
                                 ' Alle Veranstaltungen als Paket buchen.</label></div></div>';
                     }
                     

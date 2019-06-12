@@ -418,7 +418,7 @@ var kunsthalle = {
 				    if($('.event_no_'+indx).length) {
 				        evtIndex = indx;
 				        console.log("Detecting evt index:- "+ evtIndex);
-				        swiperDetails.slideTo(slideNo); 
+				        swiperDetails.slideTo(slideNo);
 				        swiperControl.slideTo(slideNo); 
 
 			            var scrollPos = $('.event_no_'+evtIndex).offset().top - 162;
@@ -831,6 +831,10 @@ var kunsthalle = {
 					return $.trim( value );
 				}
 			});
+		$('.ce-termsofuse form').on('submit', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+		});
 	},
 	initEmailrequest: function() {
 		$('.ce-emailrequest form')
