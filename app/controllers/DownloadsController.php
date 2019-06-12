@@ -52,7 +52,7 @@ class DownloadsController extends BaseController {
                 fwrite($f, "\nProcessing dl..");
 				foreach($ids as $id) {
 					$dl = Download::find($id);
-					$diata[] = $dl;
+					$data[] = $dl;
 					$dl_filename = str_replace(' ', '_', $dl->filename);
 	                $remote_file = $remote_dir.$dl->filename;
 	                $local_file = $local_dir.$dl_filename;
@@ -110,28 +110,27 @@ class DownloadsController extends BaseController {
 				$firm = Input::has('firm') ? Input::get('firm') : '';
 				$publication_date = Input::has('publication_date') ? Input::get('publication_date') : '';
 
-				if(trim($name) != '') {
-					$body = 'Name, Vorname: '. $name . '<br>'.
-							'Firma / Redaktion: '. $firm . '<br>'.
-							'Veröffentlichungsdatum: '. $publication_date . '<br><br>';
+				$body = 'Name, Vorname: '. $name . '<br>'.
+						'Firma / Redaktion: '. $firm . '<br>'.
+						'Veröffentlichungsdatum: '. $publication_date . '<br><br>';
 
-					if(count($data)) {
-						$body .= 'Files:<br>';
-						$file_list = [];
-						foreach($data as $d) {
-							$file_list[] = $d->filename;
-						}
-						$body .= implode(', ', $file_list);
+				if(count($data)) {
+					$body .= 'Files:<br>';
+					$file_list = [];
+					foreach($data as $d) {
+						$file_list[] = $d->filename;
 					}
-					$headers = "MIME-Version: 1.0" . "\r\n";
-					$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-					$headers .= 'From: Kunsthalle Bremen <info@kunsthalle-bremen.de>' . "\r\n";
+					$body .= implode(', ', $file_list);
+				}
 
-					$rec_emails  = [ 'pressebereich1@kunsthalle-bremen.de' ];
+				$headers = "MIME-Version: 1.0" . "\r\n";
+				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+				$headers .= 'From: Kunsthalle Bremen <info@kunsthalle-bremen.de>' . "\r\n";
 
-					foreach($rec_emails as $rec_email) {
-						mail($rec_email, "Bilder-Download: ". $firm .'/'. $publication_date, $body, $headers);
-					}
+				$rec_emails  = [ 'info@kunsthalle-bremen.de' ];
+
+				foreach($rec_emails as $rec_email) {
+					mail($rec_email, "Bilder-Download: ". $firm .'/'. $publication_date, $body, $headers);
 				}
 
 				header('Access-Control-Allow-Origin: *');

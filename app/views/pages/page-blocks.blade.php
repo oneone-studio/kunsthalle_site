@@ -534,7 +534,7 @@ if(isset($calendar) && is_array($calendar) && array_key_exists('all_event_dates'
                             Im Falle einer Veröffentlichung erklären Sie sich mit diesen Bedingungen 
                             einverstanden.</p>
                         <p>Für den Download benötigen Sie ein Passwort. Falls Sie noch keine Zugangsdaten besitzen, können Sie diese <a href="mailto:pressebereich@kunsthalle-bremen.de" class="link-mail"><span class="icon icon-arrow icon-s icon-inline icon-white"></span> hier per Mail</a> anfragen.</p>
-                        <form method="POST" novalidate="novalidate">
+                        <form method="POST" action="" novalidate="novalidate">
                             <div class="form-group label-placeholder">
                                 <label for="termsOfUseName" class="control-label">Vorname, Name</label>
                                 <input type="text" class="form-control" name="name" id="termsOfUseName" required />
@@ -565,7 +565,7 @@ if(isset($calendar) && is_array($calendar) && array_key_exists('all_event_dates'
                                 </div>
                             </div>
                             <input type="hidden" name="termsofuse_files" id="termsofuse_files">
-                            <button type="button" onclick="handleDownload()" class="btn btn-default btn-raised active dl-btn">Download</button>
+                            <button type="submit" onclick="handleDownload()" class="btn btn-default btn-raised active dl-btn">Download</button>
                         </form>
                     </div>
                 </div>
