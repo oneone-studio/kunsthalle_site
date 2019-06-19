@@ -125,9 +125,9 @@ class DownloadsController extends BaseController {
 
 				$headers = "MIME-Version: 1.0" . "\r\n";
 				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-				$headers .= 'From: Kunsthalle Bremen <info@kunsthalle-bremen.de>' . "\r\n";
+				$headers .= 'From: Kunsthalle Bremen <pressebereich1@kunsthalle-bremen.de>' . "\r\n";
 
-				$rec_emails  = [ 'info@kunsthalle-bremen.de' ];
+				$rec_emails  = [ 'pressebereich1@kunsthalle-bremen.de' ];
 
 				foreach($rec_emails as $rec_email) {
 					mail($rec_email, "Bilder-Download: ". $firm .'/'. $publication_date, $body, $headers);
