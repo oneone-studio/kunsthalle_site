@@ -71,6 +71,7 @@ class KEventsController extends BaseController {
 	}
 
 	public function registerForEvent() {
+		// echo 'registerForEvent()<br><br><pre>'; print_r(Input::all());exit;
 		$f = fopen('logs/event_reg.log', 'a+');
 		fwrite($f, "[".date('Y-m-d H:i')."] - registerForEvent() called\n\nUser Agent: ". $_SERVER['HTTP_USER_AGENT']."\n\n".print_r(Input::all(), true)."\n\n");
 
@@ -92,14 +93,14 @@ class KEventsController extends BaseController {
 
 			// Disallow forms with 0 participants
 			$pCount = 0;
-			if(array_key_exists('regular_adult_price', $inp) && is_numeric($inp['regular_adult_price'])) { $pCount += (int)$inp['regular_adult_price']; }
-			if(array_key_exists('member_adult_price', $inp) && is_numeric($inp['member_adult_price'])) { $pCount += (int)$inp['member_adult_price']; }
-			if(array_key_exists('member_child_price', $inp) && is_numeric($inp['member_child_price'])) { $pCount += (int)$inp['member_child_price']; }
-			if(array_key_exists('regular_child_price', $inp) && is_numeric($inp['regular_child_price'])) { $pCount += (int)$inp['regular_child_price']; }
-			if(array_key_exists('sibling_member_price', $inp) && is_numeric($inp['sibling_member_price'])) { $pCount += (int)$inp['sibling_member_price']; }
-			if(array_key_exists('sibling_child_price', $inp) && is_numeric($inp['sibling_child_price'])) { $pCount += (int)$inp['sibling_child_price']; }
-			if(array_key_exists('reduced_price', $inp) && is_numeric($inp['reduced_price'])) { $pCount += (int)$inp['reduced_price']; }
-
+			if(array_key_exists('regular_adult_price_pi', $inp) && is_numeric($inp['regular_adult_price_pi'])) { $pCount += (int)$inp['regular_adult_price_pi']; }
+			if(array_key_exists('member_adult_price_pi', $inp) && is_numeric($inp['member_adult_price_pi'])) { $pCount += (int)$inp['member_adult_price_pi']; }
+			if(array_key_exists('member_child_price_pi', $inp) && is_numeric($inp['member_child_price_pi'])) { $pCount += (int)$inp['member_child_price_pi']; }
+			if(array_key_exists('regular_child_price_pi', $inp) && is_numeric($inp['regular_child_price_pi'])) { $pCount += (int)$inp['regular_child_price_pi']; }
+			if(array_key_exists('sibling_member_price_pi', $inp) && is_numeric($inp['sibling_member_price_pi'])) { $pCount += (int)$inp['sibling_member_price_pi']; }
+			if(array_key_exists('sibling_child_price_pi', $inp) && is_numeric($inp['sibling_child_price_pi'])) { $pCount += (int)$inp['sibling_child_price_pi']; }
+			if(array_key_exists('reduced_price_pi', $inp) && is_numeric($inp['reduced_price_pi'])) { $pCount += (int)$inp['reduced_price_pi']; }
+			// echo $pCount;exit;
 			if($pCount == 0) {
 				return Redirect::action($controller_action, $params);
 			}

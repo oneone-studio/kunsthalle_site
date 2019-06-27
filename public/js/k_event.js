@@ -628,12 +628,27 @@ function getFormHTML(evt, reg_event_date, index, slideNo) {
                 '<input name="page_title" type="hidden" value="">'+
                 '<input name="id" type="hidden" value="'+evt.id+'">'+
                 '<input name="reg_event_date" id="reg_event_date" type="hidden" value="'+reg_event_date+'">'+
+                '<input type="hidden" name="regular_adult_price_pi" id="regular_adult_price_pi_'+evt.id+'">'+
+                '<input type="hidden" name="regular_child_price_pi" id="regular_child_price_pi_'+evt.id+'">'+
+                '<input type="hidden" name="member_adult_price_pi" id="member_adult_price_pi_'+evt.id+'">'+
+                '<input type="hidden" name="member_child_price_pi" id="member_child_price_pi_'+evt.id+'">'+
+                '<input type="hidden" name="sibling_child_price_pi" id="sibling_child_price_pi_'+evt.id+'">'+
+                '<input type="hidden" name="sibling_member_price_pi" id="sibling_member_price_pi_'+evt.id+'">'+
+                '<input type="hidden" name="reduced_price_pi" id="reduced_price_pi_'+evt.id+'">'+
             '</form>'+
         '</div>';
     }
 
     // console.log("final HTML\n"+h);
     return h;
+}
+
+function vals() {
+    var $inputs = $('#reg_form_29602072019 :input');
+    $inputs.each(function() {
+        console.log($(this).attr('name') + ' = '+ $(this).val());
+    });
+    return false;
 }
 
 // Get participant count

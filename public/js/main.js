@@ -288,7 +288,8 @@ var kunsthalle = {
 				++pCount;
 				$('.prt_err').hide();
 				input.val(newValue).trigger('change');
-				console.log("increment-> newValue["+input.attr('id')+']: '+newValue+"\nparticipant_count: "+participant_count);
+				var pi_inp_id = input.attr('name')+'_pi_'+curEventId;
+				if($('#'+pi_inp_id).length) { $('#'+pi_inp_id).val(newValue); }
 			})
 			.on('click', 'a.registration-count-decrement', function (e) {
 				e.preventDefault();
@@ -304,8 +305,8 @@ var kunsthalle = {
 				if (newValue <= 0) {
 					newValue = '';
 				}
-				console.log("decrement-> newValue["+input.attr('id')+']: '+newValue+"\nparticipant_count: "+participant_count);
 				input.val(newValue).trigger('change');
+				if($('#'+pi_inp_id).length) { $('#'+pi_inp_id).val(newValue); }
 			})
 			.keydown(function(e) {
 				if(e.keyCode == 13) {
@@ -928,7 +929,6 @@ $.validator.setDefaults({
 		}
 	},
 	normalizer: function( value ) {
-		console.log('normalizer - 5:');
 		return $.trim( value );
 	},
 	invalidHandler: function(event, validator) {
