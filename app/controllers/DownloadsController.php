@@ -60,7 +60,10 @@ class DownloadsController extends BaseController {
 
 	                if(count($ids) == 1 && $dl->protected == 0) {
 						header('Content-Disposition: attachment; filename="'.$dl->filename.'"');
-						return Response::json(array('error' => false, 'file' => $SITE_DOMAIN.'/downloads/'.$dl->filename), 200);
+						fwrite($f, "\nReturning file: ".SITE_DOMAIN.'/downloads/'.$dl->filename);
+		                if(ssh2_scp_recv($ssh, $remote_file, $local_file)) {
+							return Response::json(array('error' => false, 'file' => SITE_DOMAIN.'/downloads/'.$dl->filename), 200);
+		                }
 	                }
 	                if(!$use_ssh) {
 		                if(copy($remote_file, $local_file)) {
