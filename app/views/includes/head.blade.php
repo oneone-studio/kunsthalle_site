@@ -10,7 +10,7 @@
 <title>Kunsthalle Bremen</title>
 
 <script src="/bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="/js/k_event.js?v=201903181722"></script>
+<script type="text/javascript" src="/js/k_event.js?v=201906271412"></script>
 
 <link rel="stylesheet" type="text/css" href="/fonts/ll_circular_bold_web/css/stylesheet.css" media="all" />
 <link rel="stylesheet" type="text/css" href="/fonts/ll_circular_book_web/css/stylesheet.css" media="all" />
@@ -23,7 +23,7 @@
 <!-- swiper -->
 <link rel="stylesheet" type="text/css" href="/bower_components/swiper/dist/css/swiper.min.css" media="all" />
 <!-- custom -->
-<link rel="stylesheet" type="text/css" href="/css/main.css" media="all" />
+<link rel="stylesheet" type="text/css" href="/css/main.css?v=201906271412" media="all" />
 <script type="text/javascript" src="/js/clipboard.min.js"></script>
 <script src="/bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -56,3 +56,19 @@
 })();
 /**/
 </script>
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['disableCookies']);
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//www.kunsthalle-bremen.de/public/analytics/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code -->
