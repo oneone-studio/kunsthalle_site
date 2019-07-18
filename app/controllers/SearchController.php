@@ -618,6 +618,51 @@ class SearchController extends BaseController {
 					}
 				}
 			}
+			// Start page
+			$sp = Page::with(['page_image_sliders', 'page_image_sliders.page_slider_images', 'page_image_sliders.page_slider_images.slide_text'])
+							->where('page_type', 'start_page')->first();
+			$slider = [];
+			if($sp->page_image_sliders && count($sp->page_image_sliders)) {
+				$slider = $sp->page_image_sliders[0];
+			}
+			$sp_slides = $slider->page_slider_images;
+			$_slides = [];
+			foreach($sp_slides as $sl) {
+				if($sl->{'active_'.$lang} == 1) { $_slides[] = $sl; }
+			}
+			$sp_slides = (array)$_slides;
+
+			if(is_array($sp_slides)) {
+				usort($sp_slides, function($a, $b) {
+					if($a['sort_order'] == $b['sort_order']) return 0;
+					return ($a['sort_order'] < $b['sort_order']) ? -1 :1;
+				});
+			}
+			foreach($sp_slides as $sl) {
+				foreach($sl->slide_text as $txt) {
+					$val = $txt->{'line_'.$lang};
+					if(!empty($val)) {
+						$val = self::u2e($val);
+						$debug = false;
+						$_match = self::findVal($val, $term);
+						if($_match) {
+							$url = Config::get('vars.domain').$lang.'/';
+							if(!in_array($url, $urls)) {
+								$arr = [];
+								$arr['page_id'] = $sp->id;
+								$arr['page_title_'.$lang] = $sp->{'title_'.$lang};
+								$arr['page_type'] = $sp->page_type;
+								$arr['res_type'] = 'h2text';
+								$arr['menu_title_'.$lang] = $sp->{'title_'.$lang};
+								$arr['url'] = $url;
+								$data[] = $arr;
+								$urls[] = $url;
+							}
+						}
+					}
+				}
+			}
+
 			// Refine final results
 			$besuch_planen_url = $domain.'besuch-planen/';
 			for($i=0; $i<count($data); $i++) {
