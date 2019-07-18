@@ -353,14 +353,12 @@ class SearchController extends BaseController {
 								// Headline
 								$val = $h2t->{'headline_'.$lang};
 								$_match = self::findVal($val, $term);
-								if($_match == true) { $match = $_match; $res_type = 'h2_text'; 
-							}
+								if($_match == true) { $match = $_match; $res_type = 'h2_text'; }
 								if(!$match) {
 									// Intro
 									$val = self::u2e($h2t->{'intro_'.$lang});
 									$_match = self::findVal($val, $term);
-									if($_match == true) { $match = $_match; $res_type = 'h2_text'; 
-								}
+									if($_match == true) { $match = $_match; $res_type = 'h2_text'; }
 								}
 							}
 						}
@@ -424,7 +422,22 @@ class SearchController extends BaseController {
 								$line_2 = $ep->teaser->{'line_2_'.$lang};
 								$match_2 = self::findVal($line_2, $term);
 								if($match_1 || $match_2) { $match = true; $res_type = 'teaser'; }
-							} 
+							}
+							if(!$match && $ep->page_contents) {
+								if(isset($ep->h2text)) {
+									foreach($ep->h2text as $h2t) {
+										$val = $h2t->{'headline_'.$lang};
+										$_match = self::findVal($val, $term);
+										if($_match == true) { $match = $_match; $res_type = 'h2_text'; }
+										if(!$match) {
+											// Intro
+											$val = self::u2e($h2t->{'intro_'.$lang});
+											$_match = self::findVal($val, $term);
+											if($_match == true) { $match = $_match; $res_type = 'h2_text'; }
+										}
+									}
+								}
+							}
 							if(!$match && $ep->page_contents) {
 								foreach($ep->page_contents as $c) {
 									$v = $c->{'content_'.$lang};
@@ -456,7 +469,7 @@ class SearchController extends BaseController {
 										$_match = self::findVal($val, $term);
 										if($_match == true) { $match = $_match; $res_type = 'title'; }
 									}
-								}							
+								}
 							}
 							if($match) {
 								$ep_url = $url.$ep->{'slug_'.$lang};
