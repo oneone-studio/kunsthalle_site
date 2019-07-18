@@ -6,6 +6,7 @@ class SearchController extends BaseController {
 
 	public function __construct() {
 		$this->calendar = KEventsController::getEventsCalendar(null, false, 0);
+		// echo '<pre>'; print_r($this->calendar);exit;
 	}
 
 	public static function cln($str) {
@@ -14,19 +15,27 @@ class SearchController extends BaseController {
 		return $str;
 	}
 
+	public static function remSymbols(&$str) {
+		$umlauts = ['Ä', 'Ö', 'Ü', 'ä','ö', 'ü', 'ß'];
+		if(!in_array($str, $umlauts)) {
+			$str = preg_replace('/[^\p{L}\p{N}\s]/u', '', $str);
+		}
+
+		return $str;
+	}
+
 	public static function findVal($data, $val, $debug = false) {
 		$enc_term = $val; // htmlentities(trim($val));
 		$term = strtolower(htmlentities($val)); // convert into lowercase i.e., Öffnungszeiten -> öffnungszeiten
-		$term = html_entity_decode($val); // Now decode i.e., &ouml; -> ö
-		$term = utf8_decode($term);
+		$term = html_entity_decode($term); // Now decode i.e., &ouml; -> ö
 		$data = html_entity_decode($data);
 		$arr = explode(' ', $data);
+
 		// if($debug) { echo '<pre>T: '.$term.'<br><br>'; print_r($arr); }
 		foreach($arr as $a) {
-			// $a = htmlentities(trim($a));
 			$a = strtolower(htmlentities(trim($a)));
 			$a = html_entity_decode($a);
-			$a = utf8_decode($a);
+			$a = self::remSymbols($a);
 			// if(strcmp($term, $a) == 0) {
 			if(stripos($a, $term) || strpos($a, strtolower($term))) {
 				// if($debug) { echo '<br>C-1<br><h2 style="color:orangered;">'.$term.' Found!!!</h2>'; exit; }
@@ -65,6 +74,7 @@ class SearchController extends BaseController {
 		fwrite($f, "sendMessage\n\n". print_r(Input::all(), true));
 		$data = [];
 		$page_ids = [];
+		$match_type = '';
 		$urls = [];
 		$page_urls = [];
 		if(Input::has('search_term')) {
@@ -138,12 +148,61 @@ class SearchController extends BaseController {
 						}
 					}
 				}
+				// Content sections
+				// $query = 'select cs.id, cs.slug_'.$lang.', mi.slug_'.$lang.' 
+				// 		  from content_sections cs, menu_items mi
+				// 		  where cs.type = "page_section"
+				// 		     and cs.title_'.$lang.' like "%'.$enc_term.'%"
+				// 		     and mi.id = cs.menu_item_id
+				// 		     and mi.slug_'.$lang.' as menu_item_slug
+				// 		     or upper(cs.title_'.$lang.') like "%'.$term.'%" 
+				// 		     or cs.headline_'.$lang.' like "%'.$enc_term.'%" 
+				// 		     or upper(cs.headline_'.$lang.') like "%'.$term.'%" 
+				// 		     or cs.detail_'.$lang.' like "%'.$enc_term.'%" 
+				// 		     or upper(cs.detail_'.$lang.') like "%'.$term.'%"
+				// 		  group by cs.id';
+				$query = 'select cs.id, cs.title_'.$lang.', cs.headline_'.$lang.',cs.detail_'.$lang.', cs.slug_'.$lang.', mi.id, mi.slug_'.$lang.' as menu_item_slug 
+						  from content_sections cs, menu_items mi
+						  where cs.type = "page_section"
+						     and mi.id = cs.menu_item_id						     
+						  group by cs.id';
+				$cs_res = DB::select($query);
+				if($cs_res) {
+					foreach($cs_res as $_cs) {
+						$match = false;
+						$val = self::u2e($_cs->{'title_'.$lang});
+						$_match = self::findVal($val, $term);
+						if($_match == true) { $match = $_match; }
+						$val = self::u2e($_cs->{'headline_'.$lang});
+						$_match = self::findVal($val, $term);
+						if($_match == true) { $match = $_match; }
+						$val = self::u2e($_cs->{'detail_'.$lang});
+						$_match = self::findVal($val, $term);
+						if($_match == true) { $match = $_match; }
+
+						if($match) {
+							$url = $domain.$lang.'/'.$_cs->menu_item_slug .'/'. $_cs->{'slug_'.$lang};
+							if(!in_array($url, $urls)) {
+								$arr = [];
+								$arr['page_id'] = $_cs->id;
+								$arr['page_title_'.$lang] = $_cs->{'title_'.$lang};
+								$arr['page_type'] = 'page_section';
+								$arr['res_type'] = 'detail';
+								$arr['menu_title_'.$lang] = $_cs->{'title_'.$lang};
+								$arr['url'] = $url;
+								$data[] = $arr;
+								$urls[] = $url;
+							}
+						}
+					}
+				}
+				// echo '<pre>'; print_r($urls); // exit;
 				// Pages
 				$_url = $domain;
 				$page_url = $_url;
 				$exb_url = $domain.$lang.'/'.'view/exhibitions/exb-page/';
 
-				$pgs = Page::with(['page_contents', 'content_section', 'h2', 'h2text'])->get();
+				$pgs = Page::with(['page_contents', 'content_section', 'h2', 'h2text', 'page_image_sliders', 'page_image_sliders.page_slider_images'])->get();
 				foreach($pgs as $pg) {
 					$query = 'select p.id, p.content_section_id, mi.slug_'.$lang.' as menu_item_slug, 
 							    p.title_'.$lang.' as page_title_'.$lang.',
@@ -158,20 +217,36 @@ class SearchController extends BaseController {
 				                and mi.id = cs.menu_item_id 
 				              group by p.id';
 				    $results = DB::select($query);
+					// if($pg->id == 41) { echo '<br><br>'.$query; }
+					$match = false;
+					// Page image slider -> slide images
+					if(isset($pg->page_image_sliders)) {
+						foreach($pg->page_image_sliders as $ps) {
+							foreach($ps->page_slider_images as $pi) {
+								$val = self::u2e($pi->{'detail_'.$lang});
+								$_match = self::findVal($val, $term);
+								if($_match == true) { $match = $_match; $match_type = 'detail_'.$lang; }
+								if(!$match) {
+									if(stripos($val, $enc_term) || stripos($val, $enc_term)) { $match = true; $match_type = 'detail_'.$lang; }
+								}
+							}
+						}
+					}
+
 				    if($results && count($results)) {
 				    	$pres = $results[0];
 						$pg_type = ($pres->cs_type != 'page') ? $pres->cs_type : $pg->page_type;
 						$page_slug = strtolower(str_replace(" ", "-", $pg->{'title_'.$lang}));
 				    	$url = self::getSearchResUrl($pg->page_type, $results[0]->menu_item_slug, $results[0]->cs_item_slug, $pres->page_slug);
-						$match = false;
+						// $match = false;
 						if($pg->h2text) {
 							foreach($pg->h2text as $h2t) {
 								// Headline
 								$val = self::u2e($h2t->{'headline_'.$lang});
 								$_match = self::findVal($val, $term);
-								if($_match == true) { $match = $_match; }
+								if($_match == true) { $match = $_match; $match_type = 'headline_'.$lang; }
 								if(!$match) {
-									if(stripos($val, $enc_term) || stripos($val, $enc_term)) { $match = true; }
+									if(stripos($val, $enc_term) || stripos($val, $enc_term)) { $match = true; $match_type = 'headline_'.$lang; }
 								}
 								// Intro
 								if(!$match) {
@@ -191,22 +266,23 @@ class SearchController extends BaseController {
 						// 	$match = false;
 						// }
 				    }			    
-
 					// Content Section
 					if(!$match && isset($pg->content_section)) {
 						$val = self::u2e($pg->content_section->{'title_'.$lang});
 						$_match = self::findVal($val, $term);
-						if($_match == true) { $match = $_match; }
+						if($_match == true) { $match = $_match; $match_type = 'title_'.$lang; }
 						if(!$match) {
 							$val = self::u2e($pg->content_section->{'headline_'.$lang});
 							$_match = self::findVal($val, $term);
-							if($_match == true) { $match = $_match; }
+							if($_match == true) { $match = $_match; $match_type = 'headline_'.$lang; }
 						}
+						// Disabled content section as it's handled separately
+						/*
 						if(!$match) {
 							$val = self::u2e($pg->content_section->{'detail_'.$lang});
 							$_match = self::findVal($val, $term);
-							if($_match == true) { $match = $_match; }
-						}
+							if($_match == true) { $match = $_match; $match_type = 'detail_'.$lang; }
+						}/**/
 						
 						// This may not be needed
 						// if(!$match) {
@@ -237,10 +313,11 @@ class SearchController extends BaseController {
 						foreach($contents as $c) {
 							$content = self::cln($c->{'content_'.$lang});
 							$content = html_entity_decode($content);
-							$debug = ($pg->id == 24) ? true : false;
-							if($c->id == 29) { $debug = true; }
+							$debug = false;
+							// $debug = ($pg->id == 24) ? true : false;
+							// if($pg->id == 33) { $debug = true; }
 							$_match = self::findVal($content, $term, $debug);
-							if($_match == true) { $match = $_match; }
+							if($_match == true) { $match = $_match; $match_type = 'content_'.$lang; }
 						}
 						// if($match) {
 						// 	$res_item = self::getResItem($pg->id, 'page_content');
@@ -259,56 +336,62 @@ class SearchController extends BaseController {
 						if($pg->teaser) {
 							$val = self::u2e($pg->teaser->{'caption_'.$lang});
 							$_match = self::findVal($val, $term);
-							if($_match == true) { $match = $_match; }
+							if($_match == true) { $match = $_match; $match_type = 'caption_'.$lang; }
 							$l1 = self::u2e($pg->teaser->{'line_1_'.$lang});
 							$_match1 = self::findVal($l1, $term);
-							if($_match1 == true) { $match = $_match1; }
+							if($_match1 == true) { $match = $_match1; $match_type = 'line_1_'.$lang; }
 							$l2 = self::u2e($pg->teaser->{'line_2_'.$lang});
 							$_match2 = self::findVal($l2, $term);
-							if($_match1 || $_match2) { $match = true; }
+							if($_match1 || $_match2) { $match = true; $match_type = 'line_2_'.$lang; }
 						}
 					}
-
+					$m = '';
 					if(!$match) {
+						// if($pg->id == 41) { echo '<h4 style="color:red;">P-check: '.$pg->id.'</h4>m: '.($match == true); }
 						if($pg->h2text) {
 							foreach($pg->h2text as $h2t) {
 								// Headline
 								$val = $h2t->{'headline_'.$lang};
 								$_match = self::findVal($val, $term);
-								if($_match == true) { $match = $_match; $res_type = 'h2_text'; }
+								if($_match == true) { $match = $_match; $res_type = 'h2_text'; 
+							}
 								if(!$match) {
 									// Intro
 									$val = self::u2e($h2t->{'intro_'.$lang});
 									$_match = self::findVal($val, $term);
-									if($_match == true) { $match = $_match; $res_type = 'h2_text'; }
+									if($_match == true) { $match = $_match; $res_type = 'h2_text'; 
+								}
 								}
 							}
 						}
-					}	
-					if($match) {
-						$res_item = self::getResItem($pg->id, 'h2_text');
-						// if($pg->id == 146) { echo '<pre>'; print_r($res_item);exit; }
-						if(is_array($res_item) && array_key_exists('url', $res_item) && !in_array($res_item['url'], $urls)) {
-							$res_item['page_type'] = $pg->page_type;
-							$data[] = $res_item;
-							$page_ids[] = $pg->id;
-							$urls[] = $res_item['url'];
-						}
-						$match = false;
 					}
+					if($match) {
+						if($match_type != '') {
+							$res_item = self::getResItem($pg->id, $match_type);
+							if(is_array($res_item) && array_key_exists('url', $res_item) && !in_array($res_item['url'], $urls)) {
+								$res_item['page_type'] = $pg->page_type;
+								$data[] = $res_item;
+								$page_ids[] = $pg->id;
+								$urls[] = $res_item['url'];
+							}
+						}
+					}
+					$match = false;
 				}
-				// }
+				// echo '<pre>'; print_r($urls);exit;
 				// Check exhibition pages
 				$url = Config::get('vars.domain').$lang.'/'.'view/exhibitions/exb-page/';
 
 				$query = 'select p.id, p.content_section_id, p.title_'.$lang.' as page_title_'.$lang.', p.page_type, 
 						  	p.slug_'.$lang.' as page_slug 
 						  from pages p, page_contents pc
-				          where ( decode(pc.content_'.$lang.') like "%'. $enc_term . '%"';
-				$query .= ') and pc.page_id = p.id
+				          where ( decode(pc.content_'.$lang.') like "%'. $enc_term . '%" 
+				          	or pc.content_'.$lang.' like "%'. $term . '%"';
+						$query .= ') and pc.page_id = p.id
 				            and p.active_'.$lang.' = 1
 				            and p.end_date < "'.date('Y-m-d').'"
 				            and p.page_type = "exhibition"';
+
 				// $results = DB::select($query);
 				// if($results) {
 				// 	foreach($results as $res) {
@@ -393,17 +476,20 @@ class SearchController extends BaseController {
 						}
 					}
 				// }
-				// echo '<pre>';print_r($urls); exit;
 				// Find events
 				$srch_term = strtoupper($term); // ucwords($term);//strtolower($term);
+				// echo $srch_term;exit;
 				$query = 'select id, title_'.$lang.' as page_title_'.$lang.', start_date, event_day, event_day_repeat, repeat_month, end_date 
 						  from k_events 
-						  where lower(title_'.$lang.') like "%'.$enc_term.'%"
-						     or title_'.$lang.' like "%'.$enc_term.'%" 
-						     or lower(subtitle_'.$lang.') like "%'.$enc_term.'%" 
+						  where title_'.$lang.' like "%'.$enc_term.'%"
+						     or upper(title_'.$lang.') like "%'.$srch_term.'%" 
 						     or subtitle_'.$lang.' like "%'.$enc_term.'%" 
+						     or upper(subtitle_'.$lang.') like "%'.$srch_term.'%" 
+						     or detail_'.$lang.' like "%'.$enc_term.'%" 
+						     or upper(detail_'.$lang.') like "%'.$srch_term.'%" 
 						    and start_date >= "'. date('Y-m-d').'"';
 				$results = DB::select($query);
+				// echo $query;exit;
 				// fwrite($f, "\nquery:\n".$query);
 				$start_date = '';
 				$list = [];
@@ -439,7 +525,7 @@ class SearchController extends BaseController {
 										}
 									}	
 								}
-							}					
+							}
 						} else {
 							$query = 'select event_date from event_dates 
 							          where k_event_id = '. $evt->id . ' order by event_date';
@@ -488,9 +574,39 @@ class SearchController extends BaseController {
 				}
 			}
 
+			// Static pages
+			$vals = self::getStaticPageVals();
+			// echo '<pre>'; print_r($vals);exit;
+			if(is_array($vals)) {
+				foreach($vals as $vl) {
+					$page_id = $vl['page_id'];
+					$title = $vl['title'];
+					$slug = $vl['slug'];
+					$val = $vl['val'];
+					$val = self::u2e($val);
+					$debug = false;
+					$_match = self::findVal($val, $term, $debug);
+					if($_match) {
+						$url = Config::get('vars.domain').$lang.'/'.'view/static/page/'.$slug;
+						if(strtolower($slug) == 'team') {
+							$url = Config::get('vars.domain').$lang.'/'.'kunsthalle-bremen/'.$slug;
+						}
+						if(!in_array($url, $urls)) {
+							$arr = [];
+							$arr['page_id'] = $page_id;
+							$arr['page_title_'.$lang] = $vl['title'];
+							$arr['page_type'] = $vl['type'];
+							$arr['res_type'] = $vl['res_type'];
+							$arr['menu_title_'.$lang] = $vl['title'];
+							$arr['url'] = $url;
+							$data[] = $arr;
+							$urls[] = $url;
+						}
+					}
+				}
+			}
 			// Refine final results
 			$besuch_planen_url = $domain.'besuch-planen/';
-			// foreach($data as &$dt) {
 			for($i=0; $i<count($data); $i++) {
 				$dt = $data[$i];
 				// Update title if url is /besuch-planen
@@ -557,6 +673,7 @@ class SearchController extends BaseController {
 			          group by cs.id';
 			$m_res = DB::select($query);
 		}
+// if($pgid == 41) { echo $query; exit; }		
 		if($m_res) {
 			$mr = $m_res[0];
 			$_url = $domain.$lang.'/';
@@ -649,16 +766,18 @@ class SearchController extends BaseController {
 
 	function getSlideNo($index, $start_date) {
 		$evt_data = [];
-		foreach($this->calendar as $m => $data) {
-			foreach($data['days'] as $day => $event_data) {
-				foreach($event_data['events'] as $ev) {
-					if($ev['index'] == $index) {
-						$day_arr = explode(' ', $day);
-						$dayStr = $day_arr[count($day_arr)-1];
-						$evt_data = [ 'slideNo' => $ev['slideNo'],
-								  'date_info' => $dayStr .', '. date('d.m.Y', strtotime($start_date))
-								];
-						break;		
+		if(isset($this->calendar) && isset($this->calendar['calendar'])) {
+			foreach($this->calendar['calendar'] as $m => $data) {
+				foreach($data['days'] as $day => $event_data) {
+					foreach($event_data['events'] as $ev) {
+						if($ev['index'] == $index) {
+							$day_arr = explode(' ', $day);
+							$dayStr = $day_arr[count($day_arr)-1];
+							$evt_data = [ 'slideNo' => $ev['slideNo'],
+									  'date_info' => $dayStr .', '. date('d.m.Y', strtotime($start_date))
+									];
+							break;		
+						}
 					}
 				}
 			}
@@ -667,4 +786,55 @@ class SearchController extends BaseController {
 		return $evt_data;
 	}
 
+	public static function getStaticPageVals() {
+		$lang = MenusController::getLang();
+		$vals = [];
+		$vals[] = [ 'page_id' => 0, 'val' => 'Das Team der Kunsthalle Bremen', 'title' => 'Team', 'slug' => 'team', 'type' => 'normal', 'res_type' => 'content_'.$lang];
+		$vals[] = [ 'page_id' => 0, 'val' => 'The Team of the Kunsthalle Bremen', 'title' => 'Team', 'slug' => 'team', 'type' => 'normal', 'res_type' => 'content_'.$lang];
+		$contacts = Contact::all();
+		// echo '<pre>'; print_r($contacts); exit;
+		if(isset($contacts)) {
+			foreach($contacts as $c) {
+				if(isset($c->{'function_'.$lang}) && trim($c->{'function_'.$lang}) != '') { 
+					$vals[] = [ 'page_id' => 0, 
+								'val' => $c->{'function_'.$lang},
+								'title' => 'Team',
+								'slug' => 'team',
+								'type' => 'normal', 
+								'res_type' => 'function_'.$lang
+							  ]; 
+				}
+			}
+		}
+		$pgs = Page::with(['page_contents'])->where('page_type', 'footer')->get();
+		if($pgs) {
+			foreach($pgs as $pg) {
+				if(isset($pg->page_contents)) {
+					foreach($pg->page_contents as $pc) {
+						if(isset($pc->{'title_'.$lang}) && trim($pc->{'title_'.$lang}) != '') { 
+							$vals[] = [ 'page_id' => $pg->id,
+										'val' => $pc->{'title_'.$lang},
+										'title' => $pg->{'title_'.$lang},
+										'slug' => $pg->{'slug_'.$lang},
+										'type' => 'footer',
+										'res_type' => 'title_'.$lang
+									  ]; 
+						}
+						if(isset($pc->{'content_'.$lang}) && trim($pc->{'content_'.$lang}) != '') { 
+							$vals[] = [ 'page_id' => $pg->id,
+										'val' => $pc->{'content_'.$lang},
+										'title' => $pg->{'title_'.$lang},
+										'slug' => $pg->{'slug_'.$lang},
+										'type' => 'footer',
+										'res_type' => 'content_'.$lang
+									  ]; 
+						}
+					}
+				}
+			}
+		}
+		// echo '<pre>'; print_r($vals); exit;
+
+		return $vals;
+	}
 }
