@@ -289,7 +289,8 @@ var kunsthalle = {
 				$('.prt_err').hide();
 				input.val(newValue).trigger('change');
 				var pi_inp_id = input.attr('name')+'_pi_'+curEventId;
-				if($('#'+pi_inp_id).length) { $('#'+pi_inp_id).val(newValue); }
+				console.log('pi_inp_id: '+pi_inp_id);
+				if($('#'+pi_inp_id).length) { $('#'+pi_inp_id).val(newValue);  }
 			})
 			.on('click', 'a.registration-count-decrement', function (e) {
 				e.preventDefault();
@@ -306,6 +307,7 @@ var kunsthalle = {
 					newValue = '';
 				}
 				input.val(newValue).trigger('change');
+				var pi_inp_id = input.attr('name')+'_pi_'+curEventId;
 				if($('#'+pi_inp_id).length) { $('#'+pi_inp_id).val(newValue); }
 			})
 			.keydown(function(e) {
@@ -424,7 +426,8 @@ var kunsthalle = {
 
 			            var scrollPos = $('.event_no_'+evtIndex).offset().top - 162;
 			            $('html, body').animate({ scrollTop: scrollPos }, 1000);
-			            $('#icon_down_'+evtIndex).trigger('click');
+			            // $('#icon_down_'+evtIndex).trigger('click');
+			            $('.opener_'+evtIndex).trigger('click');
 			            $('.opener_'+indx).addClass('opener-open');
 			            console.log("Finished auto scroll to event: "+ evtIndex);
 			            console.log('submit found? '+ ($('#submit_'+indx).length));
@@ -953,6 +956,7 @@ $.extend( $.validator.methods, {
 $.validator.addMethod("participant", function(value, element) {
 	participant_count = getParticipantCount();
 	console.log("\nParticipant count: "+participant_count);
+// return false;	
 	if(participant_count < 1) {
 		$('.prt_err').show();
 	}

@@ -73,10 +73,16 @@ class KEventsController extends BaseController {
 	public function registerForEvent() {
 		// echo 'registerForEvent()<br><br><pre>'; print_r(Input::all());exit;
 		$f = fopen('logs/event_reg.log', 'a+');
-		fwrite($f, "[".date('Y-m-d H:i')."] - registerForEvent() called\n\nUser Agent: ". $_SERVER['HTTP_USER_AGENT']."\n\n".print_r(Input::all(), true)."\n\n");
+		$f2 = fopen('logs/event_check.log', 'w+');
+		$log = '';
+		$log .= date('Y-m-d H:i')."+++".
+				"\nClient: ". $_SERVER['HTTP_USER_AGENT']."\n".
+				"Inputs:\n" . print_r(Input::all(), true)."\n";
+		fwrite($f, "\n--ER--\n". $log);
 
 		$inp = Input::all();
 		$data = Input::all();
+		fwrite($f2, "\nInputs:\n".print_r($data, true));
 
 		$ref_url = $_SERVER['HTTP_REFERER'];
 		$controller_action = 'MenusController@getEventRegResponse';
@@ -94,19 +100,40 @@ class KEventsController extends BaseController {
 			// Disallow forms with 0 participants
 			$pCount = 0;
 			if(array_key_exists('regular_adult_price_pi', $inp) && is_numeric($inp['regular_adult_price_pi'])) { $pCount += (int)$inp['regular_adult_price_pi']; }
+			if((isset($inp['regular_adult_price']) && is_numeric($inp['regular_adult_price'])) && 
+				(!isset($inp['regular_adult_price_pi']) || trim($inp['regular_adult_price_pi']) == '')) { $pCount += (int)$inp['regular_adult_price']; }
+
 			if(array_key_exists('member_adult_price_pi', $inp) && is_numeric($inp['member_adult_price_pi'])) { $pCount += (int)$inp['member_adult_price_pi']; }
+			if((isset($inp['member_adult_price']) && is_numeric($inp['member_adult_price'])) && 
+				(!isset($inp['member_adult_price_pi']) || trim($inp['member_adult_price_pi']) == '')) { $pCount += (int)$inp['member_adult_price']; }
+
 			if(array_key_exists('member_child_price_pi', $inp) && is_numeric($inp['member_child_price_pi'])) { $pCount += (int)$inp['member_child_price_pi']; }
+			if((isset($inp['member_child_price']) && is_numeric($inp['member_child_price'])) && 
+				(!isset($inp['member_child_price_pi']) || trim($inp['member_child_price_pi']) == '')) { $pCount += (int)$inp['member_child_price']; }
+
 			if(array_key_exists('regular_child_price_pi', $inp) && is_numeric($inp['regular_child_price_pi'])) { $pCount += (int)$inp['regular_child_price_pi']; }
+			if((isset($inp['regular_child_price']) && is_numeric($inp['regular_child_price'])) && 
+				(!isset($inp['regular_child_price_pi']) || trim($inp['regular_child_price_pi']) == '')) { $pCount += (int)$inp['regular_child_price']; }
+
 			if(array_key_exists('sibling_member_price_pi', $inp) && is_numeric($inp['sibling_member_price_pi'])) { $pCount += (int)$inp['sibling_member_price_pi']; }
+			if((isset($inp['sibling_member_price']) && is_numeric($inp['sibling_member_price'])) && 
+				(!isset($inp['sibling_member_price_pi']) || trim($inp['sibling_member_price_pi']) == '')) { $pCount += (int)$inp['sibling_member_price']; }
+
 			if(array_key_exists('sibling_child_price_pi', $inp) && is_numeric($inp['sibling_child_price_pi'])) { $pCount += (int)$inp['sibling_child_price_pi']; }
+			if((isset($inp['sibling_child_price']) && is_numeric($inp['sibling_child_price'])) && 
+				(!isset($inp['sibling_child_price_pi']) || trim($inp['sibling_child_price_pi']) == '')) { $pCount += (int)$inp['sibling_child_price']; }
+
 			if(array_key_exists('reduced_price_pi', $inp) && is_numeric($inp['reduced_price_pi'])) { $pCount += (int)$inp['reduced_price_pi']; }
+			if((isset($inp['reduced_price']) && is_numeric($inp['reduced_price'])) && 
+				(!isset($inp['reduced_price_pi']) || trim($inp['reduced_price_pi']) == '')) { $pCount += (int)$inp['reduced_price']; }
+
 			// echo $pCount;exit;
+			fwrite($f2, "\n\npCount: ".$pCount);
 			if($pCount == 0) {
 				return Redirect::action($controller_action, $params);
 			}
 
 			$event = KEvent::with(['kEventCost', 'clusters', 'clusters.k_events', 'clusters.kEventCost', 'event_dates'])->find($data['id']);
-
 			$headers = "MIME-Version: 1.0" . "\r\n";
 			$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 			$headers .= 'From: Kunsthalle Bremen <info@kunsthalle-bremen.de>' . "\r\n";
@@ -168,88 +195,85 @@ class KEventsController extends BaseController {
 			}
 			$total_price = 0;
 	        // 'Gesamtbetrag für alle von Ihnen angemeldeten Teilnehmer:<br>'.
-			if(array_key_exists('regular_adult_price', $data) && is_numeric($data['regular_adult_price'])) {
-				$body .= $data['regular_adult_price']. ' Erwachsene(r) ';
+			if(array_key_exists('regular_adult_price_pi', $data) && is_numeric($data['regular_adult_price_pi'])) {
+				$body .= $data['regular_adult_price_pi']. ' Erwachsene(r) ';
 				if($pkg_price == true && $event->clusters) {
 					$body .= $event_cost_obj->regular_adult_price;
-					$total_price += ($data['regular_adult_price'] * $event_cost_obj->regular_adult_price);
+					$total_price += ($data['regular_adult_price_pi'] * $event_cost_obj->regular_adult_price);
 				} else {
 					$body .= $event->kEventCost->regular_adult_price;
-					$total_price += ($data['regular_adult_price'] * $event->kEventCost->regular_adult_price);
+					$total_price += ($data['regular_adult_price_pi'] * $event->kEventCost->regular_adult_price);
 				}  
 				$body .= ' Euro<br>';
 			}          
-			if(array_key_exists('member_adult_price', $data) && is_numeric($data['member_adult_price'])) {
-				$body .= $data['member_adult_price']. ' Mitglied(er) ';
+			if(array_key_exists('member_adult_price_pi', $data) && is_numeric($data['member_adult_price_pi'])) {
+				$body .= $data['member_adult_price_pi']. ' Mitglied(er) ';
 				if($pkg_price == true && $event->clusters) {
 					$body .= $event_cost_obj->member_adult_price;
-					$total_price += ($data['member_adult_price'] * $event_cost_obj->member_adult_price);
+					$total_price += ($data['member_adult_price_pi'] * $event_cost_obj->member_adult_price);
 				} else {
 					$body .= $event->kEventCost->member_adult_price;
-					$total_price += ($data['member_adult_price'] * $event->kEventCost->member_adult_price);
+					$total_price += ($data['member_adult_price_pi'] * $event->kEventCost->member_adult_price);
 				}  
 				$body .= ' Euro<br>';
 			}
-			if(array_key_exists('member_child_price', $data) && is_numeric($data['member_child_price'])) {
-				$body .= $data['member_child_price']. ' Kind(er) / Mitglied ';
+			if(array_key_exists('member_child_price_pi', $data) && is_numeric($data['member_child_price_pi'])) {
+				$body .= $data['member_child_price_pi']. ' Kind(er) / Mitglied ';
 				if($pkg_price == true && $event->clusters) {
 					$body .= $event_cost_obj->member_child_price;
-					$total_price += ($data['member_child_price'] * $event_cost_obj->member_child_price);
+					$total_price += ($data['member_child_price_pi'] * $event_cost_obj->member_child_price);
 				} else {
-					fwrite($f, "\n\nCheck 1: ". $event->kEventCost->member_child_price);
 					$body .= $event->kEventCost->member_child_price;
-					$total_price += ($data['member_child_price'] * $event->kEventCost->member_child_price);
+					$total_price += ($data['member_child_price_pi'] * $event->kEventCost->member_child_price);
 				}  
 				$body .= ' Euro<br>';
 			}
-			if(array_key_exists('regular_child_price', $data) && is_numeric($data['regular_child_price'])) {
-				$body .= $data['regular_child_price']. ' Kind(er) ';
+			if(array_key_exists('regular_child_price_pi', $data) && is_numeric($data['regular_child_price_pi'])) {
+				$body .= $data['regular_child_price_pi']. ' Kind(er) ';
 				if($pkg_price == true && $event->clusters) {
 					$body .= $event_cost_obj->regular_child_price;
-					$total_price += ($data['regular_child_price'] * $event_cost_obj->regular_child_price);
+					$total_price += ($data['regular_child_price_pi'] * $event_cost_obj->regular_child_price);
 				} else {
-					fwrite($f, "\n\nCheck 1: ". $event->kEventCost->regular_child_price);
 					$body .= $event->kEventCost->regular_child_price;
-					$total_price += ($data['regular_child_price'] * $event->kEventCost->regular_child_price);
+					$total_price += ($data['regular_child_price_pi'] * $event->kEventCost->regular_child_price);
 				}  
 				$body .= ' Euro<br>';
-				fwrite($f, "\Kinder ");
 			}
-			if(array_key_exists('sibling_member_price', $data) && is_numeric($data['sibling_member_price'])) {
-				$body .= $data['sibling_member_price']. ' Geschwisterkind(er) / Mitglied ';
+			if(array_key_exists('sibling_member_price_pi', $data) && is_numeric($data['sibling_member_price_pi'])) {
+				$body .= $data['sibling_member_price_pi']. ' Geschwisterkind(er) / Mitglied ';
 				if($pkg_price == true && $event->clusters) {
 					fwrite($f, "\ncheck:- event->clusters[0]->kEventCost->sibling_member_price: ". $event_cost_obj->sibling_member_price);
 					$body .= $event_cost_obj->sibling_member_price;
-					$total_price += ($data['sibling_member_price'] * $event_cost_obj->sibling_member_price);
+					$total_price += ($data['sibling_member_price_pi'] * $event_cost_obj->sibling_member_price);
 				} else {
 					fwrite($f, "\n\ncheck:- event->kEventCost->sibling_member_price: ". $event->kEventCost->sibling_member_price);
 					$body .= $event->kEventCost->sibling_member_price;
-					$total_price += ($data['sibling_member_price'] * $event->kEventCost->sibling_member_price);
+					$total_price += ($data['sibling_member_price_pi'] * $event->kEventCost->sibling_member_price);
 				}  
 				$body .= ' Euro<br>';
 				fwrite($f, "\n\nGeschwisterkinder / Mitglied");
 			}
-			if(array_key_exists('sibling_child_price', $data) && is_numeric($data['sibling_child_price'])) {
-				$body .= $data['sibling_child_price']. ' Geschwisterkind(er) ';
+			if(array_key_exists('sibling_child_price_pi', $data) && is_numeric($data['sibling_child_price_pi'])) {
+				$body .= $data['sibling_child_price_pi']. ' Geschwisterkind(er) ';
 				if($pkg_price == true && $event->clusters) {
 					fwrite($f, "\ncheck:- event->clusters[0]->kEventCost->sibling_child_price: ". $event_cost_obj->sibling_child_price);
 					$body .= $event_cost_obj->sibling_child_price;
-					$total_price += ($data['sibling_child_price'] * $event_cost_obj->sibling_child_price);
+					$total_price += ($data['sibling_child_price_pi'] * $event_cost_obj->sibling_child_price);
 				} else {
 					fwrite($f, "\n\ncheck:- event->kEventCost->sibling_child_price: ". $event->kEventCost->sibling_child_price);
 					$body .= $event->kEventCost->sibling_child_price;
-					$total_price += ($data['sibling_child_price'] * $event->kEventCost->sibling_child_price);
+					$total_price += ($data['sibling_child_price_pi'] * $event->kEventCost->sibling_child_price);
 				}  
 				$body .= ' Euro<br>';
 			}
-			if(array_key_exists('reduced_price', $data) && is_numeric($data['reduced_price'])) {
-				$body .= $data['reduced_price'] . " ermäßigt ";
+			if(array_key_exists('reduced_price_pi', $data) && is_numeric($data['reduced_price_pi'])) {
+				$body .= $data['reduced_price_pi'] . " ermäßigt ";
 				if($pkg_price == true && $event->clusters) {
 					$body .= $event_cost_obj->reduced_price;
-					$total_price += ($data['reduced_price'] * $event_cost_obj->reduced_price);
+					$total_price += ($data['reduced_price_pi'] * $event_cost_obj->reduced_price);
 				} else {
 					$body .= $event->kEventCost->reduced_price;
-					$total_price += ($data['reduced_price'] * $event->kEventCost->reduced_price);
+					$total_price += ($data['reduced_price_pi'] * $event->kEventCost->reduced_price);
 				}  
 				$body .= ' Euro<br>';
 			}
@@ -404,7 +428,7 @@ class KEventsController extends BaseController {
 
 			$rec_emails = [ $data['email'], 'programm@kunsthalle-bremen.de' ];
 			if($data['email'] == 'shahidm08@gmail.com' || $data['email'] == 'manzoor@oneone-studio.com') { $rec_emails = [ $data['email'] ]; }
-
+// echo $body; exit;
 			foreach($rec_emails as $rec_email) {
 				mail($rec_email, "Veranstaltungs-Anmeldung", $body, $headers);		   
 			}
@@ -534,94 +558,91 @@ class KEventsController extends BaseController {
 					$total_price = 0;
 			        // 'Gesamtbetrag für alle von Ihnen angemeldeten Teilnehmer:<br>'.
 			        // str_replace('.', ',', $data['total']) .' EURO';
-					if(array_key_exists('regular_adult_price', $data) && is_numeric($data['regular_adult_price'])) {
-						$body .= $data['regular_adult_price']. ' Erwachsene(r) ';
+					if(array_key_exists('regular_adult_price_pi', $data) && is_numeric($data['regular_adult_price_pi'])) {
+						$body .= $data['regular_adult_price_pi']. ' Erwachsene(r) ';
 						if($pkg_price == true && $event->clusters) {
 							$body .= $event_cost_obj->regular_adult_price;
-							$total_price += ($data['regular_adult_price'] * $event_cost_obj->regular_adult_price);
+							$total_price += ($data['regular_adult_price_pi'] * $event_cost_obj->regular_adult_price);
 						} else {
 							$body .= $event->kEventCost->regular_adult_price;
-							$total_price += ($data['regular_adult_price'] * $event->kEventCost->regular_adult_price);
+							$total_price += ($data['regular_adult_price_pi'] * $event->kEventCost->regular_adult_price);
 						}  
 						$body .= ' Euro<br>';
 					}          
-					// if(Input::has('regular_child_price')) {
-					// 	$body .= $data['regular_child_price']. ' Kinder '. $event->kEventCost->regular_child_price .' Euro<br>';
+					// if(Input::has('regular_child_price_pi')) {
+					// 	$body .= $data['regular_child_price_pi']. ' Kinder '. $event->kEventCost->regular_child_price .' Euro<br>';
 					// }
-					if(array_key_exists('member_adult_price', $data) && is_numeric($data['member_adult_price'])) {
-						$body .= $data['member_adult_price']. ' Mitglied(er) ';
+					if(array_key_exists('member_adult_price_pi', $data) && is_numeric($data['member_adult_price_pi'])) {
+						$body .= $data['member_adult_price_pi']. ' Mitglied(er) ';
 						if($pkg_price == true && $event->clusters) {
 							$body .= $event_cost_obj->member_adult_price;
-							$total_price += ($data['member_adult_price'] * $event_cost_obj->member_adult_price);
+							$total_price += ($data['member_adult_price_pi'] * $event_cost_obj->member_adult_price);
 						} else {
 							$body .= $event->kEventCost->member_adult_price;
-							$total_price += ($data['member_adult_price'] * $event->kEventCost->member_adult_price);
+							$total_price += ($data['member_adult_price_pi'] * $event->kEventCost->member_adult_price);
 						}  
 						$body .= ' Euro<br>';
 					}
-					if(array_key_exists('member_child_price', $data) && is_numeric($data['member_child_price'])) {
-						$body .= $data['member_child_price']. ' Kind(er) / Mitglied ';
+					if(array_key_exists('member_child_price_pi', $data) && is_numeric($data['member_child_price_pi'])) {
+						$body .= $data['member_child_price_pi']. ' Kind(er) / Mitglied ';
 						if($pkg_price == true && $event->clusters) {
 							$body .= $event_cost_obj->member_child_price;
-							$total_price += ($data['member_child_price'] * $event_cost_obj->member_child_price);
+							$total_price += ($data['member_child_price_pi'] * $event_cost_obj->member_child_price);
 						} else {
-							fwrite($f, "\n\nCheck 1: ". $event->kEventCost->member_child_price);
 							$body .= $event->kEventCost->member_child_price;
-							$total_price += ($data['member_child_price'] * $event->kEventCost->member_child_price);
+							$total_price += ($data['member_child_price_pi'] * $event->kEventCost->member_child_price);
 						}  
 						$body .= ' Euro<br>';
 					}
-					if(array_key_exists('regular_child_price', $data) && is_numeric($data['regular_child_price'])) {
-						$body .= $data['regular_child_price']. ' Kind(er) ';
+					if(array_key_exists('regular_child_price_pi', $data) && is_numeric($data['regular_child_price_pi'])) {
+						$body .= $data['regular_child_price_pi']. ' Kind(er) ';
 						if($pkg_price == true && $event->clusters) {
 							$body .= $event_cost_obj->regular_child_price;
-							$total_price += ($data['regular_child_price'] * $event_cost_obj->regular_child_price);
+							$total_price += ($data['regular_child_price_pi'] * $event_cost_obj->regular_child_price);
 						} else {
-							fwrite($f, "\n\nCheck 1: ". $event->kEventCost->regular_child_price);
 							$body .= $event->kEventCost->regular_child_price;
-							$total_price += ($data['regular_child_price'] * $event->kEventCost->regular_child_price);
+							$total_price += ($data['regular_child_price_pi'] * $event->kEventCost->regular_child_price);
 						}  
 						$body .= ' Euro<br>';
-						fwrite($f, "\Kinder ");
 					}
-					// if(Input::has('sibling_child_price')) {
-					// 	$body .= $data['sibling_child_price']. ' Geschwisterkinder '. $event->kEventCost->sibling_child_price .' Euro<br>';
+					// if(Input::has('sibling_child_price_pi')) {
+					// 	$body .= $data['sibling_child_price_pi']. ' Geschwisterkinder '. $event->kEventCost->sibling_child_price .' Euro<br>';
 					// }
-					if(array_key_exists('sibling_member_price', $data) && is_numeric($data['sibling_member_price'])) {
-						$body .= $data['sibling_member_price']. ' Geschwisterkind(er) / Mitglied ';
+					if(array_key_exists('sibling_member_price_pi', $data) && is_numeric($data['sibling_member_price_pi'])) {
+						$body .= $data['sibling_member_price_pi']. ' Geschwisterkind(er) / Mitglied ';
 						if($pkg_price == true && $event->clusters) {
 							fwrite($f, "\ncheck:- event->clusters[0]->kEventCost->sibling_member_price: ". $event_cost_obj->sibling_member_price);
 							$body .= $event_cost_obj->sibling_member_price;
-							$total_price += ($data['sibling_member_price'] * $event_cost_obj->sibling_member_price);
+							$total_price += ($data['sibling_member_price_pi'] * $event_cost_obj->sibling_member_price);
 						} else {
 							fwrite($f, "\n\ncheck:- event->kEventCost->sibling_member_price: ". $event->kEventCost->sibling_member_price);
 							$body .= $event->kEventCost->sibling_member_price;
-							$total_price += ($data['sibling_member_price'] * $event->kEventCost->sibling_member_price);
+							$total_price += ($data['sibling_member_price_pi'] * $event->kEventCost->sibling_member_price);
 						}  
 						$body .= ' Euro<br>';
 						fwrite($f, "\n\nGeschwisterkinder / Mitglied");
 					}
-					if(array_key_exists('sibling_child_price', $data) && is_numeric($data['sibling_child_price'])) {
-						$body .= $data['sibling_child_price']. ' Geschwisterkind(er) ';
+					if(array_key_exists('sibling_child_price_pi', $data) && is_numeric($data['sibling_child_price_pi'])) {
+						$body .= $data['sibling_child_price_pi']. ' Geschwisterkind(er) ';
 						if($pkg_price == true && $event->clusters) {
 							fwrite($f, "\ncheck:- event->clusters[0]->kEventCost->sibling_child_price: ". $event_cost_obj->sibling_child_price);
 							$body .= $event_cost_obj->sibling_child_price;
-							$total_price += ($data['sibling_child_price'] * $event_cost_obj->sibling_child_price);
+							$total_price += ($data['sibling_child_price_pi'] * $event_cost_obj->sibling_child_price);
 						} else {
 							fwrite($f, "\n\ncheck:- event->kEventCost->sibling_child_price: ". $event->kEventCost->sibling_child_price);
 							$body .= $event->kEventCost->sibling_child_price;
-							$total_price += ($data['sibling_child_price'] * $event->kEventCost->sibling_child_price);
+							$total_price += ($data['sibling_child_price_pi'] * $event->kEventCost->sibling_child_price);
 						}  
 						$body .= ' Euro<br>';
 					}
-					if(array_key_exists('reduced_price', $data) && is_numeric($data['reduced_price'])) {
-						$body .= $data['reduced_price'] . " ermäßigt ";
+					if(array_key_exists('reduced_price_pi', $data) && is_numeric($data['reduced_price_pi'])) {
+						$body .= $data['reduced_price_pi'] . " ermäßigt ";
 						if($pkg_price == true && $event->clusters) {
 							$body .= $event_cost_obj->reduced_price;
-							$total_price += ($data['reduced_price'] * $event_cost_obj->reduced_price);
+							$total_price += ($data['reduced_price_pi'] * $event_cost_obj->reduced_price);
 						} else {
 							$body .= $event->kEventCost->reduced_price;
-							$total_price += ($data['reduced_price'] * $event->kEventCost->reduced_price);
+							$total_price += ($data['reduced_price_pi'] * $event->kEventCost->reduced_price);
 						}  
 						$body .= ' Euro<br>';
 					}
