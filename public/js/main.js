@@ -389,10 +389,28 @@ var kunsthalle = {
 
 		            var scrollPos = $('.event_no_'+indx).offset().top - 68;
 		            $('html, body').animate({ scrollTop: scrollPos }, 1000);
-		            $('#icon_down_'+indx).trigger('click');
+		            if($('.up_'+indx).length) { $('.up_'+indx).removeClass('up_'+indx).addClass('down') }
+		            if($('#icon_down_'+indx) != undefined) { $('#icon_down_'+indx).trigger('click'); }
+		            // if($('.opener_'+indx) != undefined) { $('.opener_'+indx).trigger('click'); }
+		            if($('.opener_'+indx) != undefined) { $('.opener_'+indx).removeClass('opener-close').addClass('opener-open'); }
 		            console.log("Finished auto scroll to event:- "+ indx);
 				}
 			}
+
+			// var eC = 0;
+			// openEventBlock = function(indx) {
+			// 	console.log('openEventBlock('+indx+') called');
+			// 	++eC;
+			// 	if(eC > 3) {
+			// 		eC = 0;
+			// 		if($('#icon_down_'+indx).length) {
+			// 			$('#icon_down_'+indx).trigger('click');
+			// 			console.log('Now opening..');
+			// 		}
+			// 		return;
+			// 	}
+			// 	setTimeout('openEventBlock', 10, indx);
+			// }
 
 			// Handle auto scroll if event index found in URL
 		    var url = document.URL;
@@ -426,9 +444,25 @@ var kunsthalle = {
 
 			            var scrollPos = $('.event_no_'+evtIndex).offset().top - 162;
 			            $('html, body').animate({ scrollTop: scrollPos }, 1000);
+			            console.log('Opening event: '+ '#icon_down_'+evtIndex);
 			            // $('#icon_down_'+evtIndex).trigger('click');
-			            $('.opener_'+evtIndex).trigger('click');
-			            $('.opener_'+indx).addClass('opener-open');
+			            // $('.opener_'+indx).trigger('click');
+						var eC = 0;
+						openEventBlock = function(indx) {
+							console.log('openEventBlock('+indx+') called');
+							++eC;
+							if(eC > 4) {
+								eC = 0;
+								if($('#icon_down_'+indx).length) {
+									$('.toggle-icon-'+indx + ' span').trigger('click');
+								}
+								return;
+							}
+							setTimeout('openEventBlock('+indx+')', 200);
+						}
+			            openEventBlock(indx);
+			            // $('.toggle-icon-'+evtIndex).trigger('click');
+			            // $('.opener_'+indx).removeClass('opener-close').addClass('opener-open');
 			            console.log("Finished auto scroll to event: "+ evtIndex);
 			            console.log('submit found? '+ ($('#submit_'+indx).length));
 				    }    
